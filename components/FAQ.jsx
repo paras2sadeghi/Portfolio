@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { faqs, profile } from "@/lib/content";
+import { EASE } from "@/lib/motion";
 import Reveal from "./Reveal";
 
 function FAQItem({ faq }) {
@@ -29,7 +30,7 @@ function FAQItem({ faq }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.5, ease: EASE }}
             className="overflow-hidden"
           >
             <p className="pt-3 text-sm leading-relaxed text-muted">

@@ -5,8 +5,14 @@ export default function TrustSection() {
   return (
     <section id="about" className="px-6 py-4 md:px-10 md:py-8">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-3">
-        <Reveal className="rounded-3xl bg-surface p-6 md:p-7">
-          <div className="mb-6 text-xl font-semibold">W.</div>
+        <Reveal className="rounded-3xl bg-surface p-6 transition-transform duration-300 hover:-translate-y-1 md:p-7">
+          <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-background">
+            <span className="flex gap-0.5">
+              <span className="h-3 w-1.5 rounded-full bg-[#FF8C6B]" />
+              <span className="h-3 w-1.5 rounded-full bg-accent-purple" />
+              <span className="h-3 w-1.5 rounded-full bg-accent-green" />
+            </span>
+          </div>
           <h3 className="text-base font-semibold">Design Toolkit</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Figma, FigJam, and Adobe Creative Suite, paired with Claude
@@ -16,7 +22,7 @@ export default function TrustSection() {
 
         <Reveal
           delay={0.06}
-          className="flex flex-col justify-between rounded-3xl bg-ink p-6 text-white md:p-7"
+          className="flex flex-col justify-between rounded-3xl bg-ink p-6 text-white transition-transform duration-300 hover:-translate-y-1 md:p-7"
         >
           <div>
             <p className="text-3xl font-serif leading-none text-white/40">
@@ -39,7 +45,7 @@ export default function TrustSection() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.12} className="rounded-3xl border border-line p-6 md:p-7">
+        <Reveal delay={0.12} className="rounded-3xl border border-line p-6 transition-transform duration-300 hover:-translate-y-1 md:p-7">
           <div className="space-y-5">
             {stats.map((stat) => (
               <div key={stat.label} className="flex items-center gap-3">
