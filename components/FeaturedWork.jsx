@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { caseStudyList } from "@/lib/caseStudies";
+import { featuredWork } from "@/lib/caseStudies";
 import Reveal from "./Reveal";
 import TextReveal from "./TextReveal";
 
@@ -76,7 +76,7 @@ export default function FeaturedWork() {
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {caseStudyList.map((study, i) => (
+          {featuredWork.map((study, i) => (
             <ProjectCard key={study.slug} study={study} delay={i * 0.08} />
           ))}
         </div>
