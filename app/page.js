@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FeaturedWork from "@/components/FeaturedWork";
+import Journey from "@/components/Journey";
 import TrustSection from "@/components/TrustSection";
 import Services from "@/components/Services";
 import Workflow from "@/components/Workflow";
@@ -14,7 +14,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <Hero />
-        <FeaturedWork />
+        <Journey />
         <TrustSection />
         <Services />
         <Workflow />
