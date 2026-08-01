@@ -77,27 +77,19 @@ function ExplorationCard({ study, delay }) {
   const { slug, name, card } = study;
   return (
     <Reveal delay={delay}>
-      <Link
-        href={`/work/${slug}`}
-        className="group block overflow-hidden rounded-2xl border border-line/60 bg-surface transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:shadow-[0_24px_50px_-28px_rgba(0,0,0,0.35)]"
-      >
-        <div className="relative h-40 overflow-hidden">
+      <Link href={`/work/${slug}`} className="group block">
+        <div className="relative aspect-[16/10] overflow-hidden rounded-[1.25rem]">
           <div
-            className="absolute inset-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
+            className="absolute inset-0 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
             style={{ background: card.gradient }}
           />
-          <div className="relative flex h-full flex-col justify-end p-4">
-            <h4 className="text-base font-semibold text-white">{name}</h4>
-          </div>
         </div>
-        <div className="flex items-center justify-between gap-2 p-3.5">
-          <p className="text-xs text-muted">{card.subtitle}</p>
-          <span
-            aria-hidden
-            className="shrink-0 text-xs text-muted transition-transform duration-300 group-hover:translate-x-0.5"
-          >
-            →
-          </span>
+        <h4 className="mt-6 text-3xl font-semibold tracking-tight md:text-4xl">
+          {name}
+        </h4>
+        <div className="mt-4 flex items-baseline justify-between gap-6 border-t border-line pt-4">
+          <p className="text-sm text-muted">{card.subtitle}</p>
+          <span className="shrink-0 text-sm text-muted">{card.category}</span>
         </div>
       </Link>
     </Reveal>
@@ -114,8 +106,8 @@ export default function Journey() {
   const lineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section id="work" className="px-6 py-16 md:px-10 md:py-24">
-      <div className="mx-auto max-w-4xl">
+    <section id="work" className="px-6 py-16 md:px-10 md:py-28">
+      <div className="mx-auto max-w-5xl">
         <div className="mb-14 flex items-end justify-between md:mb-20">
           <TextReveal
             as="h2"
@@ -166,9 +158,9 @@ export default function Journey() {
           </p>
         </Reveal>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="mt-14 flex flex-col gap-20 md:mt-20 md:gap-28">
           {explorations.map((study, i) => (
-            <ExplorationCard key={study.slug} study={study} delay={i * 0.06} />
+            <ExplorationCard key={study.slug} study={study} delay={i * 0.04} />
           ))}
         </div>
       </div>
