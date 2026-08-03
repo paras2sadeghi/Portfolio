@@ -1,89 +1,120 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useState } from "react";
 import MagneticButton from "@/components/animations/MagneticButton";
 import SplitText from "@/components/animations/SplitText";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { profile } from "@/lib/content";
+import { footer, profile } from "@/lib/content";
 
 /**
- * Closing frame. A slow marquee gives the section ambient life, and the CTA is
- * the largest magnetic target on the page so the final action is unmissable.
+ * Closing frame. The CTA gets the most weight, then the utility footer folds
+ * in below it so the homepage ends in one deliberate gesture.
  */
 export default function ContactSection() {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const marqueeRef = useRef<HTMLDivElement | null>(null);
-  const reduced = useReducedMotion();
+  const [localTime, setLocalTime] = useState("");
 
   useEffect(() => {
-    if (reduced) return;
-    const marquee = marqueeRef.current;
-    if (!marquee) return;
+    const update = () => {
+      setLocalTime(
+        new Intl.DateTimeFormat("en-CA", {
+          timeZone: "America/Vancouver",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+          timeZoneName: "short",
+        }).format(new Date())
+      );
+    };
 
-    gsap.registerPlugin(ScrollTrigger);
-
-    const context = gsap.context(() => {
-      // Two copies of the phrase scroll as one loop; -50% lands exactly on
-      // the seam so the repeat is invisible.
-      gsap.to(marquee, {
-        xPercent: -50,
-        duration: 26,
-        ease: "none",
-        repeat: -1,
-      });
-    }, sectionRef);
-
-    return () => context.revert();
-  }, [reduced]);
+    update();
+    const timer = window.setInterval(update, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   return (
     <section
       id="contact"
-      ref={sectionRef}
-      className="relative overflow-hidden border-t border-foreground/12 px-6 py-24 md:px-10 md:py-40"
+      className="relative overflow-hidden bg-ink px-6 py-24 text-white md:px-10 md:py-36"
     >
       <div className="mx-auto max-w-[1600px]">
-        <SplitText
-          as="p"
-          text="Have something worth building?"
-          className="max-w-3xl text-[2rem] font-medium leading-[1.2] tracking-tight md:text-[3.4rem]"
-        />
+        <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/40">
+              Contact
+            </p>
+            <SplitText
+              as="h2"
+              text="Let's work together"
+              className="font-display text-[15vw] font-medium leading-[0.82] tracking-[-0.06em] md:text-[8vw]"
+            />
+          </div>
 
-        <div className="mt-14 flex flex-wrap items-center gap-6 md:mt-20">
-          <MagneticButton
-            href={`mailto:${profile.email}`}
-            strength={0.4}
-            radius={120}
-            className="inline-flex items-center justify-center rounded-full bg-foreground px-12 py-7 text-base font-medium text-background transition-colors duration-500 md:px-16 md:py-9 md:text-lg"
-          >
-            Start a conversation
-          </MagneticButton>
-
-          <div className="flex flex-col gap-1 text-sm text-muted">
-            <a
+          <div className="flex flex-col gap-5 md:items-end md:pb-4">
+            <MagneticButton
               href={`mailto:${profile.email}`}
-              className="transition-colors hover:text-foreground"
+              strength={0.38}
+              radius={120}
+              className="inline-flex w-fit items-center justify-center rounded-full bg-white px-8 py-5 text-base font-medium text-ink transition-transform duration-500 hover:scale-[1.03]"
             >
-              {profile.email}
-            </a>
-            <span>{profile.location}</span>
+              Start a conversation
+            </MagneticButton>
+
+            <div className="flex flex-col gap-1 text-sm text-white/55 md:text-right">
+              <a
+                href={`mailto:${profile.email}`}
+                className="transition-colors hover:text-white"
+              >
+                {profile.email}
+              </a>
+              <a href={`tel:${profile.phone}`} className="transition-colors hover:text-white">
+                {profile.phone}
+              </a>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-24 overflow-hidden md:mt-40">
-        <div ref={marqueeRef} className="flex w-max whitespace-nowrap">
-          {[0, 1].map((copy) => (
-            <span
-              key={copy}
-              aria-hidden={copy === 1}
-              className="text-[13vw] font-semibold leading-none tracking-[-0.03em] text-foreground/10"
-            >
-              Product design — Healthcare — SaaS — Product design — Healthcare — SaaS —&nbsp;
-            </span>
-          ))}
+        <div className="mt-20 overflow-hidden border-y border-white/10 py-4 md:mt-28">
+          <div className="marquee-track flex w-max whitespace-nowrap">
+            {[0, 1].map((copy) => (
+              <span
+                key={copy}
+                aria-hidden={copy === 1}
+                className="font-display text-[13vw] font-semibold uppercase leading-none tracking-[-0.045em] text-white/10"
+              >
+                Product design — Healthcare — SaaS —&nbsp;
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-8 pt-8 text-sm text-white/45 md:grid-cols-3 md:pt-10">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/25">
+              Version
+            </p>
+            <p>2026 © Edition</p>
+          </div>
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/25">
+              Local time
+            </p>
+            <p>{localTime}</p>
+          </div>
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/25">
+              Socials
+            </p>
+            <div className="flex gap-4 md:justify-start">
+              {footer.connect.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="transition-colors hover:text-white"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

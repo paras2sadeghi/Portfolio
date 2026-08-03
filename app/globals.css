@@ -27,6 +27,7 @@
   --color-accent-purple-dark: var(--accent-purple-dark);
   --color-accent-green: var(--accent-green);
   --font-sans: var(--font-inter);
+  --font-display: var(--font-display);
 }
 
 body {
@@ -61,5 +62,27 @@ html.lenis body {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* Name marquee — CSS-driven so it never depends on the JS ticker.
+   Two identical copies sit side by side; -50% lands exactly on the seam. */
+@keyframes marquee-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: marquee-x 22s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
   }
 }

@@ -7,11 +7,13 @@ import { useEffect, useState } from "react";
  * user flips the OS setting mid-session, so animations can degrade immediately.
  */
 export function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(query.matches);
     const onChange = (event: MediaQueryListEvent) => setReduced(event.matches);
     query.addEventListener("change", onChange);
     return () => query.removeEventListener("change", onChange);

@@ -1,15 +1,22 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import HoverPreview from "@/components/animations/HoverPreview";
 import SplitText from "@/components/animations/SplitText";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { featuredWork } from "@/lib/caseStudies";
+import { GSAP_EASE } from "@/utils/motion";
 
 interface WorkItem {
   slug: string;
   name: string;
+  year: string;
+  discipline: string;
+  thumbnail?: string;
+  featured?: boolean;
   card: {
     category: string;
     subtitle: string;
@@ -18,90 +25,136 @@ interface WorkItem {
   };
 }
 
-function ProjectCard({ item, index }: { item: WorkItem; index: number }) {
+function WorkRow({
+  item,
+  index,
+  onPreview,
+  onLeave,
+}: {
+  item: WorkItem;
+  index: number;
+  onPreview: (item: WorkItem, x: number, y: number) => void;
+  onLeave: () => void;
+}) {
   return (
     <Link
       href={`/work/${item.slug}`}
-      className="group relative flex w-[78vw] shrink-0 flex-col md:w-[46vw] lg:w-[38vw]"
+      data-work-row
+      onMouseEnter={(event) => onPreview(item, event.clientX, event.clientY)}
+      onMouseMove={(event) => onPreview(item, event.clientX, event.clientY)}
+      onMouseLeave={onLeave}
+      className="group grid border-t border-foreground/12 py-7 md:grid-cols-[5rem_1fr_auto] md:items-baseline md:gap-10 md:py-9"
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
-        <div
-          className="absolute inset-0 transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
-          style={{ background: item.card.gradient }}
-        />
-        <div className="absolute inset-0 flex items-end p-6 md:p-8">
-          <span className="text-xs uppercase tracking-[0.2em] text-white/80">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-6 flex items-baseline justify-between gap-6 border-t border-foreground/12 pt-5">
-        <h3 className="text-2xl font-semibold tracking-tight md:text-3xl">
+      <span className="mb-3 text-xs uppercase tracking-[0.2em] text-muted md:mb-0">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <div>
+        <h3 className="font-display text-4xl font-medium leading-[0.95] tracking-[-0.045em] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-3 md:text-[5.8vw]">
           {item.name}
         </h3>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted md:hidden">
+          {item.card.subtitle}
+        </p>
+      </div>
+      <div className="mt-5 flex items-center justify-between gap-8 text-xs uppercase tracking-[0.18em] text-muted md:mt-0 md:min-w-72">
+        <span>{item.discipline}</span>
+        <span>{item.year}</span>
         <span
           aria-hidden
-          className="text-lg text-muted transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
+          className="text-lg leading-none opacity-0 transition-[opacity,transform] duration-500 group-hover:translate-x-1 group-hover:opacity-100"
         >
-          →
-        </span>
-      </div>
-      <div className="mt-3 flex items-baseline justify-between gap-6">
-        <p className="text-sm text-muted">{item.card.subtitle}</p>
-        <span className="shrink-0 text-xs uppercase tracking-[0.16em] text-muted">
-          {item.card.category}
+          ↗
         </span>
       </div>
     </Link>
   );
 }
 
-/**
- * Pinned horizontal gallery. Vertical scroll drives lateral travel, so the
- * viewer is scrubbing a timeline rather than paging through a grid. Falls back
- * to a normal vertical stack on mobile and for reduced-motion users.
- */
 export default function WorkSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
+  const [preview, setPreview] = useState<WorkItem | null>(null);
+  const [pointer, setPointer] = useState({ x: 0, y: 0 });
 
-  useHorizontalScroll({
-    sectionRef,
-    trackRef,
-    enabled: !reduced,
-  });
+  useEffect(() => {
+    if (reduced) return;
+    const section = sectionRef.current;
+    if (!section) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        "[data-work-row]",
+        { y: 42, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: GSAP_EASE,
+          stagger: 0.08,
+          scrollTrigger: { trigger: section, start: "top 70%", once: true },
+        }
+      );
+    }, section);
+
+    return () => context.revert();
+  }, [reduced]);
 
   const items = featuredWork as WorkItem[];
+  const homeItems = items.filter((item) => item.featured).slice(0, 4);
+
+  const onPreview = (item: WorkItem, x: number, y: number) => {
+    setPreview(item);
+    setPointer({ x: x + 110, y: y - 30 });
+  };
 
   return (
     <section
       id="work"
       ref={sectionRef}
-      className="relative overflow-hidden py-20 md:py-0 md:min-h-screen md:flex md:flex-col md:justify-center"
+      className="relative px-6 py-24 md:px-10 md:py-40"
     >
-      <div className="px-6 md:px-10">
-        <div className="mx-auto flex max-w-[1600px] items-end justify-between gap-8">
+      <HoverPreview item={preview} x={pointer.x} y={pointer.y} />
+
+      <div className="mx-auto max-w-[1600px]">
+        <div className="mb-12 flex items-end justify-between gap-8 md:mb-20">
           <SplitText
             as="h2"
-            text="Selected work"
+            text="Recent work"
             className="text-[9vw] font-semibold leading-[0.9] tracking-[-0.03em] md:text-[5vw]"
           />
           <span className="hidden shrink-0 pb-3 text-xs uppercase tracking-[0.2em] text-muted md:block">
-            {items.length} projects — scroll
+            {homeItems.length} selected — hover
           </span>
         </div>
-      </div>
 
-      <div
-        ref={trackRef}
-        className="mt-12 flex flex-col gap-16 px-6 md:mt-16 md:flex-row md:gap-10 md:px-10 md:will-change-transform"
-      >
-        {items.map((item, i) => (
-          <ProjectCard key={item.slug} item={item} index={i} />
-        ))}
-        <div className="hidden shrink-0 md:block md:w-[10vw]" aria-hidden />
+        <div className="border-b border-foreground/12">
+          {homeItems.map((item, i) => (
+            <WorkRow
+              key={item.slug}
+              item={item}
+              index={i}
+              onPreview={onPreview}
+              onLeave={() => setPreview(null)}
+            />
+          ))}
+        </div>
+
+        <div className="mt-10 flex justify-end">
+          <Link
+            href="/work"
+            className="group inline-flex items-center gap-2 rounded-full border border-foreground/12 px-5 py-3 text-sm font-medium transition-colors hover:bg-foreground hover:text-background"
+          >
+            More work · {items.length}
+            <span
+              aria-hidden
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </Link>
+        </div>
       </div>
     </section>
   );
