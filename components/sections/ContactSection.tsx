@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MagneticButton from "@/components/animations/MagneticButton";
 import SplitText from "@/components/animations/SplitText";
 import { footer, profile } from "@/lib/content";
+import { bougainvilleaClips } from "@/lib/motif";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
  * Closing frame. The CTA gets the most weight, then the utility footer folds
@@ -11,6 +15,10 @@ import { footer, profile } from "@/lib/content";
  */
 export default function ContactSection() {
   const [localTime, setLocalTime] = useState("");
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const flowerRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const update = () => {
@@ -30,12 +38,71 @@ export default function ContactSection() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    const flower = flowerRef.current;
+    const video = videoRef.current;
+    if (!section || !flower || !video || reduced) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.12 }
+    );
+    observer.observe(section);
+
+    gsap.registerPlugin(ScrollTrigger);
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        flower,
+        { yPercent: 24, rotate: -5 },
+        {
+          yPercent: -18,
+          rotate: 3,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        }
+      );
+    }, section);
+
+    return () => {
+      observer.disconnect();
+      context.revert();
+    };
+  }, [reduced]);
+
   return (
     <section
       id="contact"
-      className="relative overflow-hidden bg-ink px-6 py-24 text-white md:px-10 md:py-36"
+      ref={sectionRef}
+      className="relative isolate overflow-hidden bg-ink px-6 py-24 text-white md:px-10 md:py-36"
     >
-      <div className="mx-auto max-w-[1600px]">
+      {!reduced && (
+        <div
+          ref={flowerRef}
+          aria-hidden
+          className="pointer-events-none absolute inset-x-[-6%] -top-[6%] z-20 h-[24%] will-change-transform md:h-[22%] [mask-image:linear-gradient(to_bottom,black_0%,black_35%,transparent_85%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_35%,transparent_85%)]"
+        >
+          <video
+            ref={videoRef}
+            src={bougainvilleaClips.contact}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="h-full w-full scale-[1.1] object-cover object-[center_10%]"
+          />
+        </div>
+      )}
+
+      <div className="relative z-10 mx-auto max-w-[1600px]">
         <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-end">
           <div>
             <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/40">

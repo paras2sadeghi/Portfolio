@@ -81,8 +81,263 @@ html.lenis body {
   will-change: transform;
 }
 
+/* Home intro round CTA: an oversized oval rises like a slow wave.
+   It avoids the hard horizontal edge of a standard translate-y fill. */
+.round-fill-wave {
+  left: -30%;
+  bottom: -150%;
+  width: 160%;
+  height: 155%;
+  border-radius: 50% 50% 0 0 / 22% 22% 0 0;
+  transform: translateY(0);
+  transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.group:hover .round-fill-wave,
+.group:focus-visible .round-fill-wave {
+  transform: translateY(-86%);
+}
+
+@keyframes globe-spin {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.globe-spin {
+  animation: globe-spin 10s linear infinite;
+  will-change: transform;
+}
+
+/* Frosted glass menu — no transform on this layer or backdrop-filter breaks */
+.site-menu-glass {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(52px) saturate(190%);
+  -webkit-backdrop-filter: blur(52px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 28px 90px rgba(0, 0, 0, 0.1);
+}
+
+.site-menu-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.18) 42%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  pointer-events: none;
+}
+
+.site-menu-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 90% 55% at 15% -5%,
+    rgba(255, 255, 255, 0.45),
+    transparent 68%
+  );
+  pointer-events: none;
+}
+
+/* Dennis work-tiles — thumb grows + stripe on row hover */
+.work-tiles-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid rgba(11, 11, 12, 0.12);
+}
+
+.work-tiles-home .work-tile-item,
+.work-tiles .work-tile-item {
+  border-top: 1px solid rgba(11, 11, 12, 0.12);
+}
+
+.work-tiles-home .work-tile-row,
+.work-tiles .work-tile-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1.25rem;
+  row-gap: 0.35rem;
+  align-items: end;
+  padding: 1.75rem 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (min-width: 768px) {
+  .work-tiles-home .work-tile-row,
+  .work-tiles .work-tile-row {
+    grid-template-columns: auto minmax(0, 1.35fr) minmax(0, 0.95fr) 4.5rem;
+    align-items: center;
+    column-gap: 2.5rem;
+    padding: 2.25rem 0;
+  }
+}
+
+.work-tiles-home .tile-image,
+.work-tiles .tile-image {
+  position: relative;
+  width: 3.25rem;
+  height: 4.25rem;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #f1f1f1;
+  transition:
+    width 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  .work-tiles-home .tile-image,
+  .work-tiles .tile-image {
+    width: 4rem;
+    height: 5.25rem;
+  }
+}
+
+.work-tiles-home .work-tile-col-title h4,
+.work-tiles .work-tile-col-title h4 {
+  margin: 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: clamp(2rem, 7.5vw, 2.75rem);
+  font-weight: 500;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+
+@media (min-width: 768px) {
+  .work-tiles-home .work-tile-col-title h4,
+  .work-tiles .work-tile-col-title h4 {
+    font-size: clamp(2.5rem, 5.5vw, 3.75rem);
+  }
+}
+
+.work-tiles-home .work-tile-col-title .stripe,
+.work-tiles .work-tile-col-title .stripe {
+  margin-top: 0.85rem;
+  height: 1px;
+  width: 0;
+  max-width: 100%;
+  background: currentColor;
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.work-tiles-home .single-tile-wrap:hover .stripe,
+.work-tiles .single-tile-wrap:hover .stripe {
+  width: 100%;
+}
+
+.work-tiles-home .work-tile-col-discipline,
+.work-tiles .work-tile-col-discipline {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .work-tiles-home .work-tile-col-discipline,
+  .work-tiles .work-tile-col-discipline {
+    display: block;
+  }
+
+  .work-tiles-home .work-tile-col-discipline p,
+  .work-tiles .work-tile-col-discipline p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+}
+
+.work-tiles-home .work-tile-col-year,
+.work-tiles .work-tile-col-year {
+  grid-column: 2;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .work-tiles-home .work-tile-col-year,
+  .work-tiles .work-tile-col-year {
+    grid-column: auto;
+    text-align: left;
+  }
+}
+
+.work-tiles-home .work-tile-col-year p,
+.work-tiles .work-tile-col-year p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.work-tiles-home .work-tile-col-discipline {
+  grid-column: 2;
+}
+
+@media (min-width: 768px) {
+  .work-tiles-home .work-tile-col-discipline {
+    grid-column: auto;
+  }
+}
+
+.work-tiles-home .single-tile-wrap:hover .tile-image,
+.work-tiles .single-tile-wrap:hover .tile-image {
+  width: 5.25rem;
+  height: 6.75rem;
+}
+
+@media (min-width: 768px) {
+  .work-tiles-home .single-tile-wrap:hover .tile-image,
+  .work-tiles .single-tile-wrap:hover .tile-image {
+    width: 6.5rem;
+    height: 8.25rem;
+  }
+}
+
+.work-tiles-home .single-tile-wrap:hover .tile-image-media,
+.work-tiles .single-tile-wrap:hover .tile-image-media {
+  transform: scale(1.05);
+}
+
+.work-tiles-home .tile-image-media,
+.work-tiles .tile-image-media {
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
+  }
+
+  .globe-spin {
+    animation: none;
+  }
+
+  .work-tiles-home .single-tile-wrap:hover .tile-image,
+  .work-tiles .single-tile-wrap:hover .tile-image {
+    width: 3.25rem;
+    height: 4.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .work-tiles-home .single-tile-wrap:hover .tile-image,
+    .work-tiles .single-tile-wrap:hover .tile-image {
+      width: 4rem;
+      height: 5.25rem;
+    }
+  }
+
+  .work-tiles-home .single-tile-wrap:hover .tile-image-media,
+  .work-tiles .single-tile-wrap:hover .tile-image-media {
+    transform: none;
   }
 }

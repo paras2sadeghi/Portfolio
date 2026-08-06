@@ -11,6 +11,7 @@ interface MagneticButtonProps {
   strength?: number;
   radius?: number;
   onClick?: () => void;
+  external?: boolean;
 }
 
 /**
@@ -24,6 +25,7 @@ export default function MagneticButton({
   strength = 0.32,
   radius = 80,
   onClick,
+  external,
 }: MagneticButtonProps) {
   const reduced = useReducedMotion();
   const ref = useMagnetic<HTMLAnchorElement>({
@@ -45,7 +47,15 @@ export default function MagneticButton({
 
   if (href) {
     return (
-      <a ref={ref} href={href} onClick={onClick} className={className}>
+      <a
+        ref={ref}
+        href={href}
+        onClick={onClick}
+        className={className}
+        {...(external
+          ? { target: "_blank", rel: "noopener noreferrer" }
+          : {})}
+      >
         {content}
       </a>
     );

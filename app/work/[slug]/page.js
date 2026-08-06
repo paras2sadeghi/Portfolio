@@ -1,37 +1,24 @@
 import { notFound } from "next/navigation";
-import {
-  caseStudies,
-  caseStudyOrder,
-  getCaseStudy,
-} from "@/lib/caseStudies";
-import { solutions } from "@/components/casestudy/solutions";
-import CaseStudyShell from "@/components/casestudy/CaseStudyShell";
+import ProjectCaseStudy from "@/components/work/ProjectCaseStudy";
+import { getProject, projects } from "@/lib/projects";
 
 export function generateStaticParams() {
-  return caseStudyOrder.map((slug) => ({ slug }));
+  return projects.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const data = getCaseStudy(slug);
-  if (!data) return {};
+  const project = getProject(slug);
+  if (!project) return {};
   return {
-    title: `${data.name} — Parastoo Sadeghi`,
-    description: data.hero.sub,
+    title: `${project.name} — Parastoo Sadeghi`,
+    description: project.caseStudy.summary,
   };
 }
 
-export default async function CaseStudyPage({ params }) {
+export default async function WorkProjectPage({ params }) {
   const { slug } = await params;
-  const data = getCaseStudy(slug);
-  if (!data) notFound();
-
-  const Solution = solutions[slug];
-
-  const idx = caseStudyOrder.indexOf(slug);
-  const nextSlug = caseStudyOrder[(idx + 1) % caseStudyOrder.length];
-  const nextData = caseStudies[nextSlug];
-  const next = nextData ? { slug: nextData.slug, name: nextData.name } : null;
-
-  return <CaseStudyShell data={data} solution={<Solution />} next={next} />;
+  const project = getProject(slug);
+  if (!project) notFound();
+  return <ProjectCaseStudy project={project} />;
 }

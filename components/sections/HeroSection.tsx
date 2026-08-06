@@ -40,17 +40,22 @@ export default function HeroSection() {
         }
       );
 
-      // Slow push-in on the photograph as the section leaves.
-      gsap.to(imageRef.current, {
-        scale: 1.1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
+      // Parallax: image drifts upward and scales as the hero scrolls away.
+      gsap.fromTo(
+        imageRef.current,
+        { yPercent: 0, scale: 1.08 },
+        {
+          yPercent: 18,
+          scale: 1.18,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        }
+      );
     }, section);
 
     return () => context.revert();
@@ -80,16 +85,6 @@ export default function HeroSection() {
         aria-hidden
         className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/45"
       />
-
-      {/* Top row */}
-      <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-6 md:px-10 md:py-8">
-        <span data-hero-fade className="text-sm font-medium text-white/90">
-          © {profile.name}
-        </span>
-        <span data-hero-fade className="pr-24 text-sm font-medium text-white/70">
-          {profile.location}
-        </span>
-      </div>
 
       {/* Location pill, left */}
       <div
@@ -145,14 +140,17 @@ export default function HeroSection() {
   );
 }
 
-/** Wireframe globe: nested ellipses rotating to imply a sphere. */
+/** Wireframe globe: meridians in 3D space, spun on the Y axis. */
 function Globe() {
   return (
-    <span className="relative block h-6 w-6 md:h-7 md:w-7">
-      <span className="absolute inset-0 animate-[spin_9s_linear_infinite] rounded-full border border-white/70" />
-      <span className="absolute inset-0 rounded-full border border-white/70 [transform:rotateY(70deg)]" />
-      <span className="absolute inset-0 rounded-full border border-white/70 [transform:rotateY(35deg)]" />
-      <span className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-white/70" />
+    <span className="relative block h-6 w-6 md:h-7 md:w-7 [perspective:140px]">
+      <span className="globe-spin absolute inset-0 [transform-style:preserve-3d]">
+        <span className="absolute inset-0 rounded-full border border-white/70" />
+        <span className="absolute inset-0 rounded-full border border-white/70 [transform:rotateY(60deg)]" />
+        <span className="absolute inset-0 rounded-full border border-white/70 [transform:rotateY(120deg)]" />
+        <span className="absolute inset-0 rounded-full border border-white/70 [transform:rotateX(90deg)]" />
+        <span className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-white/70" />
+      </span>
     </span>
   );
 }

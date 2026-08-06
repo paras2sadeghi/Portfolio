@@ -38,21 +38,41 @@ export function useLenisGsap(enabled: boolean) {
 
     lenis.on("scroll", ScrollTrigger.update);
 
-    const onAnchorClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement | null;
-      const link = target?.closest<HTMLAnchorElement>('a[href^="#"]');
-      if (!link) return;
-      const hash = link.getAttribute("href");
-      if (!hash || hash.length < 2) return;
+    const scrollToHash = (hash: string, immediate = false) => {
       const destination = document.querySelector(hash);
-      if (!destination) return;
-      event.preventDefault();
+      if (!destination) return false;
       lenis.scrollTo(destination as HTMLElement, {
         offset: -40,
-        duration: 1.5,
+        duration: immediate ? 0 : 1.5,
       });
+      return true;
+    };
+
+    const onAnchorClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      const link = target?.closest<HTMLAnchorElement>("a[href]");
+      if (!link) return;
+
+      const href = link.getAttribute("href");
+      if (!href) return;
+
+      const hashIndex = href.indexOf("#");
+      if (hashIndex === -1) return;
+
+      const hash = href.slice(hashIndex);
+      if (hash.length < 2) return;
+
+      // Cross-page section links (e.g. /#work from a case study) use default nav.
+      if (href.startsWith("/") && href.length > 1 && hashIndex > 0) return;
+
+      if (!scrollToHash(hash)) return;
+      event.preventDefault();
     };
     document.addEventListener("click", onAnchorClick);
+
+    if (window.location.hash) {
+      requestAnimationFrame(() => scrollToHash(window.location.hash, true));
+    }
 
     ScrollTrigger.refresh();
 

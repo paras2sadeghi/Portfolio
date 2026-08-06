@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { featuredWork } from "@/lib/caseStudies";
+import { WORK_PORTFOLIO_COUNT, workPortfolio, workHref } from "@/lib/projects";
 
 export const metadata = {
   title: "Work — Parastoo Sadeghi",
-  description:
-    "Selected product design case studies by Parastoo Sadeghi.",
+  description: "Selected product design work by Parastoo Sadeghi.",
 };
 
 export default function WorkArchivePage() {
@@ -24,15 +23,15 @@ export default function WorkArchivePage() {
             </h1>
           </div>
           <span className="hidden pb-3 text-xs uppercase tracking-[0.2em] text-muted md:block">
-            {featuredWork.length} case studies
+            {WORK_PORTFOLIO_COUNT} projects
           </span>
         </div>
 
         <div className="border-b border-foreground/12">
-          {featuredWork.map((item, index) => (
+          {workPortfolio.map((item, index) => (
             <Link
               key={item.slug}
-              href={`/work/${item.slug}`}
+              href={workHref(item.slug)}
               className="group grid border-t border-foreground/12 py-7 md:grid-cols-[5rem_1fr_auto] md:items-baseline md:gap-10 md:py-9"
             >
               <span className="mb-3 text-xs uppercase tracking-[0.2em] text-muted md:mb-0">

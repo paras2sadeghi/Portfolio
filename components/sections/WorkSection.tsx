@@ -5,25 +5,15 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HoverPreview from "@/components/animations/HoverPreview";
-import SplitText from "@/components/animations/SplitText";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { featuredWork } from "@/lib/caseStudies";
+import {
+  homeWorkPortfolio,
+  WORK_PORTFOLIO_COUNT,
+  workHref,
+} from "@/lib/projects";
 import { GSAP_EASE } from "@/utils/motion";
 
-interface WorkItem {
-  slug: string;
-  name: string;
-  year: string;
-  discipline: string;
-  thumbnail?: string;
-  featured?: boolean;
-  card: {
-    category: string;
-    subtitle: string;
-    gradient: string;
-    tags: string[];
-  };
-}
+type WorkListItem = (typeof homeWorkPortfolio)[number];
 
 function WorkRow({
   item,
@@ -31,14 +21,14 @@ function WorkRow({
   onPreview,
   onLeave,
 }: {
-  item: WorkItem;
+  item: WorkListItem;
   index: number;
-  onPreview: (item: WorkItem, x: number, y: number) => void;
+  onPreview: (item: WorkListItem, x: number, y: number) => void;
   onLeave: () => void;
 }) {
   return (
     <Link
-      href={`/work/${item.slug}`}
+      href={workHref(item.slug)}
       data-work-row
       onMouseEnter={(event) => onPreview(item, event.clientX, event.clientY)}
       onMouseMove={(event) => onPreview(item, event.clientX, event.clientY)}
@@ -70,10 +60,11 @@ function WorkRow({
   );
 }
 
+/** Dennis-style vertical work list + floating hover preview (no row thumbnails). */
 export default function WorkSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const reduced = useReducedMotion();
-  const [preview, setPreview] = useState<WorkItem | null>(null);
+  const [preview, setPreview] = useState<WorkListItem | null>(null);
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -101,10 +92,7 @@ export default function WorkSection() {
     return () => context.revert();
   }, [reduced]);
 
-  const items = featuredWork as WorkItem[];
-  const homeItems = items.filter((item) => item.featured).slice(0, 4);
-
-  const onPreview = (item: WorkItem, x: number, y: number) => {
+  const onPreview = (item: WorkListItem, x: number, y: number) => {
     setPreview(item);
     setPointer({ x: x + 110, y: y - 30 });
   };
@@ -118,19 +106,8 @@ export default function WorkSection() {
       <HoverPreview item={preview} x={pointer.x} y={pointer.y} />
 
       <div className="mx-auto max-w-[1600px]">
-        <div className="mb-12 flex items-end justify-between gap-8 md:mb-20">
-          <SplitText
-            as="h2"
-            text="Recent work"
-            className="text-[9vw] font-semibold leading-[0.9] tracking-[-0.03em] md:text-[5vw]"
-          />
-          <span className="hidden shrink-0 pb-3 text-xs uppercase tracking-[0.2em] text-muted md:block">
-            {homeItems.length} selected — hover
-          </span>
-        </div>
-
         <div className="border-b border-foreground/12">
-          {homeItems.map((item, i) => (
+          {homeWorkPortfolio.map((item, i) => (
             <WorkRow
               key={item.slug}
               item={item}
@@ -146,7 +123,7 @@ export default function WorkSection() {
             href="/work"
             className="group inline-flex items-center gap-2 rounded-full border border-foreground/12 px-5 py-3 text-sm font-medium transition-colors hover:bg-foreground hover:text-background"
           >
-            More work · {items.length}
+            More work · {WORK_PORTFOLIO_COUNT}
             <span
               aria-hidden
               className="transition-transform duration-300 group-hover:translate-x-1"
