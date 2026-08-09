@@ -43,7 +43,7 @@ export default function ContactSection() {
             </p>
             <SplitText
               as="h2"
-              text="Let's work together"
+              text="Let's fix something"
               className="font-display text-[15vw] font-medium leading-[0.82] tracking-[-0.06em] md:text-[8vw]"
             />
           </div>
