@@ -3,10 +3,8 @@ import Cursor from "@/components/ui/Cursor";
 import NavBar from "@/components/ui/NavBar";
 import IntroLoader from "@/components/IntroLoader";
 import HeroSection from "@/components/sections/HeroSection";
-import HomeIntroSection from "@/components/sections/HomeIntroSection";
-import WorkSection from "@/components/sections/WorkSection";
 import AboutSection from "@/components/sections/AboutSection";
-import HorizontalWorkStrip from "@/components/sections/HorizontalWorkStrip";
+import PinnedShowcase from "@/components/sections/PinnedShowcase";
 import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
@@ -17,10 +15,8 @@ export default function Home() {
       <NavBar />
       <main className="flex-1">
         <HeroSection />
-        <HomeIntroSection />
-        <WorkSection />
+        <PinnedShowcase />
         <AboutSection />
-        <HorizontalWorkStrip />
         <ContactSection />
       </main>
     </ScrollProvider>
