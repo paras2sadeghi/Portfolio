@@ -6,6 +6,8 @@ import HeroSection from "@/components/sections/HeroSection";
 import HomeIntroSection from "@/components/sections/HomeIntroSection";
 import WorkSection from "@/components/sections/WorkSection";
 import AboutSection from "@/components/sections/AboutSection";
+import HorizontalWorkStrip from "@/components/sections/HorizontalWorkStrip";
+import RoundedDivider from "@/components/ui/RoundedDivider";
 import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
@@ -19,6 +21,8 @@ export default function Home() {
         <HomeIntroSection />
         <WorkSection />
         <AboutSection />
+        <HorizontalWorkStrip />
+        <RoundedDivider />
         <ContactSection />
       </main>
     </ScrollProvider>
