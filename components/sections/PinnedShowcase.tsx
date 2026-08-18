@@ -239,9 +239,14 @@ export default function PinnedShowcase() {
               </span>
             ))}
           </h2>
-          <p className="self-end text-base leading-relaxed text-muted md:text-lg">
-            {homeIntro.aside}
-          </p>
+          <div className="flex flex-col items-start gap-6 self-end md:flex-row md:items-end md:justify-between">
+            <p className="max-w-md text-base leading-relaxed text-muted md:text-lg">
+              {homeIntro.aside}
+            </p>
+            <RoundFillLink href={homeIntro.ctaHref}>
+              {homeIntro.ctaLabel}
+            </RoundFillLink>
+          </div>
         </div>
 
         {/* Act two — stacked on top of act one so it occupies the same frame. */}

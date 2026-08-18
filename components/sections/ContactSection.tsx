@@ -83,13 +83,7 @@ export default function ContactSection() {
           </div>
         </div>
 
-        <div className="grid gap-8 pt-8 text-sm text-white/45 md:grid-cols-3 md:pt-10">
-          <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/25">
-              Version
-            </p>
-            <p>2026 © Edition</p>
-          </div>
+        <div className="grid gap-8 pt-8 text-sm text-white/45 md:grid-cols-2 md:pt-10">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/25">
               Local time
@@ -97,7 +91,7 @@ export default function ContactSection() {
             <p>{localTime}</p>
           </div>
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/25">
+            <p className="mb-3 text-xs uppercase tracking-[0.2em] text-white/25">
               Socials
             </p>
             <div className="flex gap-4 md:justify-start">
@@ -107,9 +101,10 @@ export default function ContactSection() {
                   href={item.href}
                   target={item.href.startsWith("http") ? "_blank" : undefined}
                   rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                  aria-label={item.label}
                   className="transition-colors hover:text-white"
                 >
-                  {item.label}
+                  <SocialIcon label={item.label} />
                 </a>
               ))}
             </div>
@@ -117,5 +112,58 @@ export default function ContactSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Thin-line social icons, keyed off the label already in footer.connect. */
+function SocialIcon({ label }: { label: string }) {
+  const common = {
+    width: 18,
+    height: 18,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.6,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+
+  if (label === "LinkedIn") {
+    return (
+      <svg {...common}>
+        <rect x="3" y="3" width="18" height="18" rx="2.5" />
+        <line x1="8" y1="10.5" x2="8" y2="17" />
+        <circle cx="8" cy="6.7" r="0.9" fill="currentColor" stroke="none" />
+        <path d="M12 17v-4.2c0-1.4 1-2.3 2.2-2.3 1.2 0 2.1.9 2.1 2.3V17" />
+        <line x1="12" y1="10.5" x2="12" y2="17" />
+      </svg>
+    );
+  }
+
+  if (label === "Instagram") {
+    return (
+      <svg {...common}>
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  if (label === "WhatsApp") {
+    return (
+      <svg {...common}>
+        <path d="M6.5 17.5 4 20l2.6-.7A8 8 0 1 0 4 12a7.9 7.9 0 0 0 1.1 4.1Z" />
+        <path d="M9 10.2c.3 1.9 2 3.6 3.9 3.9.8.1 1.1-.5 1.1-1v-.6l1.6.5c.3.1.5.4.4.7-.3 1.1-1.5 1.9-2.7 1.8-2.8-.2-5.4-2.8-5.6-5.6-.1-1.2.7-2.4 1.8-2.7.3-.1.6.1.7.4l.5 1.6h-.6c-.5 0-1.1.3-1 1.1Z" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m4 6.5 8 6 8-6" />
+    </svg>
   );
 }
