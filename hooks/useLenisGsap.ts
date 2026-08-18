@@ -76,8 +76,18 @@ export function useLenisGsap(enabled: boolean) {
 
     ScrollTrigger.refresh();
 
+    // Pinned sections and late-loading media change the document height after
+    // the first refresh, which leaves every trigger below them holding stale
+    // start/end positions — their reveals then never fire. Re-measure once the
+    // page has actually settled.
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onLoad);
+    const settle = window.setTimeout(() => ScrollTrigger.refresh(), 600);
+
     return () => {
       document.removeEventListener("click", onAnchorClick);
+      window.removeEventListener("load", onLoad);
+      window.clearTimeout(settle);
       gsap.ticker.remove(onTick);
       lenis.destroy();
     };

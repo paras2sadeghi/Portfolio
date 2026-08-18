@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { GSAP_EASE } from "@/utils/motion";
-import { hero, profile } from "@/lib/content";
+import { profile } from "@/lib/content";
 
 /**
  * Full-bleed portrait hero with the name running as a marquee across the base.
@@ -86,16 +86,6 @@ export default function HeroSection() {
         className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/45"
       />
 
-      {/* A greeting, not a headline — the portrait carries this frame. */}
-      <div
-        data-hero-fade
-        className="absolute left-6 top-[18vh] z-20 md:left-10 md:top-[20vh]"
-      >
-        <p className="font-display text-2xl font-medium tracking-[-0.02em] text-white md:text-3xl">
-          {hero.greeting}
-        </p>
-      </div>
-
       {/* Location pill, left */}
       <div
         data-hero-fade
@@ -122,15 +112,6 @@ export default function HeroSection() {
           Designer
         </p>
       </div>
-
-      {/* Scroll cue */}
-      <span
-        data-hero-fade
-        aria-hidden
-        className="absolute right-6 top-1/2 z-20 text-2xl text-white/80 md:right-10"
-      >
-        ↘
-      </span>
 
       {/* Name marquee */}
       <div className="absolute inset-x-0 bottom-0 z-20 overflow-hidden pb-3 md:pb-5">

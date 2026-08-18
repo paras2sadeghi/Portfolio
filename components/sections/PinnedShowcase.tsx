@@ -2,127 +2,182 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { homeIntro } from "@/lib/content";
 import { bougainvilleaClips } from "@/lib/motif";
 import { projects, workHref } from "@/lib/projects";
+import RoundFillLink from "@/components/ui/RoundFillMagneticLink";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-
-type Panel =
-  | { kind: "intro" }
-  | { kind: "story"; text: string }
-  | { kind: "work"; project: (typeof projects)[number] };
+import { GSAP_EASE } from "@/utils/motion";
 
 /**
- * Builds the panel run: the about copy opens the sequence, then the work
- * travels past it.
+ * One pinned frame that runs in two acts.
  *
- * The bougainvillea is deliberately not in here. It hangs off the pinned frame
- * as a fixed overlay so the work slides beneath it, which is what makes the
- * motif read as a branch over the scene rather than another slide in the reel.
- */
-function buildPanels(): Panel[] {
-  // AboutSection already renders aboutStory[0..1], so only the closing
-  // paragraph is pulled in here — the run should not repeat the page below it.
-  const panels: Panel[] = [
-    { kind: "intro" },
-    { kind: "story", text: homeIntro.aside },
-  ];
-
-  projects.forEach((project) => panels.push({ kind: "work", project }));
-
-  return panels;
-}
-
-/**
- * Horizontal showcase that pins to the viewport and converts vertical scroll
- * into sideways travel, carrying the about copy and the full body of work in
- * one continuous move.
+ * Act one is scroll-driven: the intro copy travels right-to-left across the
+ * frame as the page is scrolled. Act two takes over in the same frame — the
+ * horizontal travel stops and a chevron-driven carousel of the work fades in.
  *
- * Panels scale and fade based on their distance from the centre of the screen,
- * so each one resolves as it arrives instead of the whole track sliding as a
- * single rigid unit — that independent movement is what makes it read as film
- * rather than as a carousel.
+ * The carousel is navigated by its controls, not by scroll, so scrolling on
+ * past simply releases the pin and continues down the page. That keeps the
+ * section from holding a visitor hostage through ten projects.
  *
- * Pinning is desktop-only. On touch screens a hijacked scroll axis fights the
- * user's gesture, so the same panels render as an ordinary vertical stack.
+ * Desktop only: pinning fights touch gestures, so small screens get the same
+ * content as an ordinary stacked section.
  */
 export default function PinnedShowcase() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const screenRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
+  const introRef = useRef<HTMLDivElement | null>(null);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const flowerTopRef = useRef<HTMLDivElement | null>(null);
+  const flowerBottomRef = useRef<HTMLDivElement | null>(null);
+  const frameRef = useRef<HTMLDivElement | null>(null);
+
+  const [index, setIndex] = useState(0);
   const reduced = useReducedMotion();
 
-  const panels = buildPanels();
+  const count = projects.length;
+  const project = projects[index];
+
+  const go = useCallback(
+    (delta: number) => setIndex((i) => (i + delta + count) % count),
+    [count]
+  );
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "ArrowRight") go(1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [go]);
+
+  // Cross-fade the frame on slide change.
+  useEffect(() => {
+    if (reduced) return;
+    const frame = frameRef.current;
+    if (!frame) return;
+    const tween = gsap.fromTo(
+      frame,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.6, ease: GSAP_EASE }
+    );
+    return () => {
+      tween.kill();
+    };
+  }, [index, reduced]);
 
   useEffect(() => {
     if (reduced) return;
     const section = sectionRef.current;
     const screen = screenRef.current;
-    const track = trackRef.current;
-    if (!section || !screen || !track) return;
+    const intro = introRef.current;
+    const carousel = carouselRef.current;
+    if (!section || !screen || !intro || !carousel) return;
 
     gsap.registerPlugin(ScrollTrigger);
-
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
-      const items = gsap.utils.toArray<HTMLElement>("[data-panel]", track);
-
-      const distance = () => track.scrollWidth - window.innerWidth;
-
-      /** Resolve each panel against the centre of the viewport. */
-      const settle = () => {
-        const mid = window.innerWidth / 2;
-        items.forEach((item) => {
-          const rect = item.getBoundingClientRect();
-          const offset = Math.abs(rect.left + rect.width / 2 - mid);
-          const t = gsap.utils.clamp(0, 1, offset / (window.innerWidth * 0.7));
-          gsap.set(item, {
-            scale: gsap.utils.interpolate(1, 0.8, t),
-            opacity: gsap.utils.interpolate(1, 0.25, t),
-          });
-        });
-      };
-
-      const tween = gsap.to(track, {
-        x: () => -distance(),
-        ease: "none",
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          // Pin length drives pacing: shorter than the track so the run stays
-          // brisk instead of holding the page hostage.
-          end: () => `+=${distance() * 0.9}`,
+          // Short pin: just long enough to play the handoff, then release.
+          end: "+=170%",
           pin: screen,
-          scrub: 0.8,
+          scrub: 0.7,
           invalidateOnRefresh: true,
-          onUpdate: settle,
-          onRefresh: settle,
         },
       });
 
-      settle();
+      // Act one — copy travels right to left and clears the frame.
+      tl.fromTo(
+        intro,
+        { xPercent: 0, opacity: 1 },
+        { xPercent: -115, opacity: 0, ease: "none", duration: 0.55 },
+        0
+      );
 
-      // Pinning adds thousands of pixels to the document, which invalidates the
-      // start/end positions every other ScrollTrigger on the page already
-      // measured. Without this, reveals further down (About, Contact) never
-      // fire and their masked text stays parked below the mask.
+      // Act two — the carousel arrives in the space the copy left behind.
+      tl.fromTo(
+        carousel,
+        { opacity: 0, xPercent: 12, pointerEvents: "none" },
+        {
+          opacity: 1,
+          xPercent: 0,
+          pointerEvents: "auto",
+          ease: "none",
+          duration: 0.35,
+        },
+        0.5
+      );
+
+      // Flowers drift on the same scrub as the hero photograph, so the motif
+      // reads as one element travelling down the page.
+      [flowerTopRef.current, flowerBottomRef.current].forEach((el, i) => {
+        if (!el) return;
+        gsap.fromTo(
+          el,
+          { yPercent: 0, scale: 1.04 },
+          {
+            yPercent: i === 0 ? 14 : -14,
+            scale: 1.13,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        );
+      });
+
+      // Pinning changes the document height, which leaves triggers further
+      // down the page holding stale positions unless they re-measure.
       const refresh = requestAnimationFrame(() => ScrollTrigger.refresh());
 
       return () => {
         cancelAnimationFrame(refresh);
-        tween.scrollTrigger?.kill();
-        tween.kill();
-        gsap.set(items, { clearProps: "transform,opacity" });
-        gsap.set(track, { clearProps: "transform" });
+        tl.scrollTrigger?.kill();
+        tl.kill();
       };
     });
 
     return () => mm.revert();
   }, [reduced]);
+
+  // Live sites get sent to the real thing; concepts get the case study.
+  const ctaHref = project.liveUrl ?? workHref(project.slug);
+  const ctaExternal = Boolean(project.liveUrl);
+  const ctaLabel = project.liveUrl ? "View live" : "Check me out";
+
+  const caption = (
+    <div className="mt-5 flex items-start justify-between gap-6 md:mt-8">
+      {/* Title and subtitle stack directly under each other now — they used
+          to split across the row, which pushed the subtitle into the same
+          screen region as the bottom-right flower. */}
+      <div className="min-w-0">
+        <p className="text-xs uppercase tracking-[0.18em] text-muted">
+          {project.discipline}
+        </p>
+        <h3 className="mt-1 font-display text-2xl font-medium tracking-tight md:text-4xl">
+          {project.name}
+        </h3>
+        <p className="mt-2 max-w-md text-sm text-muted md:text-base">
+          {project.card.subtitle}
+        </p>
+      </div>
+
+      <RoundFillLink href={ctaHref} external={ctaExternal} size="sm">
+        {ctaLabel}
+      </RoundFillLink>
+    </div>
+  );
 
   return (
     <section
@@ -133,118 +188,167 @@ export default function PinnedShowcase() {
     >
       <div
         ref={screenRef}
-        className="relative md:h-screen md:overflow-hidden"
+        className="relative flex min-h-screen items-center overflow-hidden px-6 py-16 md:h-screen md:px-10 md:py-0"
       >
-        {/* Bougainvillea hangs off the pinned frame itself, so the work travels
-            underneath it. Both are pinned flush into their corners via
-            object-position, so the foliage bleeds off the frame edge rather
-            than floating with a gap around it. */}
+        {!reduced && (
+          <>
+            <div
+              ref={flowerTopRef}
+              aria-hidden
+              className="pointer-events-none absolute left-0 top-0 z-0 hidden h-[64vh] w-[34vw] will-change-transform md:block"
+            >
+              <video
+                src={bougainvilleaClips.bleed}
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-contain object-left-top"
+              />
+            </div>
+            <div
+              ref={flowerBottomRef}
+              aria-hidden
+              className="pointer-events-none absolute bottom-0 right-0 z-0 hidden h-[64vh] w-[34vw] will-change-transform md:block"
+              // Mirrored on both axes so the pair frames the section diagonally.
+              style={{ transform: "scaleX(-1) scaleY(-1)" }}
+            >
+              <video
+                src={bougainvilleaClips.bleed}
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-contain object-left-top"
+              />
+            </div>
+          </>
+        )}
+
+        {/* Act one */}
         <div
-          aria-hidden
-          className="pointer-events-none absolute left-0 top-0 z-20 hidden h-[64vh] w-[34vw] md:block"
+          ref={introRef}
+          className="relative z-10 mx-auto grid w-full max-w-[1600px] gap-12 md:grid-cols-[1.15fr_1fr] md:gap-20"
         >
-          <video
-            src={bougainvilleaClips.bleed}
-            muted
-            loop
-            autoPlay
-            playsInline
-            preload="metadata"
-            /* contain, never cover: cover crops the branch off at the frame. */
-            className="h-full w-full object-contain object-left-top"
-          />
+          <h2 className="font-display text-[8vw] font-medium leading-[1.02] tracking-[-0.04em] md:text-[3.2vw]">
+            {homeIntro.lines.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </h2>
+          <p className="self-end text-base leading-relaxed text-muted md:text-lg">
+            {homeIntro.aside}
+          </p>
         </div>
-        {/* Same branch mirrored on both axes into the opposite corner, so the
-            two together frame the section diagonally. */}
+
+        {/* Act two — stacked on top of act one so it occupies the same frame. */}
         <div
-          aria-hidden
-          className="pointer-events-none absolute bottom-0 right-0 z-20 hidden h-[64vh] w-[34vw] md:block"
-          // Flipped on both axes. Set inline rather than via a utility class so
-          // it cannot be dropped by a stale JIT pass.
-          style={{ transform: "scaleX(-1) scaleY(-1)" }}
+          ref={carouselRef}
+          className="absolute inset-x-0 z-10 mx-auto hidden w-full max-w-[1600px] px-6 md:block md:px-10"
+          style={{ opacity: 0, pointerEvents: "none" }}
         >
-          <video
-            src={bougainvilleaClips.bleed}
-            muted
-            loop
-            autoPlay
-            playsInline
-            preload="metadata"
-            className="h-full w-full object-contain object-left-top"
-          />
-        </div>
+          <div className="mb-6 flex items-end justify-between gap-6">
+            <p className="text-xs uppercase tracking-[0.2em] text-muted">
+              Selected work
+            </p>
+            <p className="text-xs tabular-nums text-muted">
+              {String(index + 1).padStart(2, "0")} /{" "}
+              {String(count).padStart(2, "0")}
+            </p>
+          </div>
 
-        <div
-          ref={trackRef}
-          className="flex flex-col gap-10 px-6 py-16 md:h-full md:w-max md:flex-row md:items-center md:gap-12 md:px-[12vw] md:py-0"
-        >
-          {panels.map((panel, i) => {
-            if (panel.kind === "intro") {
-              return (
-                <div
-                  key="intro"
-                  data-panel
-                  className="shrink-0 md:w-[42vw]"
-                >
-                  <h2 className="font-display text-[8vw] font-medium leading-[1.02] tracking-[-0.04em] md:text-[3vw]">
-                    {homeIntro.lines.map((line) => (
-                      <span key={line} className="block">
-                        {line}
-                      </span>
-                    ))}
-                  </h2>
-                </div>
-              );
-            }
+          <div className="flex items-center gap-3 md:gap-6">
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              aria-label="Previous project"
+              className="shrink-0 rounded-full border border-foreground/15 bg-background/70 p-3 text-foreground backdrop-blur transition-colors hover:bg-foreground hover:text-background md:p-4"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
 
-            if (panel.kind === "story") {
-              return (
-                <div
-                  key={panel.text.slice(0, 28)}
-                  data-panel
-                  className="shrink-0 text-base leading-relaxed text-muted md:w-[26vw] md:text-lg"
-                >
-                  {panel.text}
-                </div>
-              );
-            }
-
-            const { project } = panel;
-            return (
+            {/* The mockup links to the case study on its own; the caption's
+                CTA is a separate link (to the live site when there is one),
+                so the two can't end up as a nested <a> inside an <a>. */}
+            <div ref={frameRef} className="min-w-0 flex-1">
               <Link
-                key={project.slug}
-                data-panel
                 href={workHref(project.slug)}
-                /* The mockups are 16:9, so the panel is sized to exactly that
-                   ratio — the whole frame shows with no crop and no letterbox. */
-                className="group relative block aspect-[16/9] shrink-0 overflow-hidden rounded-2xl md:h-[54vh] md:w-[96vh]"
-                style={{ backgroundColor: project.tileBg }}
+                className="group block"
+                aria-label={`Open the ${project.name} case study`}
               >
-                <div className="relative h-full w-full">
+                {/* Capped height, not just aspect-ratio off full width — a
+                    wide 16:9 image at h-screen would leave no room below it
+                    for the caption before overflow-hidden clips it. */}
+                <div className="relative mx-auto aspect-[16/9] max-h-[46vh] w-auto">
                   <Image
                     src={project.thumbnail}
                     alt={project.name}
                     fill
                     unoptimized
-                    sizes="(max-width: 768px) 90vw, 96vh"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                    sizes="80vw"
+                    className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                   />
                 </div>
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent p-5 md:p-7">
-                  <p className="text-xs uppercase tracking-[0.18em] text-white/60">
-                    {project.discipline}
-                  </p>
-                  <p className="mt-1 font-display text-xl font-medium text-white md:text-2xl">
-                    {project.name}
-                  </p>
-                  <span className="mt-2 inline-flex items-center gap-1.5 text-sm text-white/0 transition-colors duration-500 group-hover:text-white">
-                    Read the case study <span aria-hidden>→</span>
-                  </span>
-                </div>
               </Link>
-            );
-          })}
+              {caption}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => go(1)}
+              aria-label="Next project"
+              className="shrink-0 rounded-full border border-foreground/15 bg-background/70 p-3 text-foreground backdrop-blur transition-colors hover:bg-foreground hover:text-background md:p-4"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="mt-8 flex justify-center gap-2">
+            {projects.map((p, i) => (
+              <button
+                key={p.slug}
+                type="button"
+                onClick={() => setIndex(i)}
+                aria-label={`Go to ${p.name}`}
+                aria-current={i === index}
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  i === index
+                    ? "w-8 bg-foreground"
+                    : "w-1.5 bg-foreground/25 hover:bg-foreground/50"
+                }`}
+              />
+            ))}
+          </div>
         </div>
+      </div>
+
+      {/* Small screens get the work as a plain stacked list under the copy. */}
+      <div className="grid gap-10 px-6 pb-16 md:hidden">
+        {projects.map((p) => (
+          <Link key={p.slug} href={workHref(p.slug)} className="block">
+            <div className="relative aspect-[16/9] w-full">
+              <Image
+                src={p.thumbnail}
+                alt={p.name}
+                fill
+                unoptimized
+                sizes="90vw"
+                className="object-contain"
+              />
+            </div>
+            <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted">
+              {p.discipline}
+            </p>
+            <p className="font-display text-xl font-medium">{p.name}</p>
+          </Link>
+        ))}
       </div>
     </section>
   );

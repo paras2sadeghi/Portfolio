@@ -7,7 +7,16 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 interface RoundFillMagneticLinkProps {
   href: string;
   children: string;
+  /** "md" is the original home-intro circle; "sm" fits inline captions. */
+  size?: "sm" | "md";
+  /** Opens in a new tab with rel="noreferrer" — for links off the site. */
+  external?: boolean;
 }
+
+const SIZE_CLASSES: Record<"sm" | "md", string> = {
+  md: "h-[12.5rem] w-[12.5rem] text-sm md:h-[14rem] md:w-[14rem] md:text-base",
+  sm: "h-20 w-20 text-[11px] md:h-24 md:w-24 md:text-xs",
+};
 
 /**
  * Dennis `btn btn-round` + `btn-click magnetic` + `btn-fill` (home-intro CTA).
@@ -15,20 +24,24 @@ interface RoundFillMagneticLinkProps {
 export default function RoundFillMagneticLink({
   href,
   children,
+  size = "md",
+  external = false,
 }: RoundFillMagneticLinkProps) {
   const reduced = useReducedMotion();
   const ref = useMagnetic<HTMLAnchorElement>({
-    strength: 0.38,
-    radius: 140,
+    strength: size === "sm" ? 0.22 : 0.38,
+    radius: size === "sm" ? 70 : 140,
     enabled: !reduced,
   });
 
   return (
-    <div className="btn btn-round inline-flex">
+    <div className="btn btn-round inline-flex shrink-0">
       <Link
         ref={ref}
         href={href}
-        className="btn-click magnetic group relative flex h-[12.5rem] w-[12.5rem] items-center justify-center overflow-hidden rounded-full border border-foreground/14 text-sm font-medium tracking-tight transition-[border-color] duration-500 hover:border-foreground/25 md:h-[14rem] md:w-[14rem] md:text-base"
+        target={external ? "_blank" : undefined}
+        rel={external ? "noreferrer" : undefined}
+        className={`btn-click magnetic group relative flex items-center justify-center overflow-hidden rounded-full border border-foreground/14 font-medium tracking-tight transition-[border-color] duration-500 hover:border-foreground/25 ${SIZE_CLASSES[size]}`}
       >
         <span
           aria-hidden

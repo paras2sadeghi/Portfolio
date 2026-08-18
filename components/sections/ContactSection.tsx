@@ -65,9 +65,6 @@ export default function ContactSection() {
               >
                 {profile.email}
               </a>
-              <a href={`tel:${profile.phone}`} className="transition-colors hover:text-white">
-                {profile.phone}
-              </a>
             </div>
           </div>
         </div>

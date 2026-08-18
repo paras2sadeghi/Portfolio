@@ -352,9 +352,6 @@ export default function AboutPage() {
               <a href={`mailto:${profile.email}`} className="hover:text-white">
                 {profile.email}
               </a>
-              <a href={`tel:${profile.phone}`} className="hover:text-white">
-                {profile.phone}
-              </a>
             </div>
           </div>
         </div>
