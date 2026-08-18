@@ -77,7 +77,7 @@ export default function ContactSection() {
                 aria-hidden={copy === 1}
                 className="font-display text-[13vw] font-semibold uppercase leading-none tracking-[-0.045em] text-white/10"
               >
-                Healthcare — Cybersecurity — Games — Fitness — Social — SaaS —&nbsp;
+                Healthcare · Cybersecurity · Games · Fitness · Social · SaaS ·&nbsp;
               </span>
             ))}
           </div>

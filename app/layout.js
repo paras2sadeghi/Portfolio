@@ -1,6 +1,7 @@
 import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import CurtainTransition from "@/components/CurtainTransition";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,9 +17,9 @@ const interTight = Inter_Tight({
 });
 
 export const metadata = {
-  title: "Parastoo Sadeghi — Product Designer",
+  title: "Parastoo Sadeghi · Product Designer",
   description:
-    "Parastoo Sadeghi is a product designer specializing in healthcare and SaaS platforms, currently Lead Product Designer at Flash Pharmacy.",
+    "Parastoo Sadeghi is a product designer working across healthcare, cybersecurity, games, fitness, social, and SaaS, currently Lead Product Designer at Flash Pharmacy.",
 };
 
 export default function RootLayout({ children }) {
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/images/hero-wide.png" as="image" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <CurtainTransition />
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -145,7 +146,17 @@ export default function SiteMenu() {
             data-menu-reveal
             className="flex shrink-0 items-center justify-between pr-28 text-sm text-foreground/65"
           >
-            <span>© {profile.name}</span>
+            <span className="flex items-center gap-2">
+              <Image
+                src="/brand/mark-64.png"
+                alt=""
+                aria-hidden
+                width={64}
+                height={64}
+                className="h-4 w-4"
+              />
+              {profile.name.split(" ")[0]}
+            </span>
             <span>{profile.location}</span>
           </div>
 

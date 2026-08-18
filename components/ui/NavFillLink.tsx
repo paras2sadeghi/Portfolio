@@ -19,7 +19,7 @@ export default function NavFillLink({
 }: NavFillLinkProps) {
   const isHash = href.startsWith("#");
   const className =
-    "nav-btn-click group relative inline-flex h-9 items-center justify-center overflow-hidden rounded-full border px-4 text-sm font-medium transition-[border-color,color] duration-300 " +
+    "nav-btn-click group relative inline-flex h-7 items-center justify-center overflow-hidden rounded-full border px-3 text-xs font-medium transition-[border-color,color] duration-300 md:h-8 md:px-3.5 md:text-sm " +
     (theme === "hero"
       ? "border-white/25 text-white"
       : "border-foreground/12 text-foreground");

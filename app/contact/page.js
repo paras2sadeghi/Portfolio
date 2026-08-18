@@ -2,21 +2,22 @@ import ScrollProvider from "@/components/ScrollProvider";
 import Cursor from "@/components/ui/Cursor";
 import NavBar from "@/components/ui/NavBar";
 import PageTransition from "@/components/PageTransition";
-import AboutPage from "@/components/pages/AboutPage";
+import ContactSection from "@/components/sections/ContactSection";
 
 export const metadata = {
-  title: "About · Parastoo Sadeghi",
-  description:
-    "Product designer working across healthcare, cybersecurity, games, and more. Story, services, and experience.",
+  title: "Contact · Parastoo Sadeghi",
+  description: "Get in touch with Parastoo Sadeghi.",
 };
 
-export default function AboutRoute() {
+export default function ContactRoute() {
   return (
     <ScrollProvider>
       <Cursor />
       <NavBar />
       <PageTransition>
-        <AboutPage />
+        <main className="flex-1 pt-9 md:pt-10">
+          <ContactSection />
+        </main>
       </PageTransition>
     </ScrollProvider>
   );

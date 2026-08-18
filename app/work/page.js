@@ -2,7 +2,7 @@ import Link from "next/link";
 import { WORK_PORTFOLIO_COUNT, workPortfolio, workHref } from "@/lib/projects";
 
 export const metadata = {
-  title: "Work — Parastoo Sadeghi",
+  title: "Work · Parastoo Sadeghi",
   description: "Selected product design work by Parastoo Sadeghi.",
 };
 

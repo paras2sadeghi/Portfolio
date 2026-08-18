@@ -92,9 +92,7 @@ export default function HeroSection() {
         className="absolute bottom-[30vh] left-0 z-20 flex items-center gap-5 rounded-r-full bg-ink/95 py-4 pl-6 pr-4 backdrop-blur-sm md:bottom-[28vh] md:py-5 md:pl-9 md:pr-5"
       >
         <p className="text-[13px] font-medium leading-[1.35] text-white md:text-sm">
-          Located
-          <br />
-          in {profile.location}
+          {profile.location}
         </p>
         <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/10 md:h-14 md:w-14">
           <Globe />
@@ -122,7 +120,7 @@ export default function HeroSection() {
               aria-hidden={copy === 1}
               className="font-display text-[13vw] font-medium uppercase leading-[0.82] tracking-[-0.035em] text-white"
             >
-              {profile.name}&nbsp;—&nbsp;
+              {profile.name}&nbsp;·&nbsp;
             </span>
           ))}
         </div>
