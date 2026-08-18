@@ -23,6 +23,11 @@ export default function AboutSection() {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // Plays on mount rather than scroll-into-view. This section sits below
+    // PinnedShowcase's pin, which adds ~2400px to the document after any
+    // trigger positioned here first measures itself — a scroll-triggered
+    // reveal can end up permanently masked depending on refresh timing.
+    // The section starts off-screen at mount either way, so nothing is lost.
     const context = gsap.context(() => {
       gsap.fromTo(
         "[data-about-reveal]",
@@ -33,7 +38,6 @@ export default function AboutSection() {
           duration: 1.2,
           ease: "expo.out",
           stagger: 0.14,
-          scrollTrigger: { trigger: section, start: "top 72%", once: true },
         }
       );
     }, section);
@@ -53,6 +57,7 @@ export default function AboutSection() {
             as="h2"
             text="About"
             className="text-[9vw] font-semibold leading-[0.9] tracking-[-0.03em] md:text-[5vw]"
+            immediate
           />
           <Link
             href="/about"

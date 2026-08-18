@@ -11,6 +11,7 @@ import { footer, profile } from "@/lib/content";
  */
 export default function ContactSection() {
   const [localTime, setLocalTime] = useState("");
+  const [year, setYear] = useState<number | null>(null);
 
   useEffect(() => {
     const update = () => {
@@ -30,6 +31,10 @@ export default function ContactSection() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <section
       id="contact"
@@ -45,6 +50,13 @@ export default function ContactSection() {
               as="h2"
               text="Let's fix something"
               className="font-display text-[15vw] font-medium leading-[0.82] tracking-[-0.06em] md:text-[8vw]"
+              // Plays on mount rather than on scroll-into-view. PinnedShowcase
+              // above pins and adds ~2400px to the document after this
+              // trigger's position is first measured, which can leave a
+              // scroll-triggered reveal here permanently masked depending on
+              // refresh timing. Mount-time is invisible either way since this
+              // section starts off-screen, so nothing is lost by not waiting.
+              immediate
             />
           </div>
 
@@ -69,45 +81,21 @@ export default function ContactSection() {
           </div>
         </div>
 
-        <div className="mt-20 overflow-hidden border-y border-white/10 py-4 md:mt-28">
-          <div className="marquee-track flex w-max whitespace-nowrap">
-            {[0, 1].map((copy) => (
-              <span
-                key={copy}
-                aria-hidden={copy === 1}
-                className="font-display text-[13vw] font-semibold uppercase leading-none tracking-[-0.045em] text-white/10"
+        <div className="mt-20 flex flex-col gap-6 border-t border-white/10 pt-8 text-sm text-white/40 md:mt-28 md:flex-row md:items-center md:justify-between">
+          <p>© {year ?? "2026"} Parastoo Sadeghi · {localTime}</p>
+          <div className="flex gap-5">
+            {footer.connect.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target={item.href.startsWith("http") ? "_blank" : undefined}
+                rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                aria-label={item.label}
+                className="transition-colors hover:text-white"
               >
-                Healthcare · Cybersecurity · Games · Fitness · Social · SaaS ·&nbsp;
-              </span>
+                <SocialIcon label={item.label} />
+              </a>
             ))}
-          </div>
-        </div>
-
-        <div className="grid gap-8 pt-8 text-sm text-white/45 md:grid-cols-2 md:pt-10">
-          <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-white/25">
-              Local time
-            </p>
-            <p>{localTime}</p>
-          </div>
-          <div>
-            <p className="mb-3 text-xs uppercase tracking-[0.2em] text-white/25">
-              Socials
-            </p>
-            <div className="flex gap-4 md:justify-start">
-              {footer.connect.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                  aria-label={item.label}
-                  className="transition-colors hover:text-white"
-                >
-                  <SocialIcon label={item.label} />
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </div>

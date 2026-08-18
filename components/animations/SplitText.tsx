@@ -41,6 +41,10 @@ export default function SplitText({
     split === "chars" ? Array.from(text) : text.split(" ").map((w) => w);
 
   useEffect(() => {
+    // Immediate mode skips the animated mask entirely (see render below), so
+    // there is nothing left to animate here.
+    if (immediate) return;
+
     const el = containerRef.current;
     if (!el || reduced) return;
 
@@ -57,9 +61,7 @@ export default function SplitText({
         delay,
         ease: GSAP_EASE,
         stagger: stagger ?? (split === "chars" ? STAGGER.tight : STAGGER.base),
-        scrollTrigger: immediate
-          ? undefined
-          : { trigger: el, start: "top 88%", once: true },
+        scrollTrigger: { trigger: el, start: "top 88%", once: true },
       }
     );
 
@@ -69,7 +71,13 @@ export default function SplitText({
     };
   }, [reduced, delay, duration, stagger, split, immediate, text]);
 
-  if (reduced) {
+  if (reduced || immediate) {
+    // Plain render, no mask/transform. The animated version raced a later
+    // hydration/streaming pass on at least one Cache Components route, which
+    // could silently reset the GSAP-driven transform back to its
+    // pre-animation state and leave the text permanently invisible —
+    // immediate mode exists specifically for content that must never be
+    // gated on that timing, so it isn't worth the flourish here.
     return <Tag className={className}>{text}</Tag>;
   }
 
@@ -87,9 +95,9 @@ export default function SplitText({
             className="inline-block will-change-transform"
             style={{ transform: "translateY(115%)" }}
           >
-            {unit === " " ? " " : unit}
+            {unit === " " ? " " : unit}
           </span>
-          {split === "words" && i < units.length - 1 ? " " : null}
+          {split === "words" && i < units.length - 1 ? " " : null}
         </span>
       ))}
     </Tag>

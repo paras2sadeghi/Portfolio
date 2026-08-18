@@ -42,14 +42,18 @@ export default function NavBar() {
       return;
     }
 
-    const work = document.querySelector("#work");
-    if (!work) return;
+    // Triggered off the hero's own bottom edge, not the next section's.
+    // Waiting on #work's offset left a gap where the hero photo had already
+    // scrolled away (its section behind it now white) but the bar hadn't
+    // switched to solid yet, so white text sat on a white background.
+    const hero = document.querySelector("#top");
+    if (!hero) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
     const trigger = ScrollTrigger.create({
-      trigger: work,
-      start: "top 4.5rem",
+      trigger: hero,
+      start: "bottom 4.5rem",
       onEnter: () => setPastHero(true),
       onLeaveBack: () => setPastHero(false),
     });
@@ -71,7 +75,7 @@ export default function NavBar() {
           : "border-b border-transparent text-white"
       }`}
     >
-      <div className="flex h-9 items-center justify-between px-6 md:h-10 md:px-10">
+      <div className="flex h-12 items-center justify-between px-6 md:h-14 md:px-10">
         <Link
           href="/"
           className={`flex items-center gap-2 text-base font-medium tracking-tight transition-opacity hover:opacity-70 md:text-lg ${
@@ -84,7 +88,7 @@ export default function NavBar() {
             aria-hidden
             width={64}
             height={64}
-            className="h-6 w-6 md:h-7 md:w-7"
+            className="h-5 w-5 md:h-6 md:w-6"
           />
           {profile.name.split(" ")[0]}
         </Link>
