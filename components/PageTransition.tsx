@@ -1,26 +1,14 @@
-"use client";
+import { type ReactNode } from "react";
 
-import { useEffect, useRef, type ReactNode } from "react";
-import { usePathname } from "next/navigation";
-import { gsap } from "gsap";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { GSAP_EASE } from "@/utils/motion";
-
+/**
+ * CurtainTransition (mounted once in the root layout) is the site's one page
+ * transition: it fully covers the screen before a route's first paint and
+ * wipes off over ~0.65s. This wrapper used to run its own 0.8s fade/slide on
+ * top of that, which meant the content was still visibly animating in for
+ * ~150ms after the curtain had already cleared. Kept as a plain pass-through
+ * so route components have a stable place to opt back into a transition
+ * without reintroducing that race.
+ */
 export default function PageTransition({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const reduced = useReducedMotion();
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || reduced) return;
-
-    gsap.fromTo(
-      el,
-      { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 0.8, ease: GSAP_EASE }
-    );
-  }, [pathname, reduced]);
-
-  return <div ref={ref}>{children}</div>;
+  return <>{children}</>;
 }

@@ -31,7 +31,17 @@ import { GSAP_EASE_INOUT } from "@/utils/motion";
  */
 export default function CurtainTransition() {
   const overlayRef = useRef<HTMLDivElement | null>(null);
-  const hasMountedRef = useRef(false);
+  // Tracks the last pathname this effect actually reacted to, not just
+  // whether it has run before. A boolean "hasMounted" flag isn't safe here:
+  // React's dev-mode Strict Mode invokes a fresh effect twice in a row for
+  // the same commit (setup → cleanup → setup) before anything has really
+  // changed. With a boolean, the first invocation would flip it to true and
+  // return early as intended, but the second invocation would then see
+  // "already mounted" and play the wipe over the page that just loaded —
+  // a curtain flash on every fresh page load in dev. Comparing against the
+  // actual pathname means the second same-pathname invocation is recognized
+  // as a no-op replay, not a real navigation.
+  const lastPathnameRef = useRef<string | null>(null);
   const reduced = useReducedMotion();
   const pathname = usePathname();
 
@@ -40,11 +50,16 @@ export default function CurtainTransition() {
     const overlay = overlayRef.current;
     if (!overlay) return;
 
-    if (!hasMountedRef.current) {
-      hasMountedRef.current = true;
+    if (lastPathnameRef.current === null) {
+      lastPathnameRef.current = pathname;
       gsap.set(overlay, { yPercent: -100 });
       return;
     }
+
+    if (lastPathnameRef.current === pathname) {
+      return;
+    }
+    lastPathnameRef.current = pathname;
 
     gsap.set(overlay, { yPercent: 0 });
     const tween = gsap.to(overlay, {
