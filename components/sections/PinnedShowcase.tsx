@@ -294,7 +294,7 @@ export default function PinnedShowcase() {
                     src={project.thumbnail}
                     alt={project.name}
                     fill
-                    unoptimized
+                    unoptimized={process.env.NODE_ENV !== "production"}
                     sizes="80vw"
                     className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                   />
@@ -343,7 +343,7 @@ export default function PinnedShowcase() {
                 src={p.thumbnail}
                 alt={p.name}
                 fill
-                unoptimized
+                unoptimized={process.env.NODE_ENV !== "production"}
                 sizes="90vw"
                 className="object-contain"
               />

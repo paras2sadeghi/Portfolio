@@ -67,14 +67,18 @@ export default function HeroSection() {
       ref={sectionRef}
       className="relative h-[100svh] w-full overflow-hidden bg-ink"
     >
-      {/* Photograph — unoptimized so dev restarts don't race the /_next/image optimizer on a 3MB PNG */}
+      {/* Photograph — unoptimized only in dev, so a dev-server restart can't
+          race the /_next/image optimizer on this 3MB source PNG. In
+          production this flag was disabling Next's image pipeline entirely,
+          shipping the full 3MB file with no resizing/compression to every
+          visitor and directly slowing down the very first paint. */}
       <div ref={imageRef} className="absolute inset-0 will-change-transform">
         <Image
           src="/images/hero-wide.png"
           alt={profile.name}
           fill
           priority
-          unoptimized
+          unoptimized={process.env.NODE_ENV !== "production"}
           sizes="100vw"
           className="object-cover object-center"
         />

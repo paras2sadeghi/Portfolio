@@ -144,7 +144,7 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
             src={project.heroImage}
             alt={`${project.name} product interface mockup`}
             fill
-            unoptimized
+            unoptimized={process.env.NODE_ENV !== "production"}
             className="object-cover object-center"
             sizes="(max-width: 1600px) 100vw, 1600px"
             priority
