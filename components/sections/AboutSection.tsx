@@ -24,7 +24,7 @@ export default function AboutSection() {
     gsap.registerPlugin(ScrollTrigger);
 
     // Plays on mount rather than scroll-into-view. This section sits below
-    // HorizontalGallery's pin, which adds the track width to the document after any
+    // PinnedShowcase's pin, which adds several screens to the document after any
     // trigger positioned here first measures itself — a scroll-triggered
     // reveal can end up permanently masked depending on refresh timing.
     // The section starts off-screen at mount either way, so nothing is lost.

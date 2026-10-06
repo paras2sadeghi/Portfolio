@@ -50,8 +50,8 @@ export default function ContactSection({ className = "" }: { className?: string 
               as="h2"
               text="Let's fix something"
               className="font-display text-[15vw] font-medium leading-[0.82] tracking-[-0.06em] md:text-[8vw]"
-              // Plays on mount rather than on scroll-into-view. HorizontalGallery
-              // above pins and adds its track width to the document after this
+              // Plays on mount rather than on scroll-into-view. PinnedShowcase
+              // above pins and adds several screens to the document after this
               // trigger's position is first measured, which can leave a
               // scroll-triggered reveal here permanently masked depending on
               // refresh timing. Mount-time is invisible either way since this

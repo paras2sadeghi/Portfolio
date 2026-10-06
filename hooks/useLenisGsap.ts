@@ -5,6 +5,14 @@ import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+let activeLenis: Lenis | null = null;
+
+/** The running Lenis instance, for components that need to scroll the page
+ *  programmatically without fighting the smoothing. Null under reduced motion. */
+export function getLenis() {
+  return activeLenis;
+}
+
 /**
  * Binds Lenis (which owns scroll position) to GSAP ScrollTrigger (which reads
  * it). Without this handshake ScrollTrigger reads the native scrollTop, which
@@ -29,6 +37,7 @@ export function useLenisGsap(enabled: boolean) {
       wheelMultiplier: 0.9,
       touchMultiplier: 1.4,
     });
+    activeLenis = lenis;
 
     // Drive Lenis from GSAP's ticker so both share one rAF loop — two
     // competing loops is the usual cause of jittery scrub animations.
@@ -90,6 +99,7 @@ export function useLenisGsap(enabled: boolean) {
       window.clearTimeout(settle);
       gsap.ticker.remove(onTick);
       lenis.destroy();
+      activeLenis = null;
     };
   }, [enabled]);
 }
