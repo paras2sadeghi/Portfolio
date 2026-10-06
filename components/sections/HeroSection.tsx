@@ -2,11 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { GSAP_EASE } from "@/utils/motion";
 import { profile } from "@/lib/content";
+import PetalField from "@/components/animations/PetalField";
 
 /**
  * Full-bleed portrait hero with the name running as a marquee across the base.
@@ -90,23 +92,37 @@ export default function HeroSection() {
         className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/45"
       />
 
-      {/* Location pill, left */}
-      <div
+      {/* Petals sit between the photo and the type, reacting to cursor + scroll */}
+      {!reduced && <PetalField className="z-10" />}
+
+      {/* Availability pill, left. A real link now, so it no longer reads as a
+          button that does nothing. */}
+      <Link
+        href="/contact"
         data-hero-fade
-        className="absolute bottom-[30vh] left-0 z-20 flex items-center gap-5 rounded-r-full bg-ink/95 py-4 pl-6 pr-4 backdrop-blur-sm md:bottom-[28vh] md:py-5 md:pl-9 md:pr-5"
+        className="group absolute bottom-[30vh] left-0 z-20 flex items-center gap-4 rounded-r-full bg-ink/95 py-3 pl-6 pr-6 backdrop-blur-sm transition-colors hover:bg-ink md:bottom-[28vh] md:gap-5 md:py-4 md:pl-9 md:pr-4"
       >
-        <p className="text-[13px] font-medium leading-[1.35] text-white md:text-sm">
-          {profile.location}
-        </p>
-        <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/10 md:h-14 md:w-14">
+        <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden>
+          <span className="absolute inset-0 animate-ping rounded-full bg-accent-green opacity-60" />
+          <span className="relative h-2.5 w-2.5 rounded-full bg-accent-green" />
+        </span>
+        <span className="text-white">
+          <span className="block text-[13px] font-medium leading-[1.35] md:text-sm">
+            {profile.availability}
+          </span>
+          <span className="block text-[12px] leading-[1.35] text-white/60 md:text-[13px]">
+            {profile.workplace}
+          </span>
+        </span>
+        <span className="relative hidden h-10 w-10 shrink-0 items-center justify-center md:flex rounded-full bg-white/10 transition-transform duration-500 group-hover:rotate-45 md:h-12 md:w-12">
           <Globe />
         </span>
-      </div>
+      </Link>
 
       {/* Role, right */}
       <div
         data-hero-fade
-        className="absolute bottom-[30vh] right-6 z-20 text-right md:bottom-[28vh] md:right-10"
+        className="absolute bottom-[21vh] right-6 z-20 text-right md:bottom-[28vh] md:right-10"
       >
         <p className="font-display text-lg font-medium leading-snug text-white md:text-2xl">
           Product
