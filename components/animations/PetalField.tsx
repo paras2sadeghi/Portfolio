@@ -16,8 +16,8 @@ interface Petal {
   alpha: number;
 }
 
-const COUNT_DESKTOP = 42;
-const COUNT_MOBILE = 18;
+const COUNT_DESKTOP = 25;
+const COUNT_MOBILE = 12;
 const REPEL_RADIUS = 160;
 
 /**

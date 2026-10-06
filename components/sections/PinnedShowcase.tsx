@@ -7,7 +7,11 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { homeIntro } from "@/lib/content";
 import { bougainvilleaClips } from "@/lib/motif";
-import { projects, workHref } from "@/lib/projects";
+import {
+  featuredProjects as projects,
+  workHref,
+  WORK_PORTFOLIO_COUNT,
+} from "@/lib/projects";
 import RoundFillLink from "@/components/ui/RoundFillMagneticLink";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { getLenis } from "@/hooks/useLenisGsap";
@@ -304,10 +308,18 @@ export default function PinnedShowcase() {
             <p className="text-xs uppercase tracking-[0.2em] text-muted">
               Selected work
             </p>
-            <p className="text-xs tabular-nums text-muted">
-              {String(index + 1).padStart(2, "0")} /{" "}
-              {String(count).padStart(2, "0")}
-            </p>
+            <div className="flex items-center gap-6">
+              <p className="text-xs tabular-nums text-muted">
+                {String(index + 1).padStart(2, "0")} /{" "}
+                {String(count).padStart(2, "0")}
+              </p>
+              <Link
+                href="/work"
+                className="text-xs uppercase tracking-[0.2em] text-foreground underline-offset-4 hover:underline"
+              >
+                All {WORK_PORTFOLIO_COUNT} projects →
+              </Link>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 md:gap-6">
@@ -399,6 +411,12 @@ export default function PinnedShowcase() {
             <p className="font-display text-xl font-medium">{p.name}</p>
           </Link>
         ))}
+        <Link
+          href="/work"
+          className="font-display text-xl font-medium underline underline-offset-4"
+        >
+          See all {WORK_PORTFOLIO_COUNT} projects →
+        </Link>
       </div>
     </section>
   );
