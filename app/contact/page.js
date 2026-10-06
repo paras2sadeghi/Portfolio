@@ -15,8 +15,8 @@ export default function ContactRoute() {
       <Cursor />
       <NavBar />
       <PageTransition>
-        <main className="flex-1 pt-12 md:pt-14">
-          <ContactSection />
+        <main className="flex min-h-svh flex-1 flex-col pt-12 md:pt-14">
+          <ContactSection className="flex-1" />
         </main>
       </PageTransition>
     </ScrollProvider>

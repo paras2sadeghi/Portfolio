@@ -9,7 +9,7 @@ import { footer, profile } from "@/lib/content";
  * Closing frame. The CTA gets the most weight, then the utility footer folds
  * in below it so the homepage ends in one deliberate gesture.
  */
-export default function ContactSection() {
+export default function ContactSection({ className = "" }: { className?: string }) {
   const [localTime, setLocalTime] = useState("");
   const [year, setYear] = useState<number | null>(null);
 
@@ -38,7 +38,7 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative isolate overflow-hidden bg-ink px-6 py-24 text-white md:px-10 md:py-36"
+      className={`relative isolate overflow-hidden bg-ink px-6 py-24 text-white md:px-10 md:py-36 ${className}`}
     >
       <div className="relative z-10 mx-auto max-w-[1600px]">
         <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-end">

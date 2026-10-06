@@ -45,7 +45,7 @@ export default function WorkArchivePage() {
                   {item.card.subtitle}
                 </p>
               </div>
-              <div className="mt-5 flex items-center justify-between gap-8 text-xs uppercase tracking-[0.18em] text-muted md:mt-0 md:min-w-72">
+              <div className="mt-5 flex items-center justify-between gap-8 text-xs uppercase tracking-[0.18em] text-muted md:mt-0 md:grid md:w-[26rem] md:grid-cols-[1fr_auto_1rem] md:gap-8 md:text-right">
                 <span>{item.discipline}</span>
                 <span>{item.year}</span>
                 <span
