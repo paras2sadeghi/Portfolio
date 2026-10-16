@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MagneticButton from "@/components/animations/MagneticButton";
+import CaseStudyBlocks, { type CaseStudyBlock } from "@/components/work/CaseStudyBlocks";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { getAdjacentProject, workHref } from "@/lib/projects";
 import { GSAP_EASE } from "@/utils/motion";
@@ -33,12 +34,15 @@ interface Project {
   liveUrl?: string | null;
   liveLabel?: string | null;
   heroImage: string;
+  tileBg: string;
   caseStudy: {
     headline: string;
     summary: string;
     meta: ProjectMeta[];
     gallery: GalleryImage[];
     sections: CaseStudySection[];
+    /** Long-form layout; when present it replaces the plain sections. */
+    blocks?: CaseStudyBlock[];
   };
 }
 
@@ -150,6 +154,12 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
             priority
           />
         </div>
+
+        {cs.blocks?.length ? (
+          <div className="mb-24 md:mb-40">
+            <CaseStudyBlocks blocks={cs.blocks} tint={project.tileBg} />
+          </div>
+        ) : null}
 
         {cs.sections.map((section, i) => (
           <section
