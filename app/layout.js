@@ -1,7 +1,6 @@
 import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
-import CurtainTransition from "@/components/CurtainTransition";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,7 +31,8 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/images/hero-wide.png" as="image" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <CurtainTransition />
+        {/* Route curtain (components/CurtainTransition.tsx) is switched off
+            for now: it glitched between pages. Re-mount it here to restore. */}
         <Providers>{children}</Providers>
       </body>
     </html>
