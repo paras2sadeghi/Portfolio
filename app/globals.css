@@ -65,6 +65,11 @@ html.lenis body {
   }
 }
 
+/* Intro loader already played this tab, or the visit didn't start on home */
+.intro-seen [data-intro-loader] {
+  display: none;
+}
+
 /* Name marquee — CSS-driven so it never depends on the JS ticker.
    Two identical copies sit side by side; -50% lands exactly on the seam. */
 @keyframes marquee-x {

@@ -25,10 +25,19 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      // The intro script above adds a class before hydration.
+      suppressHydrationWarning
       className={`${inter.variable} ${interTight.variable} h-full antialiased`}
     >
       <head>
         <link rel="preload" href="/images/hero-wide.png" as="image" />
+        {/* Intro loader plays only when a visit opens on the home page, once
+            per tab. Runs before paint so a skipped loader never flashes. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var k="intro-seen";if(sessionStorage.getItem(k)||location.pathname!=="/")document.documentElement.classList.add(k);sessionStorage.setItem(k,"1")}catch(e){}`,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {/* Route curtain (components/CurtainTransition.tsx) is switched off
