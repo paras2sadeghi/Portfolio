@@ -85,7 +85,9 @@ html.lenis body {
    It avoids the hard horizontal edge of a standard translate-y fill. */
 .round-fill-wave {
   left: -30%;
-  bottom: -150%;
+  /* Fully below the edge at rest: at -150% the 155%-tall wave poked 5%
+     into the circle and showed as a dark arc along the bottom. */
+  bottom: -160%;
   width: 160%;
   height: 155%;
   border-radius: 50% 50% 0 0 / 22% 22% 0 0;
