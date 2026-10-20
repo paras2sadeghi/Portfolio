@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
@@ -8,11 +8,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { GSAP_EASE } from "@/utils/motion";
 import { profile } from "@/lib/content";
-
-/** Layer offset for the depth parallax: negative moves against the cursor. */
-const depth = (k: number, axis: "xy" | "y" = "xy"): CSSProperties => ({
-  translate: `${axis === "xy" ? `calc(var(--hx, 0px) * ${k})` : "0px"} calc(var(--hy, 0px) * ${k})`,
-});
 
 /**
  * Full-bleed portrait hero with the name running as a marquee across the base.
@@ -23,51 +18,6 @@ export default function HeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const imageRef = useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
-
-  // Depth parallax: the mouse sets two CSS vars on the section (--hx/--hy,
-  // a few pixels either way) and each layer multiplies them by its own
-  // depth through the `translate` property, so this never fights the GSAP
-  // transforms used for the entrance and scroll parallax. The photo moves
-  // against the cursor, the type with it, which reads as depth.
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (reduced || !section) return;
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-
-    const offset = { x: 0, y: 0 };
-    const paint = () => {
-      section.style.setProperty("--hx", `${offset.x}px`);
-      section.style.setProperty("--hy", `${offset.y}px`);
-    };
-    const ease = { duration: 1.1, ease: "power3.out", onUpdate: paint };
-    const xTo = gsap.quickTo(offset, "x", ease);
-    const yTo = gsap.quickTo(offset, "y", ease);
-
-    // Listen on the window: the fixed nav sits over the hero, and section
-    // events would treat moving onto it as leaving.
-    const onMove = (e: PointerEvent) => {
-      const rect = section.getBoundingClientRect();
-      if (e.clientY > rect.bottom) {
-        xTo(0);
-        yTo(0);
-        return;
-      }
-      xTo(((e.clientX - rect.left) / rect.width - 0.5) * 32);
-      yTo(((e.clientY - rect.top) / rect.height - 0.5) * 20);
-    };
-    const onLeave = () => {
-      xTo(0);
-      yTo(0);
-    };
-
-    window.addEventListener("pointermove", onMove, { passive: true });
-    document.addEventListener("pointerleave", onLeave);
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      document.removeEventListener("pointerleave", onLeave);
-      gsap.killTweensOf(offset);
-    };
-  }, [reduced]);
 
   useEffect(() => {
     if (reduced) return;
@@ -94,10 +44,12 @@ export default function HeroSection() {
       // Parallax: image drifts upward and scales as the hero scrolls away.
       gsap.fromTo(
         imageRef.current,
-        { yPercent: 0, scale: 1.08 },
+        // Starts at its natural size: the old 1.08 resting zoom enlarged an
+        // already low-resolution source and made it look soft.
+        { yPercent: 0, scale: 1 },
         {
           yPercent: 18,
-          scale: 1.18,
+          scale: 1.06,
           ease: "none",
           scrollTrigger: {
             trigger: section,
@@ -124,17 +76,16 @@ export default function HeroSection() {
           shipping the full 3MB file with no resizing/compression to every
           visitor and directly slowing down the very first paint. */}
       <div ref={imageRef} className="absolute inset-0 will-change-transform">
-        <div className="absolute -inset-6" style={depth(-0.7)}>
-          <Image
-            src="/images/hero-wide.png"
-            alt={profile.name}
-            fill
-            priority
-            unoptimized={process.env.NODE_ENV !== "production"}
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </div>
+        <Image
+          src="/images/hero-wide.png"
+          alt={profile.name}
+          fill
+          preload
+          quality={90}
+          unoptimized={process.env.NODE_ENV !== "production"}
+          sizes="100vw"
+          className="object-cover object-center"
+        />
       </div>
 
       {/* Scrim: keeps white overlay type legible over the bright florals */}
@@ -143,13 +94,8 @@ export default function HeroSection() {
         className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/45"
       />
 
-      {/* Availability pill, left. Depth lives on the wrapper because GSAP's
-          entrance tween on [data-hero-fade] resets `translate` on the element
-          it animates; vertical only, since the pill is pinned to the edge. */}
-      <div
-        className="absolute bottom-[30vh] left-0 z-20 md:bottom-[28vh]"
-        style={depth(1.1, "y")}
-      >
+      {/* Availability pill, left */}
+      <div className="absolute bottom-[30vh] left-0 z-20 md:bottom-[28vh]">
         <Link
           href="/contact"
           data-hero-fade
@@ -175,7 +121,6 @@ export default function HeroSection() {
 
       {/* Role, right */}
       <div
-        style={depth(1)}
         className="absolute bottom-[21vh] right-6 z-20 text-right md:bottom-[28vh] md:right-10"
       >
         <p
@@ -189,10 +134,7 @@ export default function HeroSection() {
       </div>
 
       {/* Name marquee */}
-      <div
-        className="absolute inset-x-0 bottom-0 z-20 overflow-hidden pb-3 md:pb-5"
-        style={depth(0.5)}
-      >
+      <div className="absolute inset-x-0 bottom-0 z-20 overflow-hidden pb-3 md:pb-5">
         <div className="marquee-track flex w-max whitespace-nowrap">
           {[0, 1].map((copy) => (
             <span

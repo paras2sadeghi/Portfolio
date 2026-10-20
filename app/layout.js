@@ -30,7 +30,6 @@ export default function RootLayout({ children }) {
       className={`${inter.variable} ${interTight.variable} h-full antialiased`}
     >
       <head>
-        <link rel="preload" href="/images/hero-wide.png" as="image" />
         {/* Intro loader plays only when a visit opens on the home page, once
             per tab. Runs before paint so a skipped loader never flashes. */}
         <script
