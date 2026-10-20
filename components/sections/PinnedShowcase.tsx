@@ -319,6 +319,13 @@ export default function PinnedShowcase() {
               >
                 All {WORK_PORTFOLIO_COUNT} projects →
               </Link>
+              {/* Way out of the scroll lock for anyone who's seen enough. */}
+              <a
+                href="#about"
+                className="text-xs uppercase tracking-[0.2em] text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              >
+                Skip ↓
+              </a>
             </div>
           </div>
 

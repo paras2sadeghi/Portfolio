@@ -13,6 +13,7 @@
   --accent-purple: #6d4aff;
   --accent-purple-dark: #4a2fd9;
   --accent-green: #2fa98a;
+  --accent-pink: #d81b7a;
 }
 
 @theme inline {
@@ -26,6 +27,7 @@
   --color-accent-purple: var(--accent-purple);
   --color-accent-purple-dark: var(--accent-purple-dark);
   --color-accent-green: var(--accent-green);
+  --color-accent-pink: var(--accent-pink);
   --font-sans: var(--font-inter);
   --font-display: var(--font-display);
 }
@@ -68,6 +70,24 @@ html.lenis body {
 /* Intro loader already played this tab, or the visit didn't start on home */
 .intro-seen [data-intro-loader] {
   display: none;
+}
+
+/* Hero cursor spotlight: full-colour copy of the photo, masked to a soft
+   circle that follows the pointer (vars set in HeroSection). */
+.hero-spotlight {
+  --spot-x: 50%;
+  --spot-y: 50%;
+  --spot-r: 2400px;
+  -webkit-mask-image: radial-gradient(
+    circle var(--spot-r) at var(--spot-x) var(--spot-y),
+    #000 45%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--spot-r) at var(--spot-x) var(--spot-y),
+    #000 45%,
+    transparent 100%
+  );
 }
 
 /* Name marquee — CSS-driven so it never depends on the JS ticker.

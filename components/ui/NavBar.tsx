@@ -100,7 +100,12 @@ export default function NavBar() {
           {nav.map((item) => {
             const href = resolveHref(item.label);
             return (
-              <NavFillLink key={item.href} href={href} theme={linkTheme}>
+              <NavFillLink
+                key={item.href}
+                href={href}
+                theme={linkTheme}
+                active={pathname === href || pathname.startsWith(`${href}/`)}
+              >
                 {item.label}
               </NavFillLink>
             );

@@ -9,6 +9,8 @@ interface NavFillLinkProps {
   /** On hero: inverted fill for mix-blend bar. After scroll: standard ink fill. */
   theme?: "hero" | "bar";
   onClick?: () => void;
+  /** Current page: the pill stays filled so you always know where you are. */
+  active?: boolean;
 }
 
 export default function NavFillLink({
@@ -16,6 +18,7 @@ export default function NavFillLink({
   children,
   theme = "bar",
   onClick,
+  active = false,
 }: NavFillLinkProps) {
   const isHash = href.startsWith("#");
   const className =
@@ -27,14 +30,16 @@ export default function NavFillLink({
   const fillClass =
     "btn-fill pointer-events-none absolute inset-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] " +
     (theme === "hero"
-      ? "bg-white translate-y-full group-hover:translate-y-0"
-      : "bg-foreground translate-y-full group-hover:translate-y-0");
+      ? "bg-white group-hover:translate-y-0"
+      : "bg-foreground group-hover:translate-y-0") +
+    (active ? " translate-y-0" : " translate-y-full");
 
   const labelClass =
     "relative z-10 transition-colors duration-300 " +
     (theme === "hero"
       ? "group-hover:text-ink"
-      : "group-hover:text-background");
+      : "group-hover:text-background") +
+    (active ? (theme === "hero" ? " text-ink" : " text-background") : "");
 
   const inner = (
     <>
@@ -52,7 +57,12 @@ export default function NavFillLink({
   }
 
   return (
-    <Link href={href} onClick={onClick} className={className}>
+    <Link
+      href={href}
+      onClick={onClick}
+      aria-current={active ? "page" : undefined}
+      className={className}
+    >
       {inner}
     </Link>
   );

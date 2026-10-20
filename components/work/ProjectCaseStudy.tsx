@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MagneticButton from "@/components/animations/MagneticButton";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 import CaseStudyBlocks, { type CaseStudyBlock } from "@/components/work/CaseStudyBlocks";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { getAdjacentProject, workHref } from "@/lib/projects";
@@ -79,6 +80,7 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
 
   return (
     <article ref={rootRef} className="bg-background text-foreground">
+      <ScrollProgress />
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-28 md:px-10 md:pb-32 md:pt-36">
         <Link
           href="/work"
