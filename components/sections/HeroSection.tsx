@@ -121,16 +121,22 @@ export default function HeroSection() {
 
       {/* Role, right */}
       <div
-        className="absolute bottom-[21vh] right-6 z-20 text-right md:bottom-[28vh] md:right-10"
+        className="absolute bottom-[13vh] right-6 z-20 text-right md:bottom-[28vh] md:right-10"
       >
-        <p
-          data-hero-fade
-          className="font-display text-lg font-medium leading-snug text-white md:text-2xl"
-        >
-          Product
-          <br />
-          Designer
-        </p>
+        {/* The marquee is the expressive version of the name; this is the
+            stable, readable one. */}
+        <div data-hero-fade>
+          <p className="text-[13px] text-white/75 md:text-sm">{profile.name}</p>
+          <p className="font-display text-lg font-medium leading-snug text-white md:text-2xl">
+            Product Designer
+          </p>
+          <a
+            href="#work"
+            className="mt-3 inline-block text-[13px] text-white/85 underline-offset-4 transition-colors hover:text-white hover:underline md:text-sm"
+          >
+            Selected work ↓
+          </a>
+        </div>
       </div>
 
       {/* Name marquee */}

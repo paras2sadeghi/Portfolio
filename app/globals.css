@@ -72,6 +72,24 @@ html.lenis body {
   display: none;
 }
 
+/* One focus style everywhere: visible for keyboards, absent for mice. */
+:where(a, button, summary, [tabindex]):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* A slight press on pills, circles and buttons. Uses the standalone
+   `scale` property so it composes with magnetic/GSAP transforms. */
+:where(button, a[class*="rounded-full"]):active {
+  scale: 0.97;
+  transition: scale 120ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a[class*="rounded-full"]):active {
+    scale: 1;
+  }
+}
+
 /* Name marquee — CSS-driven so it never depends on the JS ticker.
    Two identical copies sit side by side; -50% lands exactly on the seam. */
 @keyframes marquee-x {

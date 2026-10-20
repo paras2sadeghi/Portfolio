@@ -78,7 +78,7 @@ export default function NavBar() {
       <div className="flex h-12 items-center justify-between px-6 md:h-14 md:px-10">
         <Link
           href="/"
-          className={`flex items-center gap-2 text-base font-medium tracking-tight transition-opacity hover:opacity-70 md:text-lg ${
+          className={`group flex items-center gap-2 text-base font-medium tracking-tight md:text-lg ${
             pastHero ? "text-foreground" : "text-white"
           }`}
         >
@@ -88,7 +88,8 @@ export default function NavBar() {
             aria-hidden
             width={64}
             height={64}
-            className="h-5 w-5 md:h-6 md:w-6"
+            // Signature detail: the flower turns a quarter on hover or focus.
+            className="h-5 w-5 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-90 group-focus-visible:rotate-90 motion-reduce:transition-none md:h-6 md:w-6"
           />
           {profile.name.split(" ")[0]}
         </Link>

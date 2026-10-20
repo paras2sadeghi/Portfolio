@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MagneticButton from "@/components/animations/MagneticButton";
 import AboutVisualPanel from "@/components/sections/AboutVisualPanel";
+import CopyEmail from "@/components/ui/CopyEmail";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import {
   aboutPage,
@@ -54,7 +55,6 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 
 export default function AboutPage() {
   const pageRef = useRef<HTMLElement | null>(null);
-  const [activeService, setActiveService] = useState(0);
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -106,9 +106,9 @@ export default function AboutPage() {
               href="#about-contact"
               strength={0.35}
               radius={100}
-              className="group mb-2 inline-flex h-14 w-14 items-center justify-center rounded-full border border-foreground/15 text-xl transition-colors hover:bg-foreground hover:text-background md:h-16 md:w-16"
+              className="group mb-2 inline-flex h-12 items-center justify-center gap-2 rounded-full border border-foreground/15 px-6 text-sm font-medium transition-colors hover:bg-foreground hover:text-background md:h-14 md:text-base"
             >
-              ↗
+              Get in touch <span aria-hidden>↗</span>
             </MagneticButton>
           </div>
 
@@ -117,6 +117,21 @@ export default function AboutPage() {
             className="mt-10 max-w-2xl text-lg leading-relaxed text-muted md:mt-14 md:text-xl"
           >
             {aboutPage.lead}
+          </p>
+
+          {/* The plain-language version, for anyone skimming. */}
+          <p
+            data-about-page-reveal
+            className="mt-6 max-w-2xl text-base leading-relaxed text-foreground md:text-lg"
+          >
+            {aboutPage.facts}
+          </p>
+          <p
+            data-about-page-reveal
+            className="mt-4 inline-flex items-center gap-2 text-sm text-muted"
+          >
+            <span className="h-2 w-2 rounded-full bg-accent-green" aria-hidden />
+            {profile.availability} · {profile.workplace}
           </p>
 
           <p
@@ -159,51 +174,32 @@ export default function AboutPage() {
           </h2>
 
           <div className="grid gap-4 lg:grid-cols-3">
-            {services.map((service, index) => {
-              const active = activeService === index;
-              return (
-                <button
-                  key={service.id}
-                  type="button"
-                  data-about-page-reveal
-                  onMouseEnter={() => setActiveService(index)}
-                  onFocus={() => setActiveService(index)}
-                  onClick={() => setActiveService(index)}
-                  className={`group relative overflow-hidden rounded-2xl border p-6 text-left transition-[border-color,background-color] duration-500 md:p-8 ${
-                    active
-                      ? "border-foreground/20 bg-foreground text-background"
-                      : "border-foreground/12 bg-surface/40 hover:border-foreground/18"
-                  }`}
-                >
-                  <span
-                    className={`text-xs uppercase tracking-[0.2em] ${active ? "text-background/60" : "text-muted"}`}
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="mt-6 font-display text-2xl font-medium tracking-tight md:text-3xl">
-                    {service.title}
-                  </h3>
-                  <p
-                    className={`mt-4 text-sm leading-relaxed transition-[max-height,opacity] duration-500 md:text-base ${
-                      active
-                        ? "max-h-40 opacity-80"
-                        : "max-h-0 opacity-0 lg:max-h-40 lg:opacity-70"
-                    }`}
-                  >
-                    {service.description}
-                  </p>
-                  <div className="mt-8 flex gap-2">
-                    {service.swatches.map((color) => (
-                      <span
-                        key={color}
-                        className="h-2 w-8 rounded-full"
-                        style={{ background: color }}
-                      />
-                    ))}
-                  </div>
-                </button>
-              );
-            })}
+            {services.map((service, index) => (
+              <article
+                key={service.id}
+                data-about-page-reveal
+                className="rounded-2xl border border-foreground/12 bg-surface/40 p-6 transition-colors duration-500 hover:border-foreground/25 md:p-8"
+              >
+                <span className="text-xs uppercase tracking-[0.2em] text-muted">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-6 font-display text-2xl font-medium tracking-tight md:text-3xl">
+                  {service.title}
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-foreground/75 md:text-base">
+                  {service.description}
+                </p>
+                <div className="mt-8 flex gap-2" aria-hidden>
+                  {service.swatches.map((color) => (
+                    <span
+                      key={color}
+                      className="h-2 w-8 rounded-full"
+                      style={{ background: color }}
+                    />
+                  ))}
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -348,11 +344,7 @@ export default function AboutPage() {
             >
               Start a conversation
             </MagneticButton>
-            <div className="flex flex-col gap-1 text-sm text-white/55">
-              <a href={`mailto:${profile.email}`} className="hover:text-white">
-                {profile.email}
-              </a>
-            </div>
+            <CopyEmail email={profile.email} className="text-sm" />
           </div>
         </div>
       </section>

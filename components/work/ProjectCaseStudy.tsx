@@ -112,7 +112,7 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
 
           <div
             data-cs-reveal
-            className="mt-10 grid gap-6 border-t border-foreground/12 pt-8 sm:grid-cols-2 lg:grid-cols-4"
+            className="mt-10 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-foreground/12 pt-8 lg:grid-cols-4"
           >
             {cs.meta.map((m) => (
               <div key={m.label}>

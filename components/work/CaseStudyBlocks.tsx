@@ -1,10 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import Lightbox, { type LightboxImage } from "@/components/work/Lightbox";
+
+/** Opens the "Look closer" viewer at a given screenshot. */
+const ZoomContext = createContext<(src: string) => void>(() => {});
 
 interface BlockImage {
   src: string;
@@ -59,6 +63,26 @@ export default function CaseStudyBlocks({
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
+  const [zoomed, setZoomed] = useState<number | null>(null);
+
+  // Every screenshot on the page, in reading order, for the viewer.
+  const images = useMemo<LightboxImage[]>(() => {
+    const list: LightboxImage[] = [];
+    for (const block of blocks) {
+      if (block.type === "image") list.push(block);
+      if (block.type === "split" || block.type === "pair" || block.type === "phones") {
+        list.push(...block.images);
+      }
+    }
+    return list;
+  }, [blocks]);
+  const zoom = useMemo(
+    () => (src: string) => {
+      const i = images.findIndex((img) => img.src === src);
+      if (i >= 0) setZoomed(i);
+    },
+    [images]
+  );
 
   useEffect(() => {
     if (reduced) return;
@@ -140,6 +164,8 @@ export default function CaseStudyBlocks({
   }, [reduced]);
 
   return (
+    <ZoomContext.Provider value={zoom}>
+    <Lightbox images={images} index={zoomed} onChange={setZoomed} onClose={() => setZoomed(null)} />
     <div ref={rootRef} className="space-y-24 md:space-y-40">
       {blocks.map((block, i) => {
         const key = `${block.type}-${i}`;
@@ -258,14 +284,16 @@ export default function CaseStudyBlocks({
                       key={img.src}
                       className="relative aspect-[1170/2532] overflow-hidden rounded-[18px] border-[3px] border-foreground/90 bg-foreground shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] md:rounded-[38px] md:border-[6px]"
                     >
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        fill
-                        unoptimized={unoptimized}
-                        sizes="(min-width: 768px) 280px, 30vw"
-                        className="object-cover object-top"
-                      />
+                      <Zoom src={img.src} alt={img.alt} className="absolute inset-0">
+                        <Image
+                          src={img.src}
+                          alt={img.alt}
+                          fill
+                          unoptimized={unoptimized}
+                          sizes="(min-width: 768px) 280px, 30vw"
+                          className="object-cover object-top"
+                        />
+                      </Zoom>
                     </div>
                   ))}
                 </div>
@@ -294,6 +322,7 @@ export default function CaseStudyBlocks({
         }
       })}
     </div>
+    </ZoomContext.Provider>
   );
 }
 
@@ -343,15 +372,17 @@ function Shot({
   if (!framed) {
     return (
       <div data-shot className="overflow-hidden rounded-[20px]">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          width={image.width}
-          height={image.height}
-          unoptimized={unoptimized}
-          sizes={sizes}
-          className="h-auto w-full"
-        />
+        <Zoom src={image.src} alt={image.alt}>
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            unoptimized={unoptimized}
+            sizes={sizes}
+            className="h-auto w-full"
+          />
+        </Zoom>
       </div>
     );
   }
@@ -367,16 +398,49 @@ function Shot({
           <span className="h-2 w-2 rounded-full bg-black/15" />
           <span className="h-2 w-2 rounded-full bg-black/15" />
         </div>
-        <Image
-          src={image.src}
-          alt={image.alt}
-          width={image.width}
-          height={image.height}
-          unoptimized={unoptimized}
-          sizes={sizes}
-          className="h-auto w-full"
-        />
+        <Zoom src={image.src} alt={image.alt}>
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            unoptimized={unoptimized}
+            sizes={sizes}
+            className="h-auto w-full"
+          />
+        </Zoom>
       </div>
     </div>
+  );
+}
+
+/** Makes a screenshot open in the viewer, with a quiet "Look closer" hint. */
+function Zoom({
+  src,
+  alt,
+  className = "relative block",
+  children,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  const zoom = useContext(ZoomContext);
+  return (
+    <button
+      type="button"
+      onClick={() => zoom(src)}
+      aria-label={`Look closer: ${alt}`}
+      className={`group/zoom w-full cursor-zoom-in text-left ${className}`}
+    >
+      {children}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-ink/80 px-3 py-1.5 text-xs text-white opacity-0 backdrop-blur transition-opacity duration-300 group-hover/zoom:opacity-100 group-focus-visible/zoom:opacity-100"
+      >
+        Look closer
+      </span>
+    </button>
   );
 }

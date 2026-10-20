@@ -15,11 +15,12 @@ import {
 import RoundFillLink from "@/components/ui/RoundFillMagneticLink";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { getLenis } from "@/hooks/useLenisGsap";
-import { GSAP_EASE } from "@/utils/motion";
 
-// Timeline units: the intro handoff, then one step per project.
-const HANDOFF = 0.85;
-const STEP = 0.4;
+// Timeline units (1 unit = 200% of the viewport in scroll): a short read
+// hold, a crossfade handoff, then one step per project.
+const READ_HOLD = 0.2;
+const HANDOFF = 0.55;
+const STEP = 0.3;
 
 /**
  * One pinned frame that runs in two acts, both driven by scroll.
@@ -42,13 +43,11 @@ export default function PinnedShowcase() {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const flowerTopRef = useRef<HTMLDivElement | null>(null);
   const flowerBottomRef = useRef<HTMLDivElement | null>(null);
-  const frameRef = useRef<HTMLDivElement | null>(null);
 
   const [index, setIndex] = useState(0);
   const reduced = useReducedMotion();
 
   const count = projects.length;
-  const project = projects[index];
 
   const triggerRef = useRef<ScrollTrigger | null>(null);
   const indexRef = useRef(0);
@@ -90,21 +89,6 @@ export default function PinnedShowcase() {
     return () => window.removeEventListener("keydown", onKey);
   }, [go]);
 
-  // Cross-fade the frame on slide change.
-  useEffect(() => {
-    if (reduced) return;
-    const frame = frameRef.current;
-    if (!frame) return;
-    const tween = gsap.fromTo(
-      frame,
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.6, ease: GSAP_EASE }
-    );
-    return () => {
-      tween.kill();
-    };
-  }, [index, reduced]);
-
   useEffect(() => {
     if (reduced) return;
     const section = sectionRef.current;
@@ -121,7 +105,7 @@ export default function PinnedShowcase() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          // Handoff (~170%) plus one screen-ish step per project.
+          // Handoff (~110%) plus ~60% of a screen per project.
           end: () => `+=${Math.round((HANDOFF + count * STEP) * 200)}%`,
           pin: screen,
           scrub: 0.7,
@@ -138,26 +122,29 @@ export default function PinnedShowcase() {
       });
       triggerRef.current = tl.scrollTrigger ?? null;
 
-      // Act one — copy travels right to left and clears the frame.
+      // Act one: the copy holds still long enough to read, then eases a
+      // short way left while fading. It never travels off-screen, so no line
+      // is ever left half-cut at the viewport edge.
       tl.fromTo(
         intro,
         { xPercent: 0, opacity: 1 },
-        { xPercent: -115, opacity: 0, ease: "none", duration: 0.55 },
-        0
+        { xPercent: -10, opacity: 0, ease: "power1.in", duration: HANDOFF - READ_HOLD },
+        READ_HOLD
       );
 
-      // Act two — the carousel arrives in the space the copy left behind.
+      // Act two overlaps the fade instead of following it, so the frame is
+      // never empty in between.
       tl.fromTo(
         carousel,
-        { opacity: 0, xPercent: 12, pointerEvents: "none" },
+        { opacity: 0, xPercent: 4, pointerEvents: "none" },
         {
           opacity: 1,
           xPercent: 0,
           pointerEvents: "auto",
-          ease: "none",
-          duration: 0.35,
+          ease: "power1.out",
+          duration: (HANDOFF - READ_HOLD) * 0.7,
         },
-        0.5
+        READ_HOLD + (HANDOFF - READ_HOLD) * 0.3
       );
 
       // Hold: empty span so the timeline runs one step per project while the
@@ -200,34 +187,6 @@ export default function PinnedShowcase() {
     return () => mm.revert();
   }, [reduced, count]);
 
-  // Live sites get sent to the real thing; concepts get the case study.
-  const ctaHref = project.liveUrl ?? workHref(project.slug);
-  const ctaExternal = Boolean(project.liveUrl);
-  const ctaLabel = project.liveUrl ? "View live" : "Check me out";
-
-  const caption = (
-    <div className="mt-5 flex items-start justify-between gap-6 md:mt-8">
-      {/* Title and subtitle stack directly under each other now — they used
-          to split across the row, which pushed the subtitle into the same
-          screen region as the bottom-right flower. */}
-      <div className="min-w-0">
-        <p className="text-xs uppercase tracking-[0.18em] text-muted">
-          {project.discipline}
-        </p>
-        <h3 className="mt-1 font-display text-2xl font-medium tracking-tight md:text-4xl">
-          {project.name}
-        </h3>
-        <p className="mt-2 max-w-md text-sm text-muted md:text-base">
-          {project.card.subtitle}
-        </p>
-      </div>
-
-      <RoundFillLink href={ctaHref} external={ctaExternal} size="sm">
-        {ctaLabel}
-      </RoundFillLink>
-    </div>
-  );
-
   return (
     <section
       ref={sectionRef}
@@ -244,7 +203,7 @@ export default function PinnedShowcase() {
             <div
               ref={flowerTopRef}
               aria-hidden
-              className="pointer-events-none absolute left-0 top-0 z-0 hidden h-[64vh] w-[34vw] will-change-transform md:block"
+              className="pointer-events-none absolute -top-[6vh] left-0 z-0 hidden h-[50vh] w-[26vw] will-change-transform md:block"
             >
               <video
                 src={bougainvilleaClips.bleed}
@@ -259,7 +218,7 @@ export default function PinnedShowcase() {
             <div
               ref={flowerBottomRef}
               aria-hidden
-              className="pointer-events-none absolute bottom-0 right-0 z-0 hidden h-[64vh] w-[34vw] will-change-transform md:block"
+              className="pointer-events-none absolute -bottom-[6vh] right-0 z-0 hidden h-[50vh] w-[26vw] will-change-transform md:block"
               // Mirrored on both axes so the pair frames the section diagonally.
               style={{ transform: "scaleX(-1) scaleY(-1)" }}
             >
@@ -304,11 +263,12 @@ export default function PinnedShowcase() {
           className="absolute inset-x-0 z-10 mx-auto hidden w-full max-w-[1600px] px-6 md:block md:px-10"
           style={{ opacity: 0, pointerEvents: "none" }}
         >
-          <div className="mb-6 flex items-end justify-between gap-6">
-            <p className="text-xs uppercase tracking-[0.2em] text-muted">
-              Selected work
-            </p>
+          {/* Grouped on the right: the top-left corner belongs to the flowers. */}
+          <div className="mb-6 flex items-end justify-end gap-6">
             <div className="flex items-center gap-6">
+              <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                Selected work
+              </p>
               <p className="text-xs tabular-nums text-muted">
                 {String(index + 1).padStart(2, "0")} /{" "}
                 {String(count).padStart(2, "0")}
@@ -341,30 +301,13 @@ export default function PinnedShowcase() {
               </svg>
             </button>
 
-            {/* The mockup links to the case study on its own; the caption's
-                CTA is a separate link (to the live site when there is one),
-                so the two can't end up as a nested <a> inside an <a>. */}
-            <div ref={frameRef} className="min-w-0 flex-1">
-              <Link
-                href={workHref(project.slug)}
-                className="group block"
-                aria-label={`Open the ${project.name} case study`}
-              >
-                {/* Capped height, not just aspect-ratio off full width — a
-                    wide 16:9 image at h-screen would leave no room below it
-                    for the caption before overflow-hidden clips it. */}
-                <div className="relative mx-auto aspect-[16/9] max-h-[46vh] w-auto">
-                  <Image
-                    src={project.thumbnail}
-                    alt={project.name}
-                    fill
-                    unoptimized={process.env.NODE_ENV !== "production"}
-                    sizes="80vw"
-                    className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                  />
-                </div>
-              </Link>
-              {caption}
+            {/* Every slide is rendered and stacked; only the active one is
+                visible. Image, title, subtitle and links switch in the same
+                frame, so a title can never arrive ahead of its image. */}
+            <div className="relative min-w-0 flex-1">
+              {projects.map((p, i) => (
+                <Slide key={p.slug} project={p} active={i === index} />
+              ))}
             </div>
 
             <button
@@ -416,6 +359,7 @@ export default function PinnedShowcase() {
               {p.discipline}
             </p>
             <p className="font-display text-xl font-medium">{p.name}</p>
+            <p className="mt-1 text-sm text-muted">{p.card.subtitle}</p>
           </Link>
         ))}
         <Link
@@ -426,5 +370,67 @@ export default function PinnedShowcase() {
         </Link>
       </div>
     </section>
+  );
+}
+
+type ShowcaseProject = (typeof projects)[number];
+
+function Slide({ project, active }: { project: ShowcaseProject; active: boolean }) {
+  return (
+    <div
+      aria-hidden={!active}
+      inert={!active}
+      className={`transition-opacity duration-500 ease-out ${
+        active ? "relative opacity-100" : "pointer-events-none absolute inset-0 opacity-0"
+      }`}
+    >
+      {/* The mockup and the circle both open the case study; a live site
+          gets its own clearly labelled text link. */}
+      <Link
+        href={workHref(project.slug)}
+        className="group block"
+        aria-label={`${project.name} case study`}
+        tabIndex={-1}
+      >
+        <div className="relative mx-auto aspect-[16/9] max-h-[46vh] w-auto">
+          <Image
+            src={project.thumbnail}
+            alt=""
+            fill
+            // Loaded up front so switching slides never waits on the network.
+            loading="eager"
+            unoptimized={process.env.NODE_ENV !== "production"}
+            sizes="80vw"
+            className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+          />
+        </div>
+      </Link>
+      <div className="mt-5 flex items-start justify-between gap-6 md:mt-8">
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-[0.18em] text-muted">
+            {project.discipline}
+          </p>
+          <h3 className="mt-1 font-display text-2xl font-medium tracking-tight md:text-4xl">
+            {project.name}
+          </h3>
+          <p className="mt-2 max-w-md text-sm text-muted md:text-base">
+            {project.card.subtitle}
+          </p>
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-block text-sm text-foreground underline-offset-4 hover:underline"
+            >
+              Live site ↗
+            </a>
+          )}
+        </div>
+        <RoundFillLink href={workHref(project.slug)} size="sm">
+          Case study
+        </RoundFillLink>
+      </div>
+    </div>
   );
 }

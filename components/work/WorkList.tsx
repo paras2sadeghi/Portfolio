@@ -11,37 +11,41 @@ type Item = (typeof shippedProjects)[number];
 
 const ALL = [...shippedProjects, ...conceptProjects];
 
+// The most complete case study, flagged for anyone short on time.
+const START_HERE = "flash-pharmacy";
+
+// The preview has one size and two fixed spots on the right edge: bottom
+// while you're reading the upper half of the screen, top while you're in the
+// lower half. Either way it sits away from the row you're on, so it never
+// covers that row's title or details.
+type Corner = "top" | "bottom";
+
 /**
- * The /work archive: shipped work first, explorations below. On desktop a
- * preview card follows the cursor over the list and slides between project
- * images as you move row to row, so every name has a picture without the list
- * losing its typographic weight.
+ * The /work archive: shipped work first, explorations below. Every row says
+ * what the project is; on desktop a preview card in the corner adds the
+ * picture and slides between projects as you move row to row.
  */
 export default function WorkList() {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState<number | null>(null);
+  const [corner, setCorner] = useState<Corner>("bottom");
   const reduced = useReducedMotion();
 
+  const placeFor = (y: number) => setCorner(y > window.innerHeight / 2 ? "top" : "bottom");
+
   useEffect(() => {
-    const preview = previewRef.current;
-    if (!preview || !window.matchMedia("(pointer: fine)").matches) return;
-    const xTo = gsap.quickTo(preview, "x", { duration: reduced ? 0 : 0.55, ease: "power3.out" });
-    const yTo = gsap.quickTo(preview, "y", { duration: reduced ? 0 : 0.55, ease: "power3.out" });
-    const onMove = (e: PointerEvent) => {
-      xTo(e.clientX);
-      yTo(e.clientY);
-    };
+    const onMove = (e: PointerEvent) => placeFor(e.clientY);
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
-  }, [reduced]);
+  }, []);
 
   useEffect(() => {
     const preview = previewRef.current;
     const strip = stripRef.current;
     if (!preview || !strip) return;
     gsap.to(preview, {
-      scale: active === null ? 0.6 : 1,
+      scale: active === null ? 0.92 : 1,
       opacity: active === null ? 0 : 1,
       duration: reduced ? 0 : 0.45,
       ease: "power3.out",
@@ -60,7 +64,11 @@ export default function WorkList() {
       key={item.slug}
       href={workHref(item.slug)}
       onPointerEnter={() => setActive(globalIndex)}
-      onFocus={() => setActive(globalIndex)}
+      onFocus={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        placeFor(r.top + r.height / 2);
+        setActive(globalIndex);
+      }}
       onBlur={() => setActive(null)}
       className={`group grid border-t border-foreground/12 md:grid-cols-[5rem_1fr_auto] md:items-baseline md:gap-10 ${
         small ? "py-6 md:py-7" : "py-7 md:py-9"
@@ -79,7 +87,12 @@ export default function WorkList() {
         >
           {item.name}
         </h3>
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted md:hidden">
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted md:text-base">
+          {item.slug === START_HERE && (
+            <span className="mr-2 inline-flex items-center rounded-full border border-foreground/20 px-2 py-0.5 align-[2px] text-[11px] font-medium uppercase tracking-[0.14em] text-foreground">
+              Start here
+            </span>
+          )}
           {item.card.subtitle}
         </p>
       </div>
@@ -103,7 +116,7 @@ export default function WorkList() {
           id="work-shipped"
           title="Selected work"
           count={shippedProjects.length}
-          note="Shipped with real teams and real users."
+          note="Client and in-house products, plus one early personal app."
         />
         <div className="border-b border-foreground/12">
           {shippedProjects.map((item, i) => row(item, i, i))}
@@ -132,7 +145,9 @@ export default function WorkList() {
       <div
         ref={previewRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[60] hidden h-[17rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl opacity-0 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.45)] [@media(pointer:fine)]:md:block"
+        className={`pointer-events-none fixed right-6 z-[60] hidden h-[15rem] w-[22rem] overflow-hidden rounded-2xl opacity-0 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.45)] md:right-10 [@media(pointer:fine)]:md:block ${
+          corner === "top" ? "top-20" : "bottom-6"
+        }`}
       >
         <div ref={stripRef} className="w-full" style={{ height: `${ALL.length * 100}%` }}>
           {ALL.map((item) => (

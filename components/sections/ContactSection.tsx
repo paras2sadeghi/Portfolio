@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import MagneticButton from "@/components/animations/MagneticButton";
 import SplitText from "@/components/animations/SplitText";
 import { footer, profile } from "@/lib/content";
+import CopyEmail from "@/components/ui/CopyEmail";
 
 /**
  * Closing frame. The CTA gets the most weight, then the utility footer folds
@@ -43,7 +44,7 @@ export default function ContactSection({ className = "" }: { className?: string 
       <div className="relative z-10 mx-auto max-w-[1600px]">
         <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/40">
+            <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/60">
               Contact
             </p>
             <SplitText
@@ -70,20 +71,26 @@ export default function ContactSection({ className = "" }: { className?: string 
               Start a conversation
             </MagneticButton>
 
-            <div className="flex flex-col gap-1 text-sm text-white/55 md:text-right">
-              <a
-                href={`mailto:${profile.email}`}
-                className="transition-colors hover:text-white"
-              >
-                {profile.email}
-              </a>
-            </div>
+            <CopyEmail email={profile.email} className="text-sm" />
+            <a
+              href={profile.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-white/80 underline-offset-4 transition-colors hover:text-white hover:underline"
+            >
+              LinkedIn ↗
+            </a>
+            <p className="inline-flex items-center gap-2 text-sm text-white/70">
+              <span className="h-2 w-2 rounded-full bg-accent-green" aria-hidden />
+              {profile.availability} · {profile.workplace}
+            </p>
           </div>
         </div>
 
-        <div className="mt-20 flex flex-col gap-6 border-t border-white/10 pt-8 text-sm text-white/40 md:mt-28 md:flex-row md:items-center md:justify-between">
+        <div className="mt-20 flex flex-col gap-6 border-t border-white/10 pt-8 text-sm text-white/60 md:mt-28 md:flex-row md:items-center md:justify-between">
           <p>© {year ?? "2026"} Parastoo Sadeghi · {localTime}</p>
-          <div className="flex gap-5">
+          {/* Icons stay small; each link carries a 40px hit area. */}
+          <div className="-mx-2.5 flex gap-1">
             {footer.connect.map((item) => (
               <a
                 key={item.label}
@@ -91,7 +98,7 @@ export default function ContactSection({ className = "" }: { className?: string 
                 target={item.href.startsWith("http") ? "_blank" : undefined}
                 rel={item.href.startsWith("http") ? "noreferrer" : undefined}
                 aria-label={item.label}
-                className="transition-colors hover:text-white"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-white/10 hover:text-white"
               >
                 <SocialIcon label={item.label} />
               </a>
