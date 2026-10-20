@@ -72,24 +72,6 @@ html.lenis body {
   display: none;
 }
 
-/* Hero cursor spotlight: full-colour copy of the photo, masked to a soft
-   circle that follows the pointer (vars set in HeroSection). */
-.hero-spotlight {
-  --spot-x: 50%;
-  --spot-y: 50%;
-  --spot-r: 2400px;
-  -webkit-mask-image: radial-gradient(
-    circle var(--spot-r) at var(--spot-x) var(--spot-y),
-    #000 45%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--spot-r) at var(--spot-x) var(--spot-y),
-    #000 45%,
-    transparent 100%
-  );
-}
-
 /* Name marquee — CSS-driven so it never depends on the JS ticker.
    Two identical copies sit side by side; -50% lands exactly on the seam. */
 @keyframes marquee-x {
