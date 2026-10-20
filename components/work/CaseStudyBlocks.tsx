@@ -247,7 +247,11 @@ export default function CaseStudyBlocks({
                 </div>
                 <div
                   data-phones
-                  className="mx-auto grid max-w-4xl grid-cols-3 items-start gap-3 md:gap-10"
+                  className={`mx-auto grid items-start gap-3 md:gap-10 ${
+                    block.images.length === 4
+                      ? "max-w-6xl grid-cols-2 md:grid-cols-4"
+                      : "max-w-4xl grid-cols-3"
+                  }`}
                 >
                   {block.images.map((img) => (
                     <div
