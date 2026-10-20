@@ -55,11 +55,8 @@ const showDrafts = process.env.NODE_ENV !== "production";
  */
 export default function CaseStudyBlocks({
   blocks,
-  tint,
 }: {
   blocks: CaseStudyBlock[];
-  /** Project tile colour, used as the backdrop behind framed screenshots. */
-  tint: string;
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
@@ -175,7 +172,7 @@ export default function CaseStudyBlocks({
               <section key={key} className="grid gap-6 md:grid-cols-[14rem_1fr] md:gap-16">
                 <Label text={block.label} />
                 <div data-rise className="max-w-3xl">
-                  <h2 className="font-display text-3xl font-medium leading-[1.05] tracking-[-0.03em] md:text-5xl">
+                  <h2 className="font-display text-[2rem] font-medium leading-[1.04] tracking-[-0.035em] md:text-[3.4vw]">
                     {block.title}
                   </h2>
                   <Body paragraphs={block.body} />
@@ -201,7 +198,7 @@ export default function CaseStudyBlocks({
               <figure key={key}>
                 <Shot
                   image={block}
-                  tint={tint}
+                 
                   framed={block.frame !== "plain"}
                   sizes="(max-width: 1600px) 100vw, 1600px"
                 />
@@ -221,7 +218,7 @@ export default function CaseStudyBlocks({
                   className={`md:sticky md:top-28 md:col-span-4 ${block.reverse ? "md:order-2" : ""}`}
                 >
                   <Label text={block.label} inline />
-                  <h2 className="mt-4 font-display text-3xl font-medium leading-[1.05] tracking-[-0.03em] md:text-4xl">
+                  <h2 className="mt-4 font-display text-[2rem] font-medium leading-[1.04] tracking-[-0.035em] md:text-[2.6vw]">
                     {block.title}
                   </h2>
                   <Body paragraphs={block.body} />
@@ -230,7 +227,7 @@ export default function CaseStudyBlocks({
                   className={`space-y-6 md:col-span-8 ${block.reverse ? "md:order-1" : ""}`}
                 >
                   {block.images.map((img) => (
-                    <Shot key={img.src} image={img} tint={tint} framed sizes="(min-width: 768px) 66vw, 100vw" />
+                    <Shot key={img.src} image={img} framed sizes="(min-width: 768px) 66vw, 100vw" />
                   ))}
                 </div>
               </section>
@@ -242,7 +239,7 @@ export default function CaseStudyBlocks({
                 <div className="grid gap-6 md:grid-cols-[14rem_1fr] md:gap-16">
                   <Label text={block.label} />
                   <div data-rise className="max-w-3xl">
-                    <h2 className="font-display text-3xl font-medium leading-[1.05] tracking-[-0.03em] md:text-5xl">
+                    <h2 className="font-display text-[2rem] font-medium leading-[1.04] tracking-[-0.035em] md:text-[3.4vw]">
                       {block.title}
                     </h2>
                     <Body paragraphs={block.body} />
@@ -250,7 +247,7 @@ export default function CaseStudyBlocks({
                 </div>
                 <div className="mt-12 grid gap-6 md:grid-cols-2">
                   {block.images.map((img) => (
-                    <Shot key={img.src} image={img} tint={tint} framed sizes="(min-width: 768px) 50vw, 100vw" />
+                    <Shot key={img.src} image={img} framed sizes="(min-width: 768px) 50vw, 100vw" />
                   ))}
                 </div>
               </section>
@@ -260,8 +257,7 @@ export default function CaseStudyBlocks({
             return (
               <section
                 key={key}
-                className="overflow-hidden rounded-[28px] px-6 py-16 md:px-16 md:py-24"
-                style={{ backgroundColor: tint }}
+                className="overflow-hidden rounded-[24px] bg-stage px-6 py-16 md:px-16 md:py-24"
               >
                 <div className="mx-auto mb-12 max-w-xl text-center">
                   <Label text={block.label} inline />
@@ -341,7 +337,7 @@ function Label({ text, inline = false }: { text?: string; inline?: boolean }) {
 
 function Body({ paragraphs }: { paragraphs: string[] }) {
   return (
-    <div className="mt-6 space-y-4 text-base leading-relaxed text-muted md:text-lg">
+    <div className="mt-6 space-y-4 text-[17px] leading-[1.65] text-foreground/72 md:text-[1.2rem]">
       {paragraphs.map((p) => (
         <p key={p.slice(0, 32)}>{p}</p>
       ))}
@@ -351,64 +347,46 @@ function Body({ paragraphs }: { paragraphs: string[] }) {
 
 function Caption({ text }: { text: string }) {
   return (
-    <figcaption className="mt-5 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
+    <figcaption className="mt-5 max-w-2xl text-[15px] leading-relaxed text-foreground/65 md:text-base">
       {text}
     </figcaption>
   );
 }
 
-/** A screenshot, optionally floated on the project tint inside a window frame. */
+/** A screenshot on the neutral stage, or bare when it is its own composition. */
 function Shot({
   image,
-  tint,
   framed,
   sizes,
 }: {
   image: BlockImage;
-  tint: string;
   framed: boolean;
   sizes: string;
 }) {
+  const img = (
+    <Zoom src={image.src} alt={image.alt}>
+      <Image
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        unoptimized={unoptimized}
+        sizes={sizes}
+        className="h-auto w-full"
+      />
+    </Zoom>
+  );
   if (!framed) {
     return (
       <div data-shot className="overflow-hidden rounded-[20px]">
-        <Zoom src={image.src} alt={image.alt}>
-          <Image
-            src={image.src}
-            alt={image.alt}
-            width={image.width}
-            height={image.height}
-            unoptimized={unoptimized}
-            sizes={sizes}
-            className="h-auto w-full"
-          />
-        </Zoom>
+        {img}
       </div>
     );
   }
   return (
-    <div
-      data-shot
-      className="overflow-hidden rounded-[20px] p-3 md:p-8"
-      style={{ backgroundColor: tint }}
-    >
-      <div className="overflow-hidden rounded-xl bg-white shadow-[0_24px_60px_-24px_rgba(15,40,60,0.35)]">
-        <div className="flex items-center gap-1.5 border-b border-black/5 px-4 py-2.5" aria-hidden>
-          <span className="h-2 w-2 rounded-full bg-black/15" />
-          <span className="h-2 w-2 rounded-full bg-black/15" />
-          <span className="h-2 w-2 rounded-full bg-black/15" />
-        </div>
-        <Zoom src={image.src} alt={image.alt}>
-          <Image
-            src={image.src}
-            alt={image.alt}
-            width={image.width}
-            height={image.height}
-            unoptimized={unoptimized}
-            sizes={sizes}
-            className="h-auto w-full"
-          />
-        </Zoom>
+    <div data-shot className="overflow-hidden rounded-[20px] bg-stage p-3 md:p-10">
+      <div className="overflow-hidden rounded-[10px] shadow-[0_1px_0_rgba(0,0,0,0.04),0_20px_50px_-24px_rgba(20,30,30,0.28)] ring-1 ring-black/[0.06]">
+        {img}
       </div>
     </div>
   );

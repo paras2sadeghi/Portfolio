@@ -3,9 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #0b0b0c;
-  --muted: #6b7280;
+  --muted: #66625c;
   --surface: #f6f4f0;
   --line: #e6e3dd;
+  /* Neutral stage behind screenshots; matches the device covers. */
+  --stage: #eff1f0;
 
   --ink: #0a0a0a;
   --ink-muted: #9ca3af;
@@ -22,6 +24,7 @@
   --color-muted: var(--muted);
   --color-surface: var(--surface);
   --color-line: var(--line);
+  --color-stage: var(--stage);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-accent-purple: var(--accent-purple);

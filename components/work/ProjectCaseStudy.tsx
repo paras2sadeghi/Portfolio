@@ -90,56 +90,57 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           ← All work
         </Link>
 
-        <header className="mb-14 md:mb-20">
-          <p
-            data-cs-reveal
-            className="mb-4 text-xs uppercase tracking-[0.2em] text-muted"
-          >
-            {project.discipline} · {project.year}
-          </p>
-          <h1
-            data-cs-reveal
-            className="max-w-[16ch] font-display text-[12vw] font-medium leading-[0.88] tracking-[-0.05em] md:text-[6.5vw]"
-          >
-            {project.name}
-          </h1>
-          <p
-            data-cs-reveal
-            className="mt-8 max-w-2xl text-lg leading-relaxed text-muted md:text-xl"
-          >
-            {cs.summary}
-          </p>
-
-          <div
-            data-cs-reveal
-            className="mt-10 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-foreground/12 pt-8 lg:grid-cols-4"
-          >
-            {cs.meta.map((m) => (
-              <div key={m.label}>
-                <p className="text-xs uppercase tracking-[0.18em] text-muted">
-                  {m.label}
-                </p>
-                <p className="mt-2 text-sm font-medium md:text-base">
-                  {m.value}
-                </p>
-              </div>
-            ))}
+        <header className="mb-14 grid gap-12 md:mb-20 md:grid-cols-12 md:gap-10">
+          <div className="md:col-span-8">
+            <p
+              data-cs-reveal
+              className="mb-4 text-xs uppercase tracking-[0.2em] text-muted"
+            >
+              {project.discipline} · {project.year}
+            </p>
+            <h1
+              data-cs-reveal
+              className="max-w-[16ch] font-display text-[12vw] font-medium leading-[0.88] tracking-[-0.05em] md:text-[6.5vw]"
+            >
+              {project.name}
+            </h1>
+            <p
+              data-cs-reveal
+              className="mt-8 max-w-3xl text-xl leading-[1.5] text-foreground/80 md:text-[1.6rem]"
+            >
+              {cs.summary}
+            </p>
           </div>
 
-          {project.liveUrl && (
-            <div data-cs-reveal className="mt-10">
+          <div data-cs-reveal className="md:col-span-4 md:self-end">
+            <dl className="grid grid-cols-2 gap-x-6 md:grid-cols-1">
+              {cs.meta.map((m) => (
+                <div
+                  key={m.label}
+                  className="border-t border-foreground/12 py-3.5 md:flex md:items-baseline md:justify-between md:gap-6"
+                >
+                  <dt className="text-xs uppercase tracking-[0.18em] text-muted">
+                    {m.label}
+                  </dt>
+                  <dd className="mt-1 text-sm font-medium md:mt-0 md:text-right md:text-base">
+                    {m.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            {project.liveUrl && (
               <MagneticButton
                 href={project.liveUrl}
                 external
                 strength={0.35}
                 radius={120}
-                className="inline-flex items-center gap-2 rounded-full border border-foreground/14 px-6 py-3.5 text-sm font-medium transition-colors hover:bg-foreground hover:text-background"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background transition-transform duration-500 hover:scale-[1.03]"
               >
-                {project.liveLabel ?? "View live site"}
+                {project.liveLabel ?? "Live site"}
                 <span aria-hidden>↗</span>
               </MagneticButton>
-            </div>
-          )}
+            )}
+          </div>
         </header>
 
         <div
@@ -159,7 +160,7 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
 
         {cs.blocks?.length ? (
           <div className="mb-24 md:mb-40">
-            <CaseStudyBlocks blocks={cs.blocks} tint={project.tileBg} />
+            <CaseStudyBlocks blocks={cs.blocks} />
           </div>
         ) : null}
 

@@ -196,7 +196,7 @@ export default function PinnedShowcase() {
     >
       <div
         ref={screenRef}
-        className="relative flex min-h-screen items-center overflow-hidden px-6 py-16 md:h-screen md:px-10 md:py-0"
+        className="relative flex min-h-screen items-center overflow-hidden px-6 py-16 md:h-screen md:px-10 md:pb-0 md:pt-14"
       >
         {!reduced && (
           <>
@@ -322,7 +322,7 @@ export default function PinnedShowcase() {
             </button>
           </div>
 
-          <div className="mt-8 flex justify-center gap-2">
+          <div className="mt-6 flex justify-center gap-2">
             {projects.map((p, i) => (
               <button
                 key={p.slug}
@@ -392,7 +392,7 @@ function Slide({ project, active }: { project: ShowcaseProject; active: boolean 
         aria-label={`${project.name} case study`}
         tabIndex={-1}
       >
-        <div className="relative mx-auto aspect-[16/9] max-h-[46vh] w-auto">
+        <div className="relative mx-auto aspect-[16/9] max-h-[48vh] w-auto">
           <Image
             src={project.thumbnail}
             alt=""
@@ -405,15 +405,15 @@ function Slide({ project, active }: { project: ShowcaseProject; active: boolean 
           />
         </div>
       </Link>
-      <div className="mt-5 flex items-start justify-between gap-6 md:mt-8">
+      <div className="mt-6 flex items-end justify-between gap-8 md:mt-8">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.18em] text-muted">
-            {project.discipline}
+            {project.discipline} · {project.year}
           </p>
-          <h3 className="mt-1 font-display text-2xl font-medium tracking-tight md:text-4xl">
+          <h3 className="mt-2 font-display text-3xl font-medium leading-[0.95] tracking-[-0.045em] md:text-[4vw]">
             {project.name}
           </h3>
-          <p className="mt-2 max-w-md text-sm text-muted md:text-base">
+          <p className="mt-3 max-w-xl text-base text-foreground/70 md:text-lg">
             {project.card.subtitle}
           </p>
           {project.liveUrl && (
@@ -423,7 +423,7 @@ function Slide({ project, active }: { project: ShowcaseProject; active: boolean 
               rel="noreferrer"
               className="mt-3 inline-block text-sm text-foreground underline-offset-4 hover:underline"
             >
-              Live site ↗
+              {project.liveLabel ?? "Live site"} ↗
             </a>
           )}
         </div>
