@@ -28,8 +28,7 @@ export default function WorkArchivePage() {
             </h1>
             <p className="mt-6 max-w-xl text-sm leading-relaxed text-muted md:text-base">
               A selection from ten products shipped across four companies, plus
-              self-initiated explorations. Each row says what it is; open any
-              for the decisions behind it.
+              self-initiated explorations.
             </p>
           </div>
           <span className="hidden pb-3 text-xs uppercase tracking-[0.2em] text-muted md:block">

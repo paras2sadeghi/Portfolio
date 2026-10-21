@@ -78,6 +78,39 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
     return () => ctx.revert();
   }, [reduced]);
 
+  // Rendered twice: beside the title on desktop, under the cover on phones.
+  const details = (
+    <>
+      <dl className="grid grid-cols-2 gap-x-6 md:grid-cols-1">
+        {cs.meta.map((m) => (
+          <div
+            key={m.label}
+            className="border-t border-foreground/12 py-3.5 md:flex md:items-baseline md:justify-between md:gap-6"
+          >
+            <dt className="text-xs uppercase tracking-[0.18em] text-muted">
+              {m.label}
+            </dt>
+            <dd className="mt-1 text-sm font-medium md:mt-0 md:text-right md:text-base">
+              {m.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {project.liveUrl && (
+        <MagneticButton
+          href={project.liveUrl}
+          external
+          strength={0.35}
+          radius={120}
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background transition-transform duration-500 hover:scale-[1.03]"
+        >
+          {project.liveLabel ?? "Live site"}
+          <span aria-hidden>↗</span>
+        </MagneticButton>
+      )}
+    </>
+  );
+
   return (
     <article ref={rootRef} className="bg-background text-foreground">
       <ScrollProgress />
@@ -112,34 +145,9 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
             </p>
           </div>
 
-          <div data-cs-reveal className="md:col-span-4 md:self-end">
-            <dl className="grid grid-cols-2 gap-x-6 md:grid-cols-1">
-              {cs.meta.map((m) => (
-                <div
-                  key={m.label}
-                  className="border-t border-foreground/12 py-3.5 md:flex md:items-baseline md:justify-between md:gap-6"
-                >
-                  <dt className="text-xs uppercase tracking-[0.18em] text-muted">
-                    {m.label}
-                  </dt>
-                  <dd className="mt-1 text-sm font-medium md:mt-0 md:text-right md:text-base">
-                    {m.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            {project.liveUrl && (
-              <MagneticButton
-                href={project.liveUrl}
-                external
-                strength={0.35}
-                radius={120}
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background transition-transform duration-500 hover:scale-[1.03]"
-              >
-                {project.liveLabel ?? "Live site"}
-                <span aria-hidden>↗</span>
-              </MagneticButton>
-            )}
+          {/* Phones show the cover first; the details follow it below. */}
+          <div data-cs-reveal className="hidden md:col-span-4 md:block md:self-end">
+            {details}
           </div>
         </header>
 
@@ -156,6 +164,10 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
             sizes="(max-width: 1600px) 100vw, 1600px"
             priority
           />
+        </div>
+
+        <div className="-mt-8 mb-16 md:hidden">
+          {details}
         </div>
 
         {cs.blocks?.length ? (

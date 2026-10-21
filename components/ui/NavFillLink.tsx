@@ -21,8 +21,12 @@ export default function NavFillLink({
   active = false,
 }: NavFillLinkProps) {
   const isHash = href.startsWith("#");
+  // The link itself is a 44px-tall touch target on phones; the visible pill
+  // inside it stays small and delicate.
   const className =
-    "nav-btn-click group relative inline-flex h-7 items-center justify-center overflow-hidden rounded-full border px-3 text-xs font-medium transition-[border-color,color] duration-300 md:h-8 md:px-3.5 md:text-sm " +
+    "nav-btn-click group relative inline-flex h-11 items-center md:h-auto";
+  const pillClass =
+    "relative inline-flex h-7 items-center justify-center overflow-hidden rounded-full border px-3 text-xs font-medium transition-[border-color,color] duration-300 md:h-8 md:px-3.5 md:text-sm " +
     (theme === "hero"
       ? "border-white/25 text-white"
       : "border-foreground/12 text-foreground");
@@ -42,10 +46,10 @@ export default function NavFillLink({
     (active ? (theme === "hero" ? " text-ink" : " text-background") : "");
 
   const inner = (
-    <>
+    <span className={pillClass}>
       <span aria-hidden className={fillClass} />
       <span className={labelClass}>{children}</span>
-    </>
+    </span>
   );
 
   if (isHash) {

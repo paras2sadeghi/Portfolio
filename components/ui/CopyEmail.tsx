@@ -41,7 +41,7 @@ export default function CopyEmail({
       <button
         type="button"
         onClick={copy}
-        className="relative rounded-full border border-white/25 px-3 py-1 text-xs text-white/85 transition-colors after:absolute after:-inset-2 after:content-[''] hover:border-white/60 hover:text-white"
+        className="relative rounded-full border border-white/25 px-3 py-1 text-xs text-white/85 transition-colors after:absolute after:-inset-[9px] after:content-[''] hover:border-white/60 hover:text-white"
       >
         {state === "copied" ? "Copied" : state === "failed" ? "Copy failed" : "Copy"}
       </button>

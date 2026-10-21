@@ -77,6 +77,17 @@ export default function PinnedShowcase() {
     [show]
   );
 
+  // "Selected work ↓" in the hero: land on the first project, not the intro.
+  useEffect(() => {
+    const onFirst = (e: Event) => {
+      if (!triggerRef.current) return; // not pinned: plain anchor scroll
+      e.preventDefault();
+      show(0);
+    };
+    window.addEventListener("showcase:first", onFirst);
+    return () => window.removeEventListener("showcase:first", onFirst);
+  }, [show]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       // Only while the carousel is on screen — otherwise the arrows would
@@ -218,7 +229,7 @@ export default function PinnedShowcase() {
             <div
               ref={flowerBottomRef}
               aria-hidden
-              className="pointer-events-none absolute -bottom-[6vh] right-0 z-0 hidden h-[50vh] w-[26vw] will-change-transform md:block"
+              className="pointer-events-none absolute -bottom-[10vh] right-0 z-0 hidden h-[42vh] w-[22vw] will-change-transform md:block"
               // Mirrored on both axes so the pair frames the section diagonally.
               style={{ transform: "scaleX(-1) scaleY(-1)" }}
             >
@@ -248,7 +259,7 @@ export default function PinnedShowcase() {
             ))}
           </h2>
           <div className="flex flex-col items-start gap-6 self-end md:flex-row md:items-end md:justify-between">
-            <p className="max-w-md text-base leading-relaxed text-muted md:text-lg">
+            <p className="max-w-lg text-lg leading-relaxed text-foreground/75 md:text-xl">
               {homeIntro.aside}
             </p>
             <RoundFillLink href={homeIntro.ctaHref}>
@@ -342,7 +353,7 @@ export default function PinnedShowcase() {
       </div>
 
       {/* Small screens get the work as a plain stacked list under the copy. */}
-      <div className="grid gap-10 px-6 pb-16 md:hidden">
+      <div id="selected-work" className="grid scroll-mt-16 gap-10 px-6 pb-16 md:hidden">
         {projects.map((p) => (
           <Link key={p.slug} href={workHref(p.slug)} className="block">
             <div className="relative aspect-[16/9] w-full">
@@ -405,7 +416,7 @@ function Slide({ project, active }: { project: ShowcaseProject; active: boolean 
           />
         </div>
       </Link>
-      <div className="mt-6 flex items-end justify-between gap-8 md:mt-8">
+      <div className="mt-6 flex items-start justify-between gap-8 md:mt-8">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.18em] text-muted">
             {project.discipline} · {project.year}
@@ -415,6 +426,9 @@ function Slide({ project, active }: { project: ShowcaseProject; active: boolean 
           </h3>
           <p className="mt-3 max-w-xl text-base text-foreground/70 md:text-lg">
             {project.card.subtitle}
+          </p>
+          <p className="mt-1.5 text-sm font-medium text-foreground/80">
+            {project.card.contribution}
           </p>
           {project.liveUrl && (
             <a

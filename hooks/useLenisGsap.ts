@@ -58,6 +58,7 @@ export function useLenisGsap(enabled: boolean) {
     };
 
     const onAnchorClick = (event: MouseEvent) => {
+      if (event.defaultPrevented) return;
       const target = event.target as HTMLElement | null;
       const link = target?.closest<HTMLAnchorElement>("a[href]");
       if (!link) return;

@@ -95,7 +95,7 @@ export default function HeroSection() {
       />
 
       {/* Availability pill, left */}
-      <div className="absolute bottom-[30vh] left-0 z-20 md:bottom-[28vh]">
+      <div className="absolute bottom-[44vh] left-0 z-20 md:bottom-[28vh]">
         <Link
           href="/contact"
           data-hero-fade
@@ -127,11 +127,22 @@ export default function HeroSection() {
             stable, readable one. */}
         <div data-hero-fade>
           <p className="text-[13px] text-white/75 md:text-sm">{profile.name}</p>
-          <p className="font-display text-lg font-medium leading-snug text-white md:text-2xl">
-            Product Designer
+          <p className="ml-auto max-w-[17ch] font-display text-lg font-medium leading-snug text-white md:text-2xl">
+            {profile.proposition}
+          </p>
+          <p className="ml-auto mt-1.5 max-w-[30ch] text-[13px] leading-snug text-white/75 md:text-sm">
+            {profile.current}
           </p>
           <a
-            href="#work"
+            href="#selected-work"
+            onClick={(e) => {
+              // Desktop pins the showcase; ask it to jump straight to the
+              // first project instead of landing on the intro copy.
+              const handled = !window.dispatchEvent(
+                new CustomEvent("showcase:first", { cancelable: true })
+              );
+              if (handled) e.preventDefault();
+            }}
             className="mt-3 inline-block text-[13px] text-white/85 underline-offset-4 transition-colors hover:text-white hover:underline md:text-sm"
           >
             Selected work ↓

@@ -71,46 +71,62 @@ export default function AboutSection() {
         <div className="mt-14 grid grid-cols-1 gap-16 md:mt-24 md:grid-cols-[0.9fr_1.1fr] md:gap-20">
           <AboutVisualPanel reduced={reduced} />
 
-          <div className="flex flex-col gap-10 md:gap-14 md:pt-10">
+          <div className="flex flex-col gap-10 md:gap-12 md:pt-4">
+            {/* Evidence first, story second: someone skimming should meet
+                the work before the anecdote. */}
+            <div data-about-reveal>
+              <p className="mb-5 text-xs uppercase tracking-[0.2em] text-muted">
+                Experience
+              </p>
+              <div className="flex flex-col">
+                {experience.slice(0, 4).map((item) => (
+                  <div
+                    key={`${item.role}-${item.org}`}
+                    className="border-t border-foreground/12 py-5"
+                  >
+                    <div className="flex items-baseline justify-between gap-4">
+                      <h3 className="text-lg font-medium tracking-tight md:text-xl">
+                        {item.role}
+                        <span className="font-normal text-muted"> · {item.org.split(" · ")[0]}</span>
+                      </h3>
+                      <span className="shrink-0 text-xs uppercase tracking-[0.16em] text-muted">
+                        {item.year}
+                      </span>
+                    </div>
+                    <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/75 md:text-base">
+                      {item.evidence}
+                      {item.href && (
+                        <>
+                          {" "}
+                          <Link
+                            href={item.href}
+                            className="whitespace-nowrap font-medium text-foreground underline-offset-4 hover:underline"
+                          >
+                            Case study →
+                          </Link>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {aboutStory.slice(0, 2).map((paragraph, i) => (
               <p
                 key={i}
                 data-about-reveal
                 className={
                   i === 0
-                    ? "max-w-2xl text-2xl font-medium leading-[1.35] tracking-tight md:text-[2rem]"
-                    : "max-w-xl text-base leading-relaxed text-muted md:text-lg"
+                    ? "max-w-2xl text-xl font-medium leading-[1.4] tracking-tight md:text-2xl"
+                    : "max-w-xl text-base leading-relaxed text-foreground/70 md:text-lg"
                 }
               >
                 {paragraph}
               </p>
             ))}
 
-            <div data-about-reveal className="grid gap-8 md:grid-cols-2">
-              <div>
-                <p className="mb-5 text-xs uppercase tracking-[0.2em] text-muted">
-                  Experience
-                </p>
-                <div className="flex flex-col gap-5">
-                  {experience.slice(0, 3).map((item) => (
-                    <div
-                      key={`${item.role}-${item.org}`}
-                      className="border-t border-foreground/12 pt-4"
-                    >
-                      <div className="flex items-baseline justify-between gap-4">
-                        <h3 className="text-lg font-medium tracking-tight">
-                          {item.role}
-                        </h3>
-                        <span className="text-xs uppercase tracking-[0.16em] text-muted">
-                          {item.year}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-sm text-muted">{item.org}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
+            <div data-about-reveal>
               <div>
                 <p className="mb-5 text-xs uppercase tracking-[0.2em] text-muted">
                   Capabilities

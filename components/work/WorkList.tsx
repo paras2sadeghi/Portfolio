@@ -59,7 +59,10 @@ export default function WorkList() {
     }
   }, [active, reduced]);
 
-  const row = (item: Item, index: number, globalIndex: number, small = false) => (
+  // Three tiers of emphasis: the primary case studies, the rest of the
+  // selected work, then explorations.
+  type Tier = "primary" | "secondary" | "explore";
+  const row = (item: Item, index: number, globalIndex: number, tier: Tier) => (
     <Link
       key={item.slug}
       href={workHref(item.slug)}
@@ -71,7 +74,7 @@ export default function WorkList() {
       }}
       onBlur={() => setActive(null)}
       className={`group grid border-t border-foreground/12 md:grid-cols-[5rem_1fr_auto] md:items-baseline md:gap-10 ${
-        small ? "py-6 md:py-7" : "py-7 md:py-9"
+        tier === "primary" ? "py-8 md:py-10" : tier === "secondary" ? "py-6 md:py-7" : "py-5 md:py-6"
       } transition-opacity duration-500 ${
         active !== null && active !== globalIndex ? "md:opacity-35" : ""
       }`}
@@ -82,7 +85,11 @@ export default function WorkList() {
       <div>
         <h3
           className={`font-display font-medium leading-[0.95] tracking-[-0.045em] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-3 ${
-            small ? "text-3xl md:text-[3.6vw]" : "text-4xl md:text-[5.8vw]"
+            tier === "primary"
+              ? "text-4xl md:text-[5.8vw]"
+              : tier === "secondary"
+                ? "text-3xl md:text-[3.6vw]"
+                : "text-2xl text-foreground/85 md:text-[2.6vw]"
           }`}
         >
           {item.name}
@@ -95,6 +102,11 @@ export default function WorkList() {
           )}
           {item.card.subtitle}
         </p>
+        {tier !== "explore" && item.card.contribution && (
+          <p className="mt-1.5 text-sm font-medium text-foreground/80">
+            {item.card.contribution}
+          </p>
+        )}
       </div>
       <div className="mt-5 flex items-center justify-between gap-8 text-xs uppercase tracking-[0.18em] text-muted md:mt-0 md:grid md:w-[26rem] md:grid-cols-[1fr_auto_1rem] md:gap-8 md:text-right">
         <span>{item.discipline}</span>
@@ -119,7 +131,7 @@ export default function WorkList() {
           note="Client and in-house products, plus one early personal app."
         />
         <div className="border-b border-foreground/12">
-          {shippedProjects.map((item, i) => row(item, i, i))}
+          {shippedProjects.map((item, i) => row(item, i, i, i < 3 ? "primary" : "secondary"))}
         </div>
       </section>
 
@@ -136,7 +148,7 @@ export default function WorkList() {
         />
         <div className="border-b border-foreground/12">
           {conceptProjects.map((item, i) =>
-            row(item, i, shippedProjects.length + i, true)
+            row(item, i, shippedProjects.length + i, "explore")
           )}
         </div>
       </section>
