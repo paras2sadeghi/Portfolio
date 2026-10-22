@@ -80,6 +80,16 @@ export default function ContactSection({ className = "" }: { className?: string 
             >
               LinkedIn ↗
             </a>
+            {profile.resumeUrl && (
+              <a
+                href={profile.resumeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-white/80 underline-offset-4 transition-colors hover:text-white hover:underline"
+              >
+                Résumé ↗
+              </a>
+            )}
             <p className="inline-flex items-center gap-2 text-sm text-white/70">
               <span className="h-2 w-2 rounded-full bg-accent-green" aria-hidden />
               {profile.availability} · {profile.workplace}
