@@ -156,15 +156,6 @@ function SocialIcon({ label }: { label: string }) {
     );
   }
 
-  if (label === "WhatsApp") {
-    return (
-      <svg {...common}>
-        <path d="M6.5 17.5 4 20l2.6-.7A8 8 0 1 0 4 12a7.9 7.9 0 0 0 1.1 4.1Z" />
-        <path d="M9 10.2c.3 1.9 2 3.6 3.9 3.9.8.1 1.1-.5 1.1-1v-.6l1.6.5c.3.1.5.4.4.7-.3 1.1-1.5 1.9-2.7 1.8-2.8-.2-5.4-2.8-5.6-5.6-.1-1.2.7-2.4 1.8-2.7.3-.1.6.1.7.4l.5 1.6h-.6c-.5 0-1.1.3-1 1.1Z" fill="currentColor" stroke="none" />
-      </svg>
-    );
-  }
-
   return (
     <svg {...common}>
       <rect x="3" y="5" width="18" height="14" rx="2" />
