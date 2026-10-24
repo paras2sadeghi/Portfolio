@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useMagnetic } from "@/hooks/useMagnetic";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface RoundFillMagneticLinkProps {
   href: string;
@@ -19,7 +17,9 @@ const SIZE_CLASSES: Record<"sm" | "md", string> = {
 };
 
 /**
- * Dennis `btn btn-round` + `btn-click magnetic` + `btn-fill` (home-intro CTA).
+ * Round outlined button that fills on hover (home-intro CTA). It used to also
+ * drift toward the cursor ("magnetic"); that movement is intentionally gone.
+ * The file keeps its name so existing imports don't change.
  */
 export default function RoundFillMagneticLink({
   href,
@@ -27,21 +27,13 @@ export default function RoundFillMagneticLink({
   size = "md",
   external = false,
 }: RoundFillMagneticLinkProps) {
-  const reduced = useReducedMotion();
-  const ref = useMagnetic<HTMLAnchorElement>({
-    strength: size === "sm" ? 0.22 : 0.38,
-    radius: size === "sm" ? 70 : 140,
-    enabled: !reduced,
-  });
-
   return (
     <div className="btn btn-round inline-flex shrink-0">
       <Link
-        ref={ref}
         href={href}
         target={external ? "_blank" : undefined}
         rel={external ? "noreferrer" : undefined}
-        className={`btn-click magnetic group relative flex items-center justify-center overflow-hidden rounded-full border border-foreground/14 font-medium tracking-tight transition-[border-color] duration-500 hover:border-foreground/25 ${SIZE_CLASSES[size]}`}
+        className={`btn-click group relative flex items-center justify-center overflow-hidden rounded-full border border-foreground/14 font-medium tracking-tight transition-[border-color] duration-500 hover:border-foreground/25 ${SIZE_CLASSES[size]}`}
       >
         <span
           aria-hidden

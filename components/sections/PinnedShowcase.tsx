@@ -21,6 +21,12 @@ import { getLenis } from "@/hooks/useLenisGsap";
 const READ_HOLD = 0.2;
 const HANDOFF = 0.55;
 const STEP = 0.3;
+// The handoff is sequential: the intro fully clears, a beat of empty frame,
+// then the carousel arrives. They used to cross-fade, which left both on
+// screen at once and the intro copy ghosting over the first mockup.
+const FADE_OUT = 0.17;
+const GAP = 0.02;
+const FADE_IN = HANDOFF - READ_HOLD - FADE_OUT - GAP;
 
 /**
  * One pinned frame that runs in two acts, both driven by scroll.
@@ -139,12 +145,11 @@ export default function PinnedShowcase() {
       tl.fromTo(
         intro,
         { xPercent: 0, opacity: 1 },
-        { xPercent: -10, opacity: 0, ease: "power1.in", duration: HANDOFF - READ_HOLD },
+        { xPercent: -10, opacity: 0, ease: "power1.in", duration: FADE_OUT },
         READ_HOLD
       );
 
-      // Act two overlaps the fade instead of following it, so the frame is
-      // never empty in between.
+      // Act two starts only once act one has fully cleared.
       tl.fromTo(
         carousel,
         { opacity: 0, xPercent: 4, pointerEvents: "none" },
@@ -153,9 +158,9 @@ export default function PinnedShowcase() {
           xPercent: 0,
           pointerEvents: "auto",
           ease: "power1.out",
-          duration: (HANDOFF - READ_HOLD) * 0.7,
+          duration: FADE_IN,
         },
-        READ_HOLD + (HANDOFF - READ_HOLD) * 0.3
+        READ_HOLD + FADE_OUT + GAP
       );
 
       // Hold: empty span so the timeline runs one step per project while the
@@ -249,17 +254,21 @@ export default function PinnedShowcase() {
         {/* Act one */}
         <div
           ref={introRef}
-          className="relative z-10 mx-auto grid w-full max-w-[1600px] gap-12 md:grid-cols-[1.15fr_1fr] md:gap-20"
+          // Two full-width rows, one under the other: the headline, then the
+          // paragraph with the About circle. Side by side, the right half had
+          // to share its width with the circle and the paragraph got squeezed
+          // into a thin column of two or three words per line.
+          className="relative z-10 mx-auto grid w-full max-w-[1600px] gap-10 md:gap-14"
         >
-          <h2 className="font-display text-[8vw] font-medium leading-[1.02] tracking-[-0.04em] md:text-[3.2vw]">
+          <h2 className="font-display text-[8vw] font-medium leading-[1.02] tracking-[-0.04em] md:text-[3.8vw]">
             {homeIntro.lines.map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
             ))}
           </h2>
-          <div className="flex flex-col items-start gap-6 self-end md:flex-row md:items-end md:justify-between">
-            <p className="max-w-lg text-lg leading-relaxed text-foreground/75 md:text-xl">
+          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between md:gap-16">
+            <p className="max-w-2xl text-lg leading-relaxed text-foreground/75 md:text-xl">
               {homeIntro.aside}
             </p>
             <RoundFillLink href={homeIntro.ctaHref}>
