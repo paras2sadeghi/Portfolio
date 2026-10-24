@@ -29,6 +29,9 @@ export function GET() {
     "## Contact",
     `- Email: ${profile.email}`,
     `- LinkedIn: ${profile.linkedin}`,
+    ...(profile.resumeUrl
+      ? [`- [Résumé (PDF)](${SITE_URL}${profile.resumeUrl})`]
+      : []),
     "",
   ];
 
