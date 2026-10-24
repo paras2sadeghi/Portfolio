@@ -70,6 +70,12 @@ export default function HeroSection() {
       ref={sectionRef}
       className="relative h-[100svh] w-full overflow-hidden bg-ink"
     >
+      {/* The visible name is the marquee below (aria-hidden on its repeat).
+          This is the page's real heading for screen readers, crawlers and AI
+          agents: who this is, what they do and where. */}
+      <h1 className="sr-only">
+        Parastoo Sadeghi, product designer based in Vancouver, BC
+      </h1>
       {/* Photograph — unoptimized only in dev, so a dev-server restart can't
           race the /_next/image optimizer on this 3MB source PNG. In
           production this flag was disabling Next's image pipeline entirely,
@@ -101,16 +107,9 @@ export default function HeroSection() {
           data-hero-fade
           className="group flex items-center gap-4 rounded-r-full bg-ink/95 py-3 pl-6 pr-6 backdrop-blur-sm transition-colors hover:bg-ink md:gap-5 md:py-4 md:pl-9 md:pr-4"
         >
-          <span className="relative flex h-2.5 w-2.5 shrink-0" aria-hidden>
-            <span className="absolute inset-0 animate-ping rounded-full bg-accent-green opacity-60" />
-            <span className="relative h-2.5 w-2.5 rounded-full bg-accent-green" />
-          </span>
           <span className="text-white">
             <span className="block text-[13px] font-medium leading-[1.35] md:text-sm">
-              {profile.availability}
-            </span>
-            <span className="block text-[12px] leading-[1.35] text-white/60 md:text-[13px]">
-              {profile.workplace}
+              {profile.location}
             </span>
           </span>
           <span className="relative hidden h-10 w-10 shrink-0 items-center justify-center md:flex rounded-full bg-white/10 transition-transform duration-500 group-hover:rotate-45 md:h-12 md:w-12">

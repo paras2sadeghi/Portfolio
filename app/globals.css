@@ -109,6 +109,30 @@ html.lenis body {
   will-change: transform;
 }
 
+/* Work strip under the hero. Same seam trick as the name marquee: two
+   identical copies, each item carries its own right padding so both halves
+   are exactly equal and -50% lands on the join. Pauses on hover and on
+   keyboard focus so a project can be read and clicked. */
+.work-marquee-track {
+  animation: marquee-x 80s linear infinite;
+  will-change: transform;
+}
+.work-marquee:hover .work-marquee-track,
+.work-marquee:focus-within .work-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-marquee {
+    overflow-x: auto;
+  }
+  .work-marquee-track {
+    animation: none;
+  }
+  .work-marquee-track > li[aria-hidden="true"] {
+    display: none;
+  }
+}
+
 /* Home intro round CTA: an oversized oval rises like a slow wave.
    It avoids the hard horizontal edge of a standard translate-y fill. */
 .round-fill-wave {
