@@ -109,6 +109,46 @@ html.lenis body {
   will-change: transform;
 }
 
+/* Hero name. One slow, constant-speed loop in one direction: two identical
+   halves, so -50% lands exactly on the seam. The 1.5s delay holds the first
+   complete name still so it can be read before anything moves. Pauses on
+   hover and whenever focus is inside the hero.
+   Phones and reduced-motion users get the static name instead; both
+   variants are plain CSS so there is no flash and no hydration mismatch. */
+.hero-name-track {
+  animation: marquee-x 80s linear 1.5s infinite;
+  will-change: transform;
+}
+.hero-name:hover .hero-name-track,
+#top:focus-within .hero-name-track {
+  animation-play-state: paused;
+}
+.hero-name-moving {
+  display: none;
+}
+.hero-name-static {
+  display: block;
+}
+@media (min-width: 768px) {
+  .hero-name-moving {
+    display: block;
+  }
+  .hero-name-static {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-name-moving {
+    display: none !important;
+  }
+  .hero-name-static {
+    display: block !important;
+  }
+  .hero-name-track {
+    animation: none;
+  }
+}
+
 /* Work strip under the hero. Same seam trick as the name marquee: two
    identical copies, each item carries its own right padding so both halves
    are exactly equal and -50% lands on the join. Pauses on hover and on
