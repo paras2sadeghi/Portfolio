@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { homeIntro } from "@/lib/content";
 import { bougainvilleaClips } from "@/lib/motif";
 import {
   featuredProjects as projects,
@@ -16,37 +15,25 @@ import RoundFillLink from "@/components/ui/RoundFillMagneticLink";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { getLenis } from "@/hooks/useLenisGsap";
 
-// Timeline units (1 unit = 200% of the viewport in scroll): a short read
-// hold, a crossfade handoff, then one step per project.
-const READ_HOLD = 0.2;
-const HANDOFF = 0.55;
+// Timeline units (1 unit = 200% of the viewport in scroll): one step per
+// project, about 60% of a screen each.
 const STEP = 0.3;
-// The handoff is sequential: the intro fully clears, a beat of empty frame,
-// then the carousel arrives. They used to cross-fade, which left both on
-// screen at once and the intro copy ghosting over the first mockup.
-const FADE_OUT = 0.17;
-const GAP = 0.02;
-const FADE_IN = HANDOFF - READ_HOLD - FADE_OUT - GAP;
 
 /**
- * One pinned frame that runs in two acts, both driven by scroll.
- *
- * Act one: the intro copy travels right-to-left across the frame. Act two
- * takes over in the same frame — the carousel of work fades in and the page
- * stays locked while each further scroll step advances one project. After the
- * last project the pin releases and the page continues.
+ * The selected-work showcase: one pinned frame, framed by the bougainvillea,
+ * where each scroll step advances one project. After the last project the pin
+ * releases and the page continues. The intro copy above it is its own static
+ * section (IntroSection), not part of this frame.
  *
  * The chevrons, dots and arrow keys still work: they scroll the page to that
  * project's step, so scroll position and the visible project never disagree.
  *
- * Desktop only: pinning fights touch gestures, so small screens get the same
- * content as an ordinary stacked section.
+ * Desktop only: pinning fights touch gestures, so small screens skip the
+ * pinned frame and get the same projects as an ordinary stacked list.
  */
 export default function PinnedShowcase() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const screenRef = useRef<HTMLDivElement | null>(null);
-  const introRef = useRef<HTMLDivElement | null>(null);
-  const carouselRef = useRef<HTMLDivElement | null>(null);
   const flowerTopRef = useRef<HTMLDivElement | null>(null);
   const flowerBottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -68,8 +55,8 @@ export default function PinnedShowcase() {
         setIndex(next);
         return;
       }
-      const total = HANDOFF + count * STEP;
-      const time = HANDOFF + (next + 0.5) * STEP;
+      const total = count * STEP;
+      const time = (next + 0.5) * STEP;
       const y = st.start + (time / total) * (st.end - st.start);
       const lenis = getLenis();
       if (lenis) lenis.scrollTo(y, { duration: 1 });
@@ -82,17 +69,6 @@ export default function PinnedShowcase() {
     (delta: number) => show(indexRef.current + delta),
     [show]
   );
-
-  // "Selected work ↓" in the hero: land on the first project, not the intro.
-  useEffect(() => {
-    const onFirst = (e: Event) => {
-      if (!triggerRef.current) return; // not pinned: plain anchor scroll
-      e.preventDefault();
-      show(0);
-    };
-    window.addEventListener("showcase:first", onFirst);
-    return () => window.removeEventListener("showcase:first", onFirst);
-  }, [show]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -110,9 +86,7 @@ export default function PinnedShowcase() {
     if (reduced) return;
     const section = sectionRef.current;
     const screen = screenRef.current;
-    const intro = introRef.current;
-    const carousel = carouselRef.current;
-    if (!section || !screen || !intro || !carousel) return;
+    if (!section || !screen) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia();
@@ -122,50 +96,22 @@ export default function PinnedShowcase() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          // Handoff (~110%) plus ~60% of a screen per project.
-          end: () => `+=${Math.round((HANDOFF + count * STEP) * 200)}%`,
+          // ~60% of a screen of scroll per project.
+          end: () => `+=${Math.round(count * STEP * 200)}%`,
           pin: screen,
           scrub: 0.7,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            const time = self.progress * (HANDOFF + count * STEP);
-            const next =
-              time <= HANDOFF
-                ? 0
-                : Math.min(count - 1, Math.floor((time - HANDOFF) / STEP));
-            setIndex(next);
+            const time = self.progress * count * STEP;
+            setIndex(Math.min(count - 1, Math.floor(time / STEP)));
           },
         },
       });
       triggerRef.current = tl.scrollTrigger ?? null;
 
-      // Act one: the copy holds still long enough to read, then eases a
-      // short way left while fading. It never travels off-screen, so no line
-      // is ever left half-cut at the viewport edge.
-      tl.fromTo(
-        intro,
-        { xPercent: 0, opacity: 1 },
-        { xPercent: -10, opacity: 0, ease: "power1.in", duration: FADE_OUT },
-        READ_HOLD
-      );
-
-      // Act two starts only once act one has fully cleared.
-      tl.fromTo(
-        carousel,
-        { opacity: 0, xPercent: 4, pointerEvents: "none" },
-        {
-          opacity: 1,
-          xPercent: 0,
-          pointerEvents: "auto",
-          ease: "power1.out",
-          duration: FADE_IN,
-        },
-        READ_HOLD + FADE_OUT + GAP
-      );
-
-      // Hold: empty span so the timeline runs one step per project while the
-      // frame stays pinned and onUpdate swaps the slide.
-      tl.to({}, { duration: count * STEP }, HANDOFF);
+      // Hold: an empty span so the timeline runs one step per project while
+      // the frame stays pinned and onUpdate swaps the slide.
+      tl.to({}, { duration: count * STEP });
 
       // Flowers drift on the same scrub as the hero photograph, so the motif
       // reads as one element travelling down the page.
@@ -207,12 +153,14 @@ export default function PinnedShowcase() {
     <section
       ref={sectionRef}
       id="work"
-      aria-label="About and selected work"
+      aria-label="Selected work"
       className="relative overflow-x-clip bg-background"
     >
+      {/* Desktop only. On phones this frame is skipped and the stacked list
+          at the bottom of the section carries the work instead. */}
       <div
         ref={screenRef}
-        className="relative flex min-h-screen items-center overflow-hidden px-6 py-16 md:h-screen md:px-10 md:pb-0 md:pt-14"
+        className="relative hidden items-center overflow-hidden px-6 md:flex md:h-screen md:px-10 md:pb-0 md:pt-14"
       >
         {!reduced && (
           <>
@@ -251,38 +199,7 @@ export default function PinnedShowcase() {
           </>
         )}
 
-        {/* Act one */}
-        <div
-          ref={introRef}
-          // Two full-width rows, one under the other: the headline, then the
-          // paragraph with the About circle. Side by side, the right half had
-          // to share its width with the circle and the paragraph got squeezed
-          // into a thin column of two or three words per line.
-          className="relative z-10 mx-auto grid w-full max-w-[1600px] gap-10 md:gap-14"
-        >
-          <h2 className="font-display text-[8vw] font-medium leading-[1.02] tracking-[-0.04em] md:text-[3.8vw]">
-            {homeIntro.lines.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </h2>
-          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between md:gap-16">
-            <p className="max-w-2xl text-lg leading-relaxed text-foreground/75 md:text-xl">
-              {homeIntro.aside}
-            </p>
-            <RoundFillLink href={homeIntro.ctaHref}>
-              {homeIntro.ctaLabel}
-            </RoundFillLink>
-          </div>
-        </div>
-
-        {/* Act two — stacked on top of act one so it occupies the same frame. */}
-        <div
-          ref={carouselRef}
-          className="absolute inset-x-0 z-10 mx-auto hidden w-full max-w-[1600px] px-6 md:block md:px-10"
-          style={{ opacity: 0, pointerEvents: "none" }}
-        >
+        <div className="relative z-10 mx-auto w-full max-w-[1600px]">
           {/* Grouped on the right: the top-left corner belongs to the flowers. */}
           <div className="mb-6 flex items-end justify-end gap-6">
             <div className="flex items-center gap-6">
