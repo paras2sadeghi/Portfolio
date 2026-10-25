@@ -40,8 +40,8 @@ const PARTS = [
   },
   {
     label: "Longevity+",
-    src: "/images/work/flash-longevity/mobile-hero.jpg",
-    alt: "Flash Longevity+ on a phone: the healthcare benefit your team will actually use",
+    src: "/images/work/flash-longevity/pace-of-ageing.jpg",
+    alt: "Flash Longevity+ on a phone: the Pace of ageing screen, showing an estimated biological age of 27.6 and a pace of 0.82 times, slower than expected",
   },
 ];
 
