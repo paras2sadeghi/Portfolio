@@ -6,7 +6,6 @@ import HeroSection from "@/components/sections/HeroSection";
 import FeaturedWork from "@/components/sections/FeaturedWork";
 import WorkMarquee from "@/components/sections/WorkMarquee";
 import IntroSection from "@/components/sections/IntroSection";
-import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
@@ -20,7 +19,6 @@ export default function Home() {
         <IntroSection />
         <FeaturedWork />
         <WorkMarquee />
-        <AboutSection />
         <ContactSection />
       </main>
     </ScrollProvider>
