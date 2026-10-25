@@ -19,26 +19,27 @@ export default function ContactSection({ className = "" }: { className?: string 
       id="contact"
       className={`relative isolate overflow-hidden bg-ink px-6 py-16 text-white md:px-10 md:py-24 ${className}`}
     >
-      <div className="relative z-10 mx-auto max-w-[1600px]">
-        <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/60">
-          Contact
-        </p>
-        <SplitText
-          as="h2"
-          text="Let’s talk."
-          className="font-display text-[15vw] font-medium leading-[0.86] tracking-[-0.06em] md:text-[8vw]"
-          // Plays on mount rather than on scroll-into-view. The featured
-          // story above pins and adds several screens to the document after
-          // this trigger's position is first measured, which can leave a
-          // scroll-triggered reveal here permanently masked depending on
-          // refresh timing. Mount-time is invisible either way since this
-          // section starts off-screen, so nothing is lost by not waiting.
-          immediate
-        />
+      {/* One line: the headline on the left, the icons on the right, both
+          sitting on the same bottom edge. Stacks on phones. */}
+      <div className="relative z-10 mx-auto flex max-w-[1600px] flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">
+        <div>
+          <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/60">
+            Contact
+          </p>
+          <SplitText
+            as="h2"
+            text="Let’s talk."
+            className="font-display text-[15vw] font-medium leading-[0.86] tracking-[-0.06em] md:text-[8vw]"
+            // Plays on mount rather than on scroll-into-view, so a trigger
+            // measured before the images above have loaded can never leave
+            // the headline masked. The section starts off-screen anyway.
+            immediate
+          />
+        </div>
 
-        {/* One row of icons, each a 56px target with its name for screen
-            readers and as a hover tooltip. */}
-        <ul className="mt-8 flex flex-wrap gap-3 md:mt-10">
+        {/* Each icon is a 56px target with its name for screen readers and
+            as a hover tooltip. */}
+        <ul className="flex flex-wrap gap-3 md:pb-2">
           {links.map((item) => {
             const external = !item.href.startsWith("mailto:");
             return (
