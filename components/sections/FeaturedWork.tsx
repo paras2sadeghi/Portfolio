@@ -117,15 +117,18 @@ export default function FeaturedWork() {
                 key={part.label}
                 className="w-[70%] shrink-0 snap-start sm:w-[44%] lg:w-auto lg:shrink"
               >
-                <Link href={href} className="group block">
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] ring-1 ring-foreground/10">
+                <Link href={href} className="group mx-auto block max-w-[280px]">
+                  {/* Every screen is a phone screenshot with the same tall
+                      proportions (about 9:19.5), so the frame is that exact
+                      shape and the whole screen shows, uncropped. */}
+                  <div className="relative aspect-[530/1147] overflow-hidden rounded-[1.75rem] ring-1 ring-foreground/10">
                     <Image
                       src={part.src}
                       alt={part.alt}
                       fill
                       unoptimized={unoptimized}
-                      sizes="(max-width: 768px) 70vw, 24vw"
-                      className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                      sizes="(max-width: 768px) 70vw, 280px"
+                      className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
                   <p className="mt-4 flex items-baseline justify-between gap-4">
