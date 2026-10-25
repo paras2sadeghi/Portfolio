@@ -1,19 +1,18 @@
+import Image from "next/image";
 import Link from "next/link";
-import FeaturedStory from "@/components/sections/FeaturedStory";
 import { getProject, workHref } from "@/lib/projects";
 
 /**
- * The featured slot directly under the hero: one project given the whole
- * stage, in the spirit of an artist profile's "latest release".
+ * The pinned project directly under the hero, in the spirit of an artist
+ * profile's pinned release: one slide from the old showcase carousel, kept
+ * on its own. A large mockup centred on the page, then one caption row
+ * across the full width (label, name, line and role on the left, the case
+ * study link on the right), then the four parts of the platform.
  *
  * Built in the site's own language (the same as the moving strip after it):
- * plain white, thin rules, no boxes, shadows or colour of its own. The caption
- * comes first (name, one line, the link, the facts), then the scroll story in
- * FeaturedStory: the laptop shrinks away and the four screens slide in.
- *
- * The caption and every link are plain server-rendered HTML, so the section
- * is fully readable by crawlers and agents, and without JavaScript or with
- * reduced motion it is simply a static stack.
+ * plain white, the page's own gutters, no boxes, shadows or colour of its
+ * own. Plain server-rendered HTML and links, so it reads at a glance and is
+ * fully visible to crawlers and agents.
  */
 
 const FEATURED_SLUG = "flash-pharmacy";
@@ -43,27 +42,18 @@ const PARTS = [
   },
 ];
 
-const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const unoptimized = process.env.NODE_ENV !== "production";
 
 export default function FeaturedWork() {
   const featured = getProject(FEATURED_SLUG);
   if (!featured) return null;
   const href = workHref(featured.slug);
 
-  // "Lead designer · launching soon" -> role and status.
-  const [role, status] = String(featured.card.contribution ?? "").split(" · ");
-  const facts: [string, string][] = [
-    ["Role", capitalise(role ?? "")],
-    ["Status", capitalise(status ?? "")],
-    ["Category", featured.discipline],
-    ["Year", featured.year],
-  ].filter(([, v]) => v) as [string, string][];
-
   return (
     <section
       id="work"
       aria-labelledby="featured-title"
-      className="relative overflow-hidden bg-background px-6 pb-8 pt-16 md:px-10 md:pb-10 md:pt-20"
+      className="relative bg-background px-6 pb-4 pt-10 md:px-10 md:pb-6 md:pt-14"
     >
       <div className="mx-auto max-w-[1600px]">
         {/* Section title: the same display style as "Selected work" on /work. */}
@@ -77,44 +67,85 @@ export default function FeaturedWork() {
           <p className="text-sm tabular-nums text-muted">01</p>
         </div>
 
-        {/* Everything under the title shares the laptop mockup's width, so
-            the caption starts at the laptop's left edge. The mockup is
-            1542 x 851 with no transparent margin; capping the width at
-            66vh x that ratio keeps it inside one screen on the pinned stage. */}
-        <div className="mx-auto w-full max-w-[calc(66vh*1542/851)]">
-          <div className="mt-10 md:mt-12">
-            <h3 className="font-display text-5xl font-medium leading-[0.92] tracking-[-0.045em] md:text-[5vw]">
+        {/* The mockup, large and centred, floating on the page. The width is
+            capped so it never takes more than about 56% of the screen's
+            height (the image is 1542 x 851). */}
+        <Link
+          href={href}
+          aria-label={`${featured.name} case study`}
+          tabIndex={-1}
+          className="group relative mx-auto mt-8 block aspect-[1542/851] w-full max-w-[calc(56vh*1542/851)] md:mt-10"
+        >
+          <Image
+            src={featured.thumbnail}
+            alt={`${featured.name} on desktop and phone`}
+            fill
+            unoptimized={unoptimized}
+            sizes="(max-width: 768px) 92vw, 80vw"
+            className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+          />
+        </Link>
+
+        {/* One caption row across the full width, as on the old slide. */}
+        <div className="mt-8 flex flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-12">
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted">
+              {featured.discipline} Â· {featured.year}
+            </p>
+            <h3 className="mt-2 font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] md:text-[4vw]">
               {featured.name}
             </h3>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-foreground/70 md:text-lg">
+            <p className="mt-3 max-w-xl text-base text-foreground/70 md:text-lg">
               {featured.card.subtitle}
             </p>
-            <Link
-              href={href}
-              className="mt-5 inline-block border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-foreground focus-visible:border-foreground focus-visible:outline-offset-4"
-            >
-              View case study ↗
-            </Link>
+            {featured.card.contribution && (
+              <p className="mt-1.5 text-sm font-medium text-foreground/80">
+                {featured.card.contribution}
+              </p>
+            )}
           </div>
-
-          {/* Facts as one hairline row; each sizes to its content, so none wrap. */}
-          <dl className="mt-10 flex flex-wrap gap-x-14 gap-y-6 border-t border-foreground/15 pt-5 text-sm md:mt-12">
-            {facts.map(([label, value]) => (
-              <div key={label}>
-                <dt className="text-[11px] uppercase tracking-[0.16em] text-muted">
-                  {label}
-                </dt>
-                <dd className="mt-1.5">{value}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <FeaturedStory
+          <Link
             href={href}
-            name={featured.name}
-            mockup={featured.thumbnail}
-            parts={PARTS}
-          />
+            className="inline-block w-fit shrink-0 border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-foreground focus-visible:border-foreground focus-visible:outline-offset-4"
+          >
+            View case study â†—
+          </Link>
+        </div>
+
+        {/* Inside the platform: part of the same feature. */}
+        <div className="mt-12 md:mt-14">
+          <h3 className="text-xs font-normal uppercase tracking-[0.18em] text-muted">
+            Inside the platform
+          </h3>
+
+          {/* Phones and tablets: a swipeable row. Desktop (1024px and up): four across. */}
+          <ul className="-mx-6 mt-5 flex snap-x snap-mandatory scroll-pl-6 gap-5 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:-mx-10 md:scroll-pl-10 md:px-10 lg:mx-0 lg:scroll-pl-0 lg:grid lg:grid-cols-4 lg:gap-8 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
+            {PARTS.map((part) => (
+              <li
+                key={part.label}
+                className="w-[70%] shrink-0 snap-start sm:w-[44%] lg:w-auto lg:shrink"
+              >
+                <Link href={href} className="group block">
+                  {/* Every screen is a phone screenshot with the same tall
+                      proportions (about 9:19.5), so the frame is that exact
+                      shape and the whole screen shows, uncropped. */}
+                  <div className="relative mx-auto aspect-[530/1147] max-w-[240px] overflow-hidden rounded-[1.75rem] ring-1 ring-foreground/10">
+                    <Image
+                      src={part.src}
+                      alt={part.alt}
+                      fill
+                      unoptimized={unoptimized}
+                      sizes="(max-width: 768px) 70vw, 240px"
+                      className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                    />
+                  </div>
+                  <p className="mx-auto mt-4 max-w-[240px] font-display text-lg font-medium tracking-tight">
+                    {part.label}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

@@ -16,7 +16,7 @@ export default function WorkMarquee() {
   return (
     <section
       aria-label="Selected work"
-      className="work-marquee relative overflow-hidden bg-background py-12 md:py-16"
+      className="work-marquee relative overflow-hidden bg-background py-8 md:py-10"
     >
       <ul className="work-marquee-track flex w-max">
         {[0, 1].map((copy) =>

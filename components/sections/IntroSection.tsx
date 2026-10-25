@@ -13,7 +13,7 @@ export default function IntroSection() {
     <section
       id="intro"
       aria-label="Introduction"
-      className="relative bg-background px-6 pb-4 pt-20 md:px-10 md:pb-6 md:pt-28"
+      className="relative bg-background px-6 pb-2 pt-14 md:px-10 md:pb-4 md:pt-20"
     >
       <div className="mx-auto w-full max-w-[1600px]">
         {/* One sentence, so it is set large and balanced across its lines. */}
@@ -22,7 +22,7 @@ export default function IntroSection() {
         </h2>
 
         {/* The line, with a plain underlined link to About beneath it. */}
-        <div className="mt-10 md:mt-12">
+        <div className="mt-6 md:mt-8">
           <p className="max-w-sm text-lg leading-snug text-foreground/75">
             {homeIntro.aside}
           </p>

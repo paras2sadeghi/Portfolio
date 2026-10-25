@@ -1,39 +1,11 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import SplitText from "@/components/animations/SplitText";
 import { footer, profile } from "@/lib/content";
 
 /**
- * Closing frame, kept editorial and minimal: one short line, one row of icons
- * for every way to reach me, and a single quiet line of small print.
+ * Closing frame, kept editorial and minimal: one short line and one row of
+ * icons for every way to reach me. Nothing else.
  */
 export default function ContactSection({ className = "" }: { className?: string }) {
-  const [localTime, setLocalTime] = useState("");
-  const [year, setYear] = useState<number | null>(null);
-
-  useEffect(() => {
-    const update = () => {
-      setLocalTime(
-        new Intl.DateTimeFormat("en-CA", {
-          timeZone: "America/Vancouver",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-          timeZoneName: "short",
-        }).format(new Date())
-      );
-    };
-
-    update();
-    const timer = window.setInterval(update, 30_000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
-
   // Every way to reach me, as one row of icons: email first, then the
   // profiles, then the résumé when there is one.
   const links = [
@@ -45,7 +17,7 @@ export default function ContactSection({ className = "" }: { className?: string 
   return (
     <section
       id="contact"
-      className={`relative isolate overflow-hidden bg-ink px-6 pb-10 pt-24 text-white md:px-10 md:pb-12 md:pt-36 ${className}`}
+      className={`relative isolate overflow-hidden bg-ink px-6 py-16 text-white md:px-10 md:py-24 ${className}`}
     >
       <div className="relative z-10 mx-auto max-w-[1600px]">
         <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/60">
@@ -66,7 +38,7 @@ export default function ContactSection({ className = "" }: { className?: string 
 
         {/* One row of icons, each a 56px target with its name for screen
             readers and as a hover tooltip. */}
-        <ul className="mt-12 flex flex-wrap gap-3 md:mt-16">
+        <ul className="mt-8 flex flex-wrap gap-3 md:mt-10">
           {links.map((item) => {
             const external = !item.href.startsWith("mailto:");
             return (
@@ -85,18 +57,6 @@ export default function ContactSection({ className = "" }: { className?: string 
             );
           })}
         </ul>
-
-        <div className="mt-20 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-white/60 md:mt-28 md:flex-row md:items-center md:justify-between">
-          <p>© {year ?? "2026"} Parastoo Sadeghi</p>
-          <p>
-            {profile.location}
-            {localTime && ` · ${localTime}`}
-          </p>
-          <p className="inline-flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent-green" aria-hidden />
-            {profile.availability}
-          </p>
-        </div>
       </div>
     </section>
   );
