@@ -1,34 +1,37 @@
-import RoundFillLink from "@/components/ui/RoundFillMagneticLink";
+import Link from "next/link";
 import { homeIntro } from "@/lib/content";
 
 /**
  * The home page's statement, as its own static section between the hero and
- * the work: the headline across the full width, then the paragraph with the
- * About circle underneath. Deliberately has no scroll animation, so the copy
- * can never end up hidden by a trigger measuring a stale page height.
+ * the featured work: one headline, then the line and an underlined link to
+ * About directly beneath it, on the same left edge. Deliberately has no
+ * scroll animation, so the copy can never end up hidden by a trigger
+ * measuring a stale page height.
  */
 export default function IntroSection() {
   return (
     <section
       id="intro"
       aria-label="Introduction"
-      className="relative bg-background px-6 py-24 md:px-10 md:py-36"
+      className="relative bg-background px-6 pb-4 pt-20 md:px-10 md:pb-6 md:pt-28"
     >
-      <div className="mx-auto grid w-full max-w-[1600px] gap-10 md:gap-14">
-        <h2 className="font-display text-[8vw] font-medium leading-[1.02] tracking-[-0.04em] md:text-[3.8vw]">
-          {homeIntro.lines.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
+      <div className="mx-auto w-full max-w-[1600px]">
+        {/* One sentence, so it is set large and balanced across its lines. */}
+        <h2 className="max-w-[18ch] text-balance font-display text-[11vw] font-medium leading-[0.98] tracking-[-0.045em] md:max-w-[20ch] md:text-[5.6vw]">
+          {homeIntro.lines.join(" ")}
         </h2>
-        <div className="flex flex-col items-start gap-8 md:flex-row md:items-center md:justify-between md:gap-16">
-          <p className="max-w-2xl text-lg leading-relaxed text-foreground/75 md:text-xl">
+
+        {/* The line, with a plain underlined link to About beneath it. */}
+        <div className="mt-10 md:mt-12">
+          <p className="max-w-sm text-lg leading-snug text-foreground/75">
             {homeIntro.aside}
           </p>
-          <RoundFillLink href={homeIntro.ctaHref}>
+          <Link
+            href={homeIntro.ctaHref}
+            className="mt-5 inline-block border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-foreground focus-visible:border-foreground focus-visible:outline-offset-4"
+          >
             {homeIntro.ctaLabel}
-          </RoundFillLink>
+          </Link>
         </div>
       </div>
     </section>

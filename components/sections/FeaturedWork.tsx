@@ -68,7 +68,7 @@ export default function FeaturedWork() {
     <section
       id="work"
       aria-labelledby="featured-title"
-      className="relative overflow-hidden bg-background px-6 pb-16 pt-20 md:px-10 md:pb-24 md:pt-28"
+      className="relative overflow-hidden bg-background px-6 pb-8 pt-16 md:px-10 md:pb-10 md:pt-20"
     >
       <div className="mx-auto max-w-[1600px]">
         {/* Section title: the same display style as "Selected work" on /work. */}
@@ -82,87 +82,94 @@ export default function FeaturedWork() {
           <p className="text-sm tabular-nums text-muted">01</p>
         </div>
 
-        {/* The mockup, floating on the page. */}
-        <Link
-          href={href}
-          aria-label={`${featured.name} case study`}
-          className="group relative mx-auto mt-12 block aspect-[16/9] max-h-[62vh] w-full md:mt-16"
-        >
-          <Image
-            src={featured.thumbnail}
-            alt={`${featured.name} on desktop and phone`}
-            fill
-            unoptimized={unoptimized}
-            sizes="(max-width: 768px) 92vw, 80vw"
-            className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-          />
-        </Link>
+        {/* Everything under the title shares the mockup's exact width, so
+            the name, facts and screens start at the laptop's left edge. The
+            mockup is 1542 x 851 with no transparent margin; capping the
+            width at 62vh x that ratio keeps it from getting too tall. */}
+        <div className="mx-auto w-full max-w-[calc(62vh*1542/851)]">
+          {/* The mockup, floating on the page. */}
+          <Link
+            href={href}
+            aria-label={`${featured.name} case study`}
+            className="group relative mt-10 block aspect-[1542/851] w-full md:mt-12"
+          >
+            <Image
+              src={featured.thumbnail}
+              alt={`${featured.name} on desktop and phone`}
+              fill
+              unoptimized={unoptimized}
+              sizes="(max-width: 768px) 92vw, 80vw"
+              className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+            />
+          </Link>
 
-        {/* Caption and the screens share one four-column grid. */}
-        <div className="mt-12 grid gap-y-10 md:mt-16 lg:grid-cols-4 lg:gap-x-8">
-          <div className="lg:col-span-2">
+          {/* Caption: name, then the description and the link as one group,
+              all on the same left edge. */}
+          <div className="mt-10 md:mt-12">
             <h3 className="font-display text-5xl font-medium leading-[0.92] tracking-[-0.045em] md:text-[5vw]">
               {featured.name}
             </h3>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-foreground/70 md:text-lg">
-              {featured.card.subtitle}
-            </p>
-          </div>
-
-          <div className="max-w-md lg:col-start-4 lg:max-w-none">
-            <dl className="divide-y divide-foreground/15 border-y border-foreground/15 text-sm">
-              {facts.map(([label, value]) => (
-                <div key={label} className="flex justify-between gap-6 py-3">
-                  <dt className="text-muted">{label}</dt>
-                  <dd className="text-right">{value}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="mt-8">
+            <div className="mt-6 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-10">
+              <p className="max-w-md text-base leading-relaxed text-foreground/70 md:text-lg">
+                {featured.card.subtitle}
+              </p>
               <RoundFillLink href={href} size="sm">
                 Case study
               </RoundFillLink>
             </div>
           </div>
-        </div>
 
-        {/* Inside the platform: part of the same feature. */}
-        <div className="mt-16 md:mt-24">
-          <h3 className="text-xs font-normal uppercase tracking-[0.18em] text-muted">
-            Inside the platform
-          </h3>
-
-          {/* Phones and tablets: a swipeable row. Desktop (1024px and up): four across. */}
-          <ul className="-mx-6 mt-6 flex snap-x snap-mandatory scroll-pl-6 gap-5 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:-mx-10 md:scroll-pl-10 md:px-10 lg:mx-0 lg:scroll-pl-0 lg:grid lg:grid-cols-4 lg:gap-8 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
-            {PARTS.map((part, i) => (
-              <li
-                key={part.label}
-                className="w-[70%] shrink-0 snap-start sm:w-[44%] lg:w-auto lg:shrink"
-              >
-                <Link href={href} className="group block">
-                  {/* Every screen is a phone screenshot with the same tall
-                      proportions (about 9:19.5), so the frame is that exact
-                      shape and the whole screen shows, uncropped. */}
-                  <div className="relative aspect-[530/1147] max-w-[280px] overflow-hidden rounded-[1.75rem] ring-1 ring-foreground/10">
-                    <Image
-                      src={part.src}
-                      alt={part.alt}
-                      fill
-                      unoptimized={unoptimized}
-                      sizes="(max-width: 768px) 70vw, 280px"
-                      className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                    />
-                  </div>
-                  <p className="mt-4 flex max-w-[280px] items-baseline gap-3 text-sm">
-                    <span className="tabular-nums text-muted">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="font-medium">{part.label}</span>
-                  </p>
-                </Link>
-              </li>
+          {/* Facts as one hairline row, on the same four columns as the
+              screens below, so every edge lines up. */}
+          <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-foreground/15 pt-5 text-sm md:mt-12 lg:grid-cols-4">
+            {facts.map(([label, value]) => (
+              <div key={label}>
+                <dt className="text-[11px] uppercase tracking-[0.16em] text-muted">
+                  {label}
+                </dt>
+                <dd className="mt-1.5">{value}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
+
+          {/* Inside the platform: part of the same feature. */}
+          <div className="mt-14 md:mt-16">
+            <h3 className="text-xs font-normal uppercase tracking-[0.18em] text-muted">
+              Inside the platform
+            </h3>
+
+            {/* Phones and tablets: a swipeable row. Desktop (1024px and up): four across. */}
+            <ul className="-mx-6 mt-6 flex snap-x snap-mandatory scroll-pl-6 gap-5 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:-mx-10 md:scroll-pl-10 md:px-10 lg:mx-0 lg:scroll-pl-0 lg:grid lg:grid-cols-4 lg:gap-8 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
+              {PARTS.map((part, i) => (
+                <li
+                  key={part.label}
+                  className="w-[70%] shrink-0 snap-start sm:w-[44%] lg:w-auto lg:shrink"
+                >
+                  <Link href={href} className="group block">
+                    {/* Every screen is a phone screenshot with the same tall
+                        proportions (about 9:19.5), so the frame is that exact
+                        shape and the whole screen shows, uncropped. */}
+                    <div className="relative aspect-[530/1147] max-w-[280px] overflow-hidden rounded-[1.75rem] ring-1 ring-foreground/10">
+                      <Image
+                        src={part.src}
+                        alt={part.alt}
+                        fill
+                        unoptimized={unoptimized}
+                        sizes="(max-width: 768px) 70vw, 280px"
+                        className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      />
+                    </div>
+                    <p className="mt-4 flex max-w-[280px] items-baseline gap-3 text-sm">
+                      <span className="tabular-nums text-muted">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="font-medium">{part.label}</span>
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
