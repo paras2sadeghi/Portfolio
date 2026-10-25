@@ -29,7 +29,7 @@ export default function IntroSection() {
           they never sit on the text. Desktop only. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[18%] max-w-[520px] xl:w-[24%] [mask-image:linear-gradient(to_right,transparent,black_35%)] lg:block"
+        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[20%] max-w-[560px] xl:w-[26%] [mask-image:linear-gradient(to_right,transparent,black_35%)] lg:block"
       >
         <Image
           src="/images/home/bougainvillea-wall.jpg"
@@ -37,7 +37,7 @@ export default function IntroSection() {
           fill
           unoptimized={process.env.NODE_ENV !== "production"}
           sizes="24vw"
-          className="object-cover object-left"
+          className="object-cover object-right"
         />
       </div>
 
