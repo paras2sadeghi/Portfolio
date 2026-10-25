@@ -3,11 +3,10 @@ import Link from "next/link";
 import { getProject, workHref } from "@/lib/projects";
 
 /**
- * The pinned project directly under the hero, in the spirit of an artist
- * profile's pinned release: one slide from the old showcase carousel, kept
- * on its own. A large mockup centred on the page, then one caption row
- * across the full width (label, name, line and role on the left, the case
- * study link on the right), then the four parts of the platform.
+ * My latest work, directly under the hero, laid out like the "Latest
+ * release" row on an artist profile: the mockup on the left, the details on
+ * the right (year and discipline, name, one line, role, the case study
+ * link), then the four parts of the platform in a small row beneath.
  *
  * Built in the site's own language (the same as the moving strip after it):
  * plain white, the page's own gutters, no boxes, shadows or colour of its
@@ -62,54 +61,52 @@ export default function FeaturedWork() {
             id="featured-title"
             className="font-display text-2xl font-medium tracking-[-0.03em] md:text-3xl"
           >
-            Featured project
+            Latest work
           </h2>
           <p className="text-sm tabular-nums text-muted">01</p>
         </div>
 
-        {/* The mockup, large and centred, floating on the page. The width is
-            capped so it never takes more than about 56% of the screen's
-            height (the image is 1542 x 851). */}
-        <Link
-          href={href}
-          aria-label={`${featured.name} case study`}
-          tabIndex={-1}
-          className="group relative mx-auto mt-8 block aspect-[1542/851] w-full max-w-[calc(56vh*1542/851)] md:mt-10"
-        >
-          <Image
-            src={featured.thumbnail}
-            alt={`${featured.name} on desktop and phone`}
-            fill
-            unoptimized={unoptimized}
-            sizes="(max-width: 768px) 92vw, 80vw"
-            className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-          />
-        </Link>
+        {/* The latest-release row: mockup on the left, details on the
+            right, centred against each other. Stacks below 1024px. */}
+        <div className="mt-8 grid items-center gap-8 md:mt-10 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+          <Link
+            href={href}
+            aria-label={`${featured.name} case study`}
+            tabIndex={-1}
+            className="group relative block aspect-[1542/851] w-full"
+          >
+            <Image
+              src={featured.thumbnail}
+              alt={`${featured.name} on desktop and phone`}
+              fill
+              unoptimized={unoptimized}
+              sizes="(max-width: 1024px) 92vw, 55vw"
+              className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+            />
+          </Link>
 
-        {/* One caption row across the full width, as on the old slide. */}
-        <div className="mt-8 flex flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-12">
           <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.18em] text-muted">
-              {featured.discipline} · {featured.year}
+              {featured.year} · {featured.discipline}
             </p>
-            <h3 className="mt-2 font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] md:text-[4vw]">
+            <h3 className="mt-3 font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] md:text-6xl xl:text-7xl">
               {featured.name}
             </h3>
-            <p className="mt-3 max-w-xl text-base text-foreground/70 md:text-lg">
+            <p className="mt-4 max-w-md text-base text-foreground/70 md:text-lg">
               {featured.card.subtitle}
             </p>
             {featured.card.contribution && (
-              <p className="mt-1.5 text-sm font-medium text-foreground/80">
+              <p className="mt-2 text-sm font-medium text-foreground/80">
                 {featured.card.contribution}
               </p>
             )}
+            <Link
+              href={href}
+              className="mt-8 inline-block border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-foreground focus-visible:border-foreground focus-visible:outline-offset-4"
+            >
+              View case study ↗
+            </Link>
           </div>
-          <Link
-            href={href}
-            className="inline-block w-fit shrink-0 border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-foreground focus-visible:border-foreground focus-visible:outline-offset-4"
-          >
-            View case study ↗
-          </Link>
         </div>
 
         {/* Inside the platform: part of the same feature. */}
@@ -118,28 +115,29 @@ export default function FeaturedWork() {
             Inside the platform
           </h3>
 
-          {/* Phones and tablets: a swipeable row. Desktop (1024px and up): four across. */}
-          <ul className="-mx-6 mt-5 flex snap-x snap-mandatory scroll-pl-6 gap-5 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:-mx-10 md:scroll-pl-10 md:px-10 lg:mx-0 lg:scroll-pl-0 lg:grid lg:grid-cols-4 lg:gap-8 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
+          {/* Phones and tablets: a swipeable row. Desktop (1024px and up): a
+              small row of four from the left edge. */}
+          <ul className="-mx-6 mt-5 flex snap-x snap-mandatory scroll-pl-6 gap-5 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:-mx-10 md:scroll-pl-10 md:px-10 lg:mx-0 lg:gap-10 lg:overflow-visible lg:scroll-pl-0 lg:px-0 [&::-webkit-scrollbar]:hidden">
             {PARTS.map((part) => (
               <li
                 key={part.label}
-                className="w-[70%] shrink-0 snap-start sm:w-[44%] lg:w-auto lg:shrink"
+                className="w-[60%] shrink-0 snap-start sm:w-[36%] lg:w-[200px]"
               >
                 <Link href={href} className="group block">
                   {/* Every screen is a phone screenshot with the same tall
                       proportions (about 9:19.5), so the frame is that exact
                       shape and the whole screen shows, uncropped. */}
-                  <div className="relative mx-auto aspect-[530/1147] max-w-[240px] overflow-hidden rounded-[1.75rem] ring-1 ring-foreground/10">
+                  <div className="relative aspect-[530/1147] w-full overflow-hidden rounded-[1.75rem] ring-1 ring-foreground/10">
                     <Image
                       src={part.src}
                       alt={part.alt}
                       fill
                       unoptimized={unoptimized}
-                      sizes="(max-width: 768px) 70vw, 240px"
+                      sizes="(max-width: 768px) 60vw, 200px"
                       className="object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
-                  <p className="mx-auto mt-4 max-w-[240px] font-display text-lg font-medium tracking-tight">
+                  <p className="mt-3 font-display text-base font-medium tracking-tight">
                     {part.label}
                   </p>
                 </Link>
