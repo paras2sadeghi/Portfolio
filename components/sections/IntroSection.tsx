@@ -21,7 +21,7 @@ export default function IntroSection() {
           <h2 className="max-w-[18ch] text-balance font-display text-[11vw] font-medium leading-[0.98] tracking-[-0.045em] md:max-w-[20ch] md:text-[5.6vw]">
             {homeIntro.lines.join(" ")}
           </h2>
-          <p className="mt-6 max-w-sm text-lg leading-snug text-foreground/75 md:mt-8">
+          <p className="mt-6 max-w-md text-lg leading-snug text-foreground/75 md:mt-8">
             {homeIntro.aside}
           </p>
         </div>
