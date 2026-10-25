@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Magnolia from "@/components/ui/Magnolia";
 import { getProject, workHref } from "@/lib/projects";
 
 /**
@@ -14,7 +15,8 @@ import { getProject, workHref } from "@/lib/projects";
  * fully visible to crawlers and agents.
  */
 
-const FEATURED_SLUG = "flash-pharmacy";
+// Also read by WorkMarquee, which leaves this project out of the strip.
+export const FEATURED_SLUG = "flash-pharmacy";
 
 const unoptimized = process.env.NODE_ENV !== "production";
 
@@ -27,7 +29,7 @@ export default function FeaturedWork() {
     <section
       id="work"
       aria-labelledby="featured-title"
-      className="relative bg-background px-6 pb-4 pt-10 md:px-10 md:pb-6 md:pt-14"
+      className="relative overflow-x-clip bg-background px-6 pb-4 pt-10 md:px-10 md:pb-6 md:pt-14"
     >
       <div className="mx-auto max-w-[1600px]">
         {/* Section title: the same display style as "Selected work" on /work. */}
@@ -60,8 +62,12 @@ export default function FeaturedWork() {
             />
           </Link>
 
-          <div className="min-w-0">
-            <p className="text-xs uppercase tracking-[0.18em] text-muted">
+          <div className="relative isolate min-w-0">
+            {/* The brand flower, large and soft pink, turning very slowly
+                behind the details like a watermark. */}
+            <Magnolia className="pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square h-[105%] -translate-x-1/2 lg:h-[150%] -translate-y-1/2 animate-[spin_90s_linear_infinite] text-[#EC4899]/10 motion-reduce:animate-none lg:left-[60%]" />
+            <p className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted">
+              <Magnolia className="h-3.5 w-3.5 text-[#EC4899]" />
               {featured.year} · {featured.discipline}
             </p>
             <h3 className="mt-3 font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] md:text-6xl xl:text-7xl">
@@ -77,7 +83,7 @@ export default function FeaturedWork() {
             )}
             <Link
               href={href}
-              className="mt-8 inline-block border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-foreground focus-visible:border-foreground focus-visible:outline-offset-4"
+              className="mt-8 inline-block border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-[#EC4899] focus-visible:border-[#EC4899] focus-visible:outline-offset-4"
             >
               View case study ↗
             </Link>
