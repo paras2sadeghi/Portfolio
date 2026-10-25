@@ -1,32 +1,81 @@
-import RoundFillLink from "@/components/ui/RoundFillMagneticLink";
+import Image from "next/image";
+import Link from "next/link";
 import { homeIntro } from "@/lib/content";
 
 /**
- * The home page's statement, as its own static section between the hero and
- * the latest work: the headline and one line on the left, and the round
- * "More about me" button on the right, level with the headline. Deliberately
- * has no scroll animation, so the copy can never end up hidden by a trigger
- * measuring a stale page height.
+ * The home page's statement, between the hero and the latest work, laid out
+ * on a 12-column grid inside a 1200px content width (20px gutters, 96px top
+ * and bottom on desktop):
+ *
+ * - the headline in a serif across six columns, its second line in pink
+ *   italics;
+ * - the paragraph and the About link in columns 7 to 10, clear of the
+ *   flowers;
+ * - a bougainvillea wall bleeding off the right edge, fading into the page.
+ *
+ * Deliberately has no scroll animation, so the copy can never end up hidden
+ * by a trigger measuring a stale page height.
  */
 export default function IntroSection() {
+  const [first, second] = homeIntro.lines;
+
   return (
     <section
       id="intro"
       aria-label="Introduction"
-      className="relative bg-background px-6 pb-2 pt-14 md:px-10 md:pb-4 md:pt-20"
+      className="relative overflow-hidden bg-background px-6 py-16 md:px-10 lg:py-24"
     >
-      <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-10 md:flex-row md:items-center md:justify-between md:gap-12">
-        <div>
-          {/* One sentence, so it is set large and balanced across its lines. */}
-          <h2 className="max-w-[18ch] text-balance font-display text-[11vw] font-medium leading-[0.98] tracking-[-0.045em] md:max-w-[20ch] md:text-[5.6vw]">
-            {homeIntro.lines.join(" ")}
-          </h2>
-          <p className="mt-6 max-w-md text-lg leading-snug text-foreground/75 md:mt-8">
+      {/* The flowers: full height on the right, fading in from the page so
+          they never sit on the text. Desktop only. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[18%] max-w-[520px] xl:w-[24%] [mask-image:linear-gradient(to_right,transparent,black_35%)] lg:block"
+      >
+        <Image
+          src="/images/home/bougainvillea-wall.jpg"
+          alt=""
+          fill
+          unoptimized={process.env.NODE_ENV !== "production"}
+          sizes="24vw"
+          className="object-cover object-left"
+        />
+      </div>
+
+      <div className="relative mx-auto grid max-w-[1200px] grid-cols-12 gap-x-5">
+        <h2 className="col-span-12 font-serif text-[clamp(3.25rem,13vw,4.5rem)] font-normal leading-[0.98] tracking-[-0.02em] md:text-[clamp(4.5rem,8vw,6.75rem)] lg:col-span-6 lg:text-[clamp(4rem,6.4vw,6rem)]">
+          <span className="block">{first}</span>
+          {second && (
+            <span className="block italic text-[#DB2777]">{second}</span>
+          )}
+        </h2>
+
+        <div className="col-span-12 mt-8 md:col-span-8 lg:col-start-7 lg:col-span-4 lg:mt-0 lg:self-end lg:pb-3">
+          <p className="text-lg leading-[1.45] text-foreground/80 md:text-xl">
             {homeIntro.aside}
           </p>
+          <Link
+            href={homeIntro.ctaHref}
+            className="group mt-8 inline-flex items-center gap-3 text-lg font-medium"
+          >
+            <span className="border-b border-transparent pb-0.5 transition-colors duration-300 group-hover:border-[#DB2777] group-focus-visible:border-[#DB2777]">
+              {homeIntro.ctaLabel}
+            </span>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+              className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            >
+              <path d="M7 17 17 7M8 7h9v9" />
+            </svg>
+          </Link>
         </div>
-
-        <RoundFillLink href={homeIntro.ctaHref}>{homeIntro.ctaLabel}</RoundFillLink>
       </div>
     </section>
   );

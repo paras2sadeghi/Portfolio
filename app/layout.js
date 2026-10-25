@@ -1,4 +1,4 @@
-import { Inter, Inter_Tight } from "next/font/google";
+import { Inter, Inter_Tight, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import { SITE_URL, profile } from "@/lib/content";
@@ -14,6 +14,14 @@ const interTight = Inter_Tight({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+// High-contrast serif for the editorial headline in the home intro.
+const playfair = Playfair_Display({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
 });
 
 const description =
@@ -73,7 +81,7 @@ export default function RootLayout({ children }) {
       lang="en"
       // The intro script above adds a class before hydration.
       suppressHydrationWarning
-      className={`${inter.variable} ${interTight.variable} h-full antialiased`}
+      className={`${inter.variable} ${interTight.variable} ${playfair.variable} h-full antialiased`}
     >
       <head>
         {/* Intro loader plays only when a visit opens on the home page, once
