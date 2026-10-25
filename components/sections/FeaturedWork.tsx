@@ -90,7 +90,7 @@ export default function FeaturedWork() {
         <div className="mt-8 flex flex-col gap-6 md:mt-10 md:flex-row md:items-end md:justify-between md:gap-12">
           <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.18em] text-muted">
-              {featured.discipline} Â· {featured.year}
+              {featured.discipline} · {featured.year}
             </p>
             <h3 className="mt-2 font-display text-5xl font-medium leading-[0.95] tracking-[-0.045em] md:text-[4vw]">
               {featured.name}
@@ -108,7 +108,7 @@ export default function FeaturedWork() {
             href={href}
             className="inline-block w-fit shrink-0 border-b border-foreground/30 pb-1 text-base font-medium transition-colors duration-300 hover:border-foreground focus-visible:border-foreground focus-visible:outline-offset-4"
           >
-            View case study â†—
+            View case study ↗
           </Link>
         </div>
 
