@@ -1,11 +1,15 @@
 /**
- * Project posters: the photographed product scenes (4:3, in
- * /images/work/scenes). Projects without a scene yet fall back to their
+ * Project posters: photographed product scenes (4:3, in /images/work/scenes),
+ * all shot on one set (limestone plinth, Mediterranean daylight, a small
+ * bougainvillea cameo). Projects without a scene yet fall back to their
  * existing hero mockup, unchanged.
  */
 const SCENES: Record<string, string> = {
   "flash-pharmacy": "/images/work/scenes/flash-pharmacy.webp",
   "flash-longevity": "/images/work/scenes/flash-longevity.webp",
+  "connected-health-pitch": "/images/work/scenes/connected-health.webp",
+  "safes-family": "/images/work/scenes/safes-family.webp",
+  roobinium: "/images/work/scenes/roobinium.webp",
   huddle: "/images/work/scenes/huddle.webp",
   transit: "/images/work/scenes/transit.webp",
   bloom: "/images/work/scenes/bloom.webp",
