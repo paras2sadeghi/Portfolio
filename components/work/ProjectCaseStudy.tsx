@@ -178,6 +178,35 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           <div className="mb-24 md:mb-40">
             <CaseStudyBlocks blocks={cs.blocks} />
           </div>
+        ) : cs.gallery?.length ? (
+          // Case studies without long-form blocks show their screens as a
+          // simple gallery. Each image keeps its own proportions, uncropped,
+          // and tall phone screens are capped so they fit on one screen.
+          <section data-cs-reveal className="mb-16 md:mb-24" aria-label="Screens">
+            <p className="mb-6 text-xs uppercase tracking-[0.2em] text-muted">
+              Screens
+            </p>
+            <div className="grid items-start gap-4 md:grid-cols-2 md:gap-6">
+              {cs.gallery.map((img, i) => (
+                <figure
+                  key={img.src}
+                  className={`flex justify-center overflow-hidden rounded-2xl bg-surface ${
+                    i === 0 && cs.gallery.length % 2 === 1 ? "md:col-span-2" : ""
+                  }`}
+                >
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    width={1600}
+                    height={1000}
+                    unoptimized={process.env.NODE_ENV !== "production"}
+                    sizes="(max-width: 768px) 92vw, 50vw"
+                    className="h-auto max-h-[80svh] w-auto max-w-full object-contain"
+                  />
+                </figure>
+              ))}
+            </div>
+          </section>
         ) : null}
 
         {cs.sections.map((section, i) => (
