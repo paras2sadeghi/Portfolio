@@ -114,16 +114,16 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
   return (
     <article ref={rootRef} className="bg-background text-foreground">
       <ScrollProgress />
-      <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-28 md:px-10 md:pb-32 md:pt-36">
+      <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-28">
         <Link
           href="/work"
           data-cs-reveal
-          className="mb-10 inline-flex text-sm text-muted transition-colors hover:text-foreground"
+          className="mb-6 inline-flex text-sm text-muted transition-colors hover:text-foreground"
         >
           ← All work
         </Link>
 
-        <header className="mb-14 grid gap-12 md:mb-20 md:grid-cols-12 md:gap-10">
+        <header className="mb-8 grid gap-8 md:mb-10 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-8">
             <p
               data-cs-reveal
@@ -133,13 +133,13 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
             </p>
             <h1
               data-cs-reveal
-              className="max-w-[16ch] font-display text-[12vw] font-medium leading-[0.88] tracking-[-0.05em] md:text-[6.5vw]"
+              className="max-w-[16ch] font-display text-[12vw] font-medium leading-[0.9] tracking-[-0.05em] md:text-[clamp(3rem,4.6vw,4.75rem)]"
             >
               {project.name}
             </h1>
             <p
               data-cs-reveal
-              className="mt-8 max-w-3xl text-xl leading-[1.5] text-foreground/80 md:text-[1.6rem]"
+              className="mt-5 max-w-3xl text-lg leading-[1.5] text-foreground/80 md:text-xl"
             >
               {cs.summary}
             </p>
@@ -151,16 +151,20 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           </div>
         </header>
 
+        {/* Every cover is 16:9, so the frame is too and nothing is cropped.
+            The width is capped to the screen height left under the header,
+            so the whole cover shows when the page opens, but never below
+            36rem wide on large screens. */}
         <div
           data-cs-reveal
-          className="relative mb-16 aspect-[16/10] overflow-hidden rounded-2xl bg-surface md:mb-24"
+          className="relative mx-auto mb-16 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-surface md:mb-24 md:max-w-[max(36rem,calc((100svh-28rem)*16/9))]"
         >
           <Image
             src={project.heroImage}
             alt={`${project.name} product interface mockup`}
             fill
             unoptimized={process.env.NODE_ENV !== "production"}
-            className="object-cover object-center"
+            className="object-contain object-center"
             sizes="(max-width: 1600px) 100vw, 1600px"
             priority
           />
