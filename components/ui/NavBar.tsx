@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { getLenis } from "@/hooks/useLenisGsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { profile } from "@/lib/content";
 
@@ -24,7 +23,6 @@ export default function NavBar() {
   const isHome = pathname === "/";
   const reduced = useReducedMotion();
   const [pastHero, setPastHero] = useState(!isHome);
-  const [workInView, setWorkInView] = useState(false);
 
   useEffect(() => {
     if (!isHome) {
@@ -53,39 +51,6 @@ export default function NavBar() {
 
     return () => trigger.kill();
   }, [isHome, reduced, pathname]);
-
-  // "Work" lights up while the featured-work section crosses the middle of
-  // the screen. An observer, not a scroll trigger, because that section pins.
-  useEffect(() => {
-    if (!isHome) {
-      setWorkInView(false);
-      return;
-    }
-    const section = document.getElementById("work");
-    if (!section) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setWorkInView(entry.isIntersecting),
-      { rootMargin: "-45% 0px -45% 0px" }
-    );
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, [isHome]);
-
-  const goToWork = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!isHome) return; // From other pages the link navigates home to #work.
-    const section = document.getElementById("work");
-    if (!section) return;
-    event.preventDefault();
-    const lenis = getLenis();
-    if (reduced) {
-      // "instant" overrides the page's CSS smooth-scroll fallback.
-      section.scrollIntoView({ behavior: "instant" as ScrollBehavior });
-    } else if (lenis) {
-      lenis.scrollTo(section, { duration: 1.4 });
-    } else {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   return (
     <header
@@ -118,10 +83,10 @@ export default function NavBar() {
         </Link>
 
         <nav aria-label="Primary" className="flex items-center">
+          {/* Work goes to the full work page. */}
           <NavItem
-            href="/#work"
-            onClick={goToWork}
-            active={workInView || pathname.startsWith("/work")}
+            href="/work"
+            active={pathname.startsWith("/work")}
             solid={pastHero}
           >
             Work
