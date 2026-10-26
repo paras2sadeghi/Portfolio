@@ -133,33 +133,6 @@ export default function AboutPage() {
             <span className="h-2 w-2 rounded-full bg-accent-green" aria-hidden />
             {profile.availability} · {profile.workplace}
           </p>
-
-          <p
-            data-about-page-reveal
-            className="mt-8 text-sm uppercase tracking-[0.22em] text-muted"
-          >
-            Always exploring
-          </p>
-          <div
-            data-about-page-reveal
-            className="mt-4 overflow-hidden border-y border-foreground/12 py-4"
-          >
-            <div className="marquee-track flex w-max gap-10 whitespace-nowrap">
-              {[0, 1].map((copy) => (
-                <span
-                  key={copy}
-                  aria-hidden={copy === 1}
-                  className="font-display text-2xl font-medium tracking-tight text-foreground/80 md:text-3xl"
-                >
-                  {aboutPage.exploring.map((item) => (
-                    <span key={`${copy}-${item}`} className="mx-5">
-                      {item}
-                    </span>
-                  ))}
-                </span>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -317,6 +290,32 @@ export default function AboutPage() {
                 answer={item.answer}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Always exploring: a moving band of fields, right above the footer. */}
+      <section className="px-6 pb-16 md:px-10 md:pb-20">
+        <div className="mx-auto max-w-[1600px]">
+          <p className="text-sm uppercase tracking-[0.22em] text-muted">
+            Always exploring
+          </p>
+          <div className="mt-4 overflow-hidden border-y border-foreground/12 py-4">
+            <div className="marquee-track flex w-max gap-10 whitespace-nowrap">
+              {[0, 1].map((copy) => (
+                <span
+                  key={copy}
+                  aria-hidden={copy === 1}
+                  className="font-display text-2xl font-medium tracking-tight text-foreground/80 md:text-3xl"
+                >
+                  {aboutPage.exploring.map((item) => (
+                    <span key={`${copy}-${item}`} className="mx-5">
+                      {item}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
