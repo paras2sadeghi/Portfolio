@@ -91,7 +91,8 @@ export default function ProjectStrip({ cards }: { cards: StripCard[] }) {
   };
 
   return (
-    <div className="mt-16">
+    // A pale warm band, the tone of the stone in the posters, edge to edge.
+    <div className="mt-16 bg-[#F7F3EE] py-14 md:py-16">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-6 sm:flex-row sm:items-end sm:justify-between sm:gap-6 md:px-10">
         <div>
           <h3 className="font-serif text-3xl font-normal tracking-[-0.01em] md:text-[2.5rem]">
