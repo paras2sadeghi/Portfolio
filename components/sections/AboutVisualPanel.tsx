@@ -101,8 +101,8 @@ export default function AboutVisualPanel({
         <div
           ref={videoLayerRef}
           aria-hidden
-          // Only the top of the panel, fading out well above the copy.
-          className="pointer-events-none absolute inset-x-0 top-0 h-[34%] will-change-transform md:h-[42%] [mask-image:linear-gradient(to_bottom,black_0%,black_55%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_55%,transparent_100%)]"
+          // Only the top of the panel, clear of the copy. No fade.
+          className="pointer-events-none absolute inset-x-0 top-0 h-[34%] will-change-transform md:h-[42%]"
         >
           <video
             ref={videoRef}
@@ -111,7 +111,8 @@ export default function AboutVisualPanel({
             loop
             playsInline
             preload="metadata"
-            className="h-full w-full object-cover object-top"
+            // The whole vine, uncropped, so it ends where the flowers end.
+            className="h-full w-full object-contain object-[left_top]"
           />
         </div>
       )}
