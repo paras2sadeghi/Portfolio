@@ -110,6 +110,14 @@ html.lenis body {
   will-change: transform;
 }
 
+/* Home fields band: slower than the hero name and moving the other way, so
+   the two never read as the same thing. Reduced motion stops it via the
+   .marquee-track rule below. */
+.fields-track {
+  animation-duration: 60s;
+  animation-direction: reverse;
+}
+
 /* Hero name. One slow, constant-speed loop in one direction: two identical
    halves, so -50% lands exactly on the seam. The 1.5s delay holds the first
    complete name still so it can be read before anything moves. Pauses on
