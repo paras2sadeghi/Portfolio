@@ -1,352 +1,389 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useEffect, useRef, type ReactNode } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import MagneticButton from "@/components/animations/MagneticButton";
 import AboutVisualPanel from "@/components/sections/AboutVisualPanel";
-import CopyEmail from "@/components/ui/CopyEmail";
+import ContactSection from "@/components/sections/ContactSection";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import {
-  aboutPage,
-  aboutStory,
-  experience,
-  faqs,
-  profile,
-  services,
-  stats,
-} from "@/lib/content";
-import { GSAP_EASE } from "@/utils/motion";
 
-function FaqItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
+/**
+ * About page, from the supplied art direction: a modern editorial layout in
+ * the home page's 1200px column (12-column grid), serif headings with a pink
+ * italic accent, small pink eyebrows, thin rules between chapters and the
+ * three real photographs. Each chapter fades up once as it comes into view.
+ */
 
-  return (
-    <div className="border-t border-foreground/12">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-start justify-between gap-6 py-6 text-left"
-        aria-expanded={open}
-      >
-        <span className="text-lg font-medium tracking-tight md:text-xl">
-          {question}
-        </span>
-        <span
-          aria-hidden
-          className={`mt-1 shrink-0 text-xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "rotate-45" : ""}`}
-        >
-          +
-        </span>
-      </button>
-      <div
-        className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-      >
-        <div className="overflow-hidden">
-          <p className="max-w-2xl pb-6 text-base leading-relaxed text-muted">
-            {answer}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+const PINK = "text-[#DB2777]";
+const unoptimized = process.env.NODE_ENV !== "production";
 
 export default function AboutPage() {
   const pageRef = useRef<HTMLElement | null>(null);
   const reduced = useReducedMotion();
 
+  // One-time fade-up for each [data-reveal] block. IntersectionObserver, so
+  // nothing can be left hidden by a stale scroll measurement; content is
+  // fully visible without JS and with reduced motion.
   useEffect(() => {
-    if (reduced) return;
     const page = pageRef.current;
     if (!page) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    gsap.registerPlugin(ScrollTrigger);
-
-    const context = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>("[data-about-page-reveal]").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { y: 48, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1.1,
-            ease: GSAP_EASE,
-            scrollTrigger: { trigger: el, start: "top 88%", once: true },
-          }
-        );
-      });
-    }, page);
-
-    return () => context.revert();
-  }, [reduced]);
+    const blocks = gsap.utils.toArray<HTMLElement>("[data-reveal]", page);
+    const ctx = gsap.context(() => gsap.set(blocks, { y: 32, autoAlpha: 0 }), page);
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          io.unobserve(entry.target);
+          ctx.add(() =>
+            gsap.to(entry.target, { y: 0, autoAlpha: 1, duration: 1, ease: "power3.out" })
+          );
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px" }
+    );
+    blocks.forEach((b) => io.observe(b));
+    return () => {
+      io.disconnect();
+      ctx.revert();
+    };
+  }, []);
 
   return (
-    <main ref={pageRef} className="bg-background text-foreground">
-      {/* Hero — inspired by dennissnellenberg.com/about */}
-      <section className="px-6 pb-16 pt-32 md:px-10 md:pb-24 md:pt-40">
-        <div className="mx-auto max-w-[1600px]">
-          <Link
-            href="/"
-            className="mb-10 inline-flex text-sm text-muted transition-colors hover:text-foreground"
-          >
-            ← Home
-          </Link>
-
-          <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
-            <h1
-              data-about-page-reveal
-              className="max-w-[14ch] font-display text-[12vw] font-medium leading-[0.88] tracking-[-0.05em] md:text-[6.5vw]"
-            >
-              {aboutPage.headline}
+    <main ref={pageRef} className="bg-white text-foreground">
+      {/* Hero */}
+      <Chapter className="pt-32 md:pt-40" first>
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8">
+          <div data-reveal className="lg:col-span-7">
+            <Eyebrow>A little about me</Eyebrow>
+            <h1 className="font-serif text-[clamp(2.75rem,9vw,3.5rem)] font-normal leading-[1.05] tracking-[-0.02em] md:text-[clamp(3rem,5vw,4.75rem)]">
+              My brain has a visual setting.{" "}
+              <em className={`not-italic md:block ${PINK}`}>
+                <span className="italic">It’s always on.</span>
+              </em>
             </h1>
-            <MagneticButton
-              href="#about-contact"
-              strength={0.35}
-              radius={100}
-              className="group mb-2 inline-flex h-12 items-center justify-center gap-2 rounded-full border border-foreground/15 px-6 text-sm font-medium transition-colors hover:bg-foreground hover:text-background md:h-14 md:text-base"
-            >
-              Get in touch <span aria-hidden>↗</span>
-            </MagneticButton>
+            <Body className="mt-8">
+              Hi, I’m Parastoo. A Vancouver-based product designer who loves
+              making things work, look beautiful, and feel a little more human.
+            </Body>
+            <Body>
+              I think in pictures. Sometimes even sounds and feelings turn into
+              images in my head.
+            </Body>
+            <Body>It’s a pretty interesting place in there.</Body>
           </div>
-
-          <p
-            data-about-page-reveal
-            className="mt-10 max-w-2xl text-lg leading-relaxed text-muted md:mt-14 md:text-xl"
-          >
-            {aboutPage.lead}
-          </p>
-
-          {/* The plain-language version, for anyone skimming. */}
-          <p
-            data-about-page-reveal
-            className="mt-6 max-w-2xl text-base leading-relaxed text-foreground md:text-lg"
-          >
-            {aboutPage.facts}
-          </p>
-          <p
-            data-about-page-reveal
-            className="mt-4 inline-flex items-center gap-2 text-sm text-muted"
-          >
-            <span className="h-2 w-2 rounded-full bg-accent-green" aria-hidden />
-            {profile.availability} · {profile.workplace}
-          </p>
-        </div>
-      </section>
-
-      {/* Services */}
-      <section className="border-t border-foreground/12 px-6 py-20 md:px-10 md:py-28">
-        <div className="mx-auto max-w-[1600px]">
-          <h2
-            data-about-page-reveal
-            className="mb-12 font-display text-4xl font-medium tracking-[-0.04em] md:text-5xl"
-          >
-            {aboutPage.servicesTitle}
-          </h2>
-
-          <div className="grid gap-4 lg:grid-cols-3">
-            {services.map((service, index) => (
-              <article
-                key={service.id}
-                data-about-page-reveal
-                className="rounded-2xl border border-foreground/12 bg-surface/40 p-6 transition-colors duration-500 hover:border-foreground/25 md:p-8"
-              >
-                <span className="text-xs uppercase tracking-[0.2em] text-muted">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-6 font-display text-2xl font-medium tracking-tight md:text-3xl">
-                  {service.title}
-                </h3>
-                <p className="mt-4 text-sm leading-relaxed text-foreground/75 md:text-base">
-                  {service.description}
-                </p>
-                <div className="mt-8 flex gap-2" aria-hidden>
-                  {service.swatches.map((color) => (
-                    <span
-                      key={color}
-                      className="h-2 w-8 rounded-full"
-                      style={{ background: color }}
-                    />
-                  ))}
-                </div>
-              </article>
-            ))}
+          <div data-reveal className="lg:col-span-5">
+            <Photo
+              src="/images/about/resting-on-arms.webp"
+              alt="Parastoo resting her head on her arms on a sunlit stone ledge, bougainvillea petals in front of her"
+              width={525}
+              height={543}
+              priority
+            />
           </div>
         </div>
-      </section>
+      </Chapter>
 
-      {/* Story + visual */}
-      <section className="px-6 py-20 md:px-10 md:py-28">
-        <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-16 md:grid-cols-[0.95fr_1.05fr] md:gap-20">
-          <AboutVisualPanel reduced={reduced} />
-          <div className="flex flex-col gap-8 md:gap-10 md:pt-6">
-            {aboutStory.map((paragraph, i) => (
-              <p
-                key={i}
-                data-about-page-reveal
-                className={
-                  i === 0
-                    ? "text-2xl font-medium leading-[1.35] tracking-tight md:text-[1.75rem]"
-                    : "max-w-xl text-base leading-relaxed text-muted md:text-lg"
-                }
-              >
-                {paragraph}
+      {/* 01 */}
+      <Chapter>
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8">
+          <div data-reveal className="lg:col-span-6">
+            <Eyebrow>01 / How it started</Eyebrow>
+            <Heading>
+              I’ve always been a bit of a <Accent>fixer.</Accent>
+            </Heading>
+            <Body>
+              As a kid, I was constantly trying to fix things around the house. I
+              loved figuring out how things worked, but I loved art just as much.
+            </Body>
+            <Body>
+              Then came cinema, where I fell in love with storytelling and making
+              people <em>feel</em> something.
+            </Body>
+            <Body>
+              After university, I started out in content creation. Little by
+              little, I found my way into design.
+            </Body>
+            <Body>
+              Turns out,{" "}
+              <strong className="font-medium text-foreground">
+                design was where everything I loved finally met.
+              </strong>
+            </Body>
+          </div>
+          <div data-reveal className="lg:col-span-6">
+            <div className="flex min-h-[260px] flex-col justify-center bg-[#F7F3EE] p-10 md:min-h-[300px] md:p-12">
+              <p className="font-serif text-3xl leading-[1.1] tracking-[-0.01em] md:text-[2.25rem]">
+                Art + logic +
+                <br />
+                <Accent>storytelling.</Accent>
               </p>
-            ))}
+              <p className="mt-4 text-sm text-muted">Three interests. One career.</p>
+            </div>
           </div>
         </div>
-      </section>
+      </Chapter>
 
-      {/* Spotlight */}
-      <section className="border-y border-foreground/12 bg-ink px-6 py-20 text-white md:px-10 md:py-28">
-        <div className="mx-auto grid max-w-[1600px] gap-10 md:grid-cols-[1fr_1.2fr] md:items-end">
-          <h2
-            data-about-page-reveal
-            className="font-display text-4xl font-medium leading-[0.95] tracking-[-0.04em] md:text-6xl"
-          >
-            {aboutPage.spotlight.title}
-          </h2>
-          <p
-            data-about-page-reveal
-            className="max-w-xl text-base leading-relaxed text-white/65 md:text-lg"
-          >
-            {aboutPage.spotlight.body}
-          </p>
+      {/* 02 */}
+      <Chapter>
+        <div data-reveal>
+          <Eyebrow>02 / How I think</Eyebrow>
+          <Heading>
+            I see it before I can <Accent>explain it.</Accent>
+          </Heading>
         </div>
-      </section>
-
-      {/* Experience */}
-      <section className="px-6 py-20 md:px-10 md:py-28">
-        <div className="mx-auto max-w-[1600px]">
-          <h2
-            data-about-page-reveal
-            className="mb-12 text-xs uppercase tracking-[0.22em] text-muted"
-          >
-            Experience
-          </h2>
-          <div className="border-t border-foreground/12">
-            {experience.map((item) => (
-              <div
-                key={`${item.role}-${item.org}`}
-                data-about-page-reveal
-                className="group grid gap-4 border-b border-foreground/12 py-8 transition-colors hover:bg-surface/50 md:grid-cols-[6rem_1fr_2fr] md:items-start md:gap-10 md:py-10"
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
+          <div data-reveal className="lg:col-span-5">
+            <Body>
+              My thinking is incredibly visual. Ideas take shape in my head long
+              before I find the words for them.
+            </Body>
+            <Body>
+              I care about the little details, sometimes a little too much. I
+              love learning, experimenting, and finding unexpected ways to solve
+              problems.
+            </Body>
+            <Body>To me, good design isn’t just something that looks beautiful.</Body>
+            <Body>
+              <strong className="font-medium text-foreground">
+                It’s something that makes sense and makes you feel something.
+              </strong>
+            </Body>
+          </div>
+          <ol data-reveal className="lg:col-span-6 lg:col-start-7">
+            {[
+              ["See the bigger picture.", "I visualize ideas, connections, and possibilities."],
+              ["Obsess over the little things.", "The details are what make an experience feel right."],
+              ["Never stop experimenting.", "There’s always something new worth learning."],
+            ].map(([title, line], i) => (
+              <li
+                key={title}
+                className="grid grid-cols-[3rem_1fr] gap-4 border-t border-foreground/10 py-6 last:border-b"
               >
-                <span className="text-xs uppercase tracking-[0.18em] text-muted">
-                  {item.year}
+                <span className={`pt-1.5 text-sm tabular-nums ${PINK}`}>
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <div>
-                  <h3 className="text-xl font-medium tracking-tight md:text-2xl">
-                    {item.role}
+                  <h3 className="font-serif text-2xl font-normal tracking-[-0.01em] md:text-[1.75rem]">
+                    {title}
                   </h3>
-                  <p className="mt-1 text-sm text-muted">{item.org}</p>
+                  <p className="mt-1 text-sm text-muted md:text-base">{line}</p>
                 </div>
-                <p className="max-w-lg text-sm leading-relaxed text-muted md:text-base">
-                  {item.detail}
-                </p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
-      </section>
+      </Chapter>
 
-      {/* Stats */}
-      <section className="border-t border-foreground/12 px-6 py-16 md:px-10 md:py-20">
-        <div className="mx-auto grid max-w-[1600px] gap-10 md:grid-cols-3">
-          {stats.map((stat) => (
-            <div key={stat.label} data-about-page-reveal>
-              <div className="mb-3 flex items-center gap-2">
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ background: stat.dot }}
-                />
-                <span className="font-display text-5xl font-medium tracking-tight md:text-6xl">
-                  {stat.value}
-                </span>
-              </div>
-              <p className="max-w-xs text-sm leading-relaxed text-muted">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="px-6 py-20 md:px-10 md:py-28">
-        <div className="mx-auto max-w-[1600px]">
-          <h2
-            data-about-page-reveal
-            className="mb-10 font-display text-4xl font-medium tracking-[-0.04em]"
-          >
-            Questions
+      {/* 03 */}
+      {/* 03: the dark panel with drifting bougainvillea and parallax. */}
+      <Chapter tight className="pb-20 md:pb-28">
+        <AboutVisualPanel reduced={reduced}>
+          <Eyebrow>03 / When things get messy</Eyebrow>
+          <h2 className="mb-8 max-w-[18ch] font-serif text-[clamp(2.25rem,8vw,2.75rem)] font-normal leading-[1.08] tracking-[-0.02em] md:text-[clamp(2.75rem,4vw,3.75rem)]">
+            Chaos? <Accent>Surprisingly, I’m pretty good at it.</Accent>
           </h2>
-          <div data-about-page-reveal>
-            {faqs.slice(0, 5).map((item) => (
-              <FaqItem
-                key={item.question}
-                question={item.question}
-                answer={item.answer}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+          <Body>
+            Give me a tricky problem, an unexpected crisis, or a deadline that’s
+            getting uncomfortably close, and something clicks.
+          </Body>
+          <Body>
+            I focus, connect the dots, find a way forward, and get things done.
+          </Body>
+          <Body className="mb-0">
+            I might overthink the tiniest visual detail on an ordinary Tuesday, but
+            when it really matters, I know how to lock in.
+          </Body>
+        </AboutVisualPanel>
+      </Chapter>
 
-      {/* Always exploring: a moving band of fields, right above the footer. */}
-      <section className="px-6 pb-16 md:px-10 md:pb-20">
-        <div className="mx-auto max-w-[1600px]">
-          <p className="text-sm uppercase tracking-[0.22em] text-muted">
-            Always exploring
-          </p>
-          <div className="mt-4 overflow-hidden border-y border-foreground/12 py-4">
-            <div className="marquee-track flex w-max gap-10 whitespace-nowrap">
-              {[0, 1].map((copy) => (
-                <span
-                  key={copy}
-                  aria-hidden={copy === 1}
-                  className="font-display text-2xl font-medium tracking-tight text-foreground/80 md:text-3xl"
+      {/* 04 */}
+      <Chapter>
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8">
+          <div data-reveal className="order-2 lg:order-1 lg:col-span-5">
+            <Photo
+              src="/images/about/sunlit-profile.webp"
+              alt="Parastoo with her eyes closed in the sun, surrounded by bougainvillea"
+              width={492}
+              height={543}
+            />
+          </div>
+          <div data-reveal className="order-1 lg:order-2 lg:col-span-6 lg:col-start-7">
+            <Eyebrow>04 / Beyond the pixels</Eyebrow>
+            <Heading>
+              I collect <Accent>creative obsessions.</Accent>
+            </Heading>
+            <Body>
+              I make music, experiment with code, explore new technologies, and
+              regularly disappear down fascinating rabbit holes.
+            </Body>
+            <Body>Sometimes those rabbit holes involve actual rabbits.</Body>
+            <Body>
+              I have a ridiculous soft spot for animals, a never-ending list of
+              things I want to learn, and a habit of turning random curiosities
+              into creative projects.
+            </Body>
+            <Body>
+              Not everything I make needs a purpose.{" "}
+              <strong className="font-medium text-foreground">
+                Sometimes curiosity is reason enough.
+              </strong>
+            </Body>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {["Music", "Creative coding", "Animals", "Games"].map((tag) => (
+                <li
+                  key={tag}
+                  className="rounded-full border border-foreground/15 px-4 py-2 text-xs"
                 >
-                  {aboutPage.exploring.map((item) => (
-                    <span key={`${copy}-${item}`} className="mx-5">
-                      {item}
-                    </span>
-                  ))}
-                </span>
+                  {tag}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
-      </section>
+      </Chapter>
 
-      {/* Contact CTA */}
-      <section
-        id="about-contact"
-        className="bg-ink px-6 py-24 text-white md:px-10 md:py-32"
-      >
-        <div className="mx-auto max-w-[1600px]">
-          <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/40">
-            Contact
-          </p>
-          <h2 className="font-display text-[14vw] font-medium leading-[0.85] tracking-[-0.06em] md:text-[7vw]">
-            Let&apos;s work
-            <br />
-            together
-          </h2>
-          <div className="mt-12 flex flex-col gap-6 md:mt-16 md:flex-row md:items-center md:justify-between">
-            <MagneticButton
-              href={`mailto:${profile.email}`}
-              strength={0.38}
-              radius={120}
-              className="inline-flex w-fit rounded-full bg-white px-8 py-5 text-base font-medium text-ink"
-            >
-              Start a conversation
-            </MagneticButton>
-            <CopyEmail email={profile.email} className="text-sm" />
+      {/* 05 */}
+      <Chapter last>
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8">
+          <div data-reveal className="lg:col-span-6">
+            <Eyebrow>05 / What’s next</Eyebrow>
+            <Heading>
+              Still curious. <Accent>Still building.</Accent>
+            </Heading>
+            <Body>
+              I’m currently working in product design, learning front-end
+              development, and exploring how design and technology can create
+              more immersive experiences.
+            </Body>
+            <Body>
+              I’m especially drawn to the world of games, where design,
+              storytelling, interaction, and a little magic all come together.
+            </Body>
+            <Body>
+              I’m always interested in exciting opportunities, interesting
+              people, and ideas worth bringing to life.
+            </Body>
+            <ul className="mt-8 border-t border-foreground/10">
+              {["Product design", "Creative development", "Game experiences"].map(
+                (item, i) => (
+                  <li
+                    key={item}
+                    className="flex items-baseline gap-4 border-b border-foreground/10 py-4"
+                  >
+                    <span className={`text-sm tabular-nums ${PINK}`}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-base">{item}</span>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+          <div data-reveal className="lg:col-span-6">
+            <Photo
+              src="/images/about/looking-up-with-bougainvillea.webp"
+              alt="Parastoo at a laptop on a sunny terrace, holding a bougainvillea flower and looking up, thinking"
+              width={718}
+              height={534}
+            />
           </div>
         </div>
-      </section>
+      </Chapter>
+
+      <ContactSection lead="Have something in mind?" />
     </main>
+  );
+}
+
+/**
+ * One chapter in the 1200px column. Chapters after the first open with a thin
+ * rule inside the column, so it lines up with the text; the tinted "chaos"
+ * chapter carries its own panel instead, with tighter padding.
+ */
+function Chapter({
+  children,
+  className = "",
+  first = false,
+  tight = false,
+}: {
+  children: ReactNode;
+  className?: string;
+  first?: boolean;
+  last?: boolean;
+  tight?: boolean;
+}) {
+  const inner = first
+    ? "pb-20 md:pb-28"
+    : tight
+      ? "py-2"
+      : "border-t border-foreground/10 py-20 md:py-28";
+  return (
+    <section className={`px-6 md:px-10 ${className}`}>
+      <div className={`mx-auto max-w-[1200px] ${inner}`}>{children}</div>
+    </section>
+  );
+}
+
+function Eyebrow({ children }: { children: ReactNode }) {
+  return (
+    <p className={`mb-6 text-[11px] font-medium uppercase tracking-[0.16em] ${PINK}`}>
+      {children}
+    </p>
+  );
+}
+
+function Heading({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="mb-8 font-serif text-[clamp(2.25rem,8vw,2.75rem)] font-normal leading-[1.08] tracking-[-0.02em] md:text-[clamp(2.75rem,4vw,3.75rem)]">
+      {children}
+    </h2>
+  );
+}
+
+function Accent({ children }: { children: ReactNode }) {
+  return <em className={`italic ${PINK}`}>{children}</em>;
+}
+
+function Body({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <p className={`mb-4 max-w-[34rem] text-base leading-relaxed text-foreground/70 md:text-[1.0625rem] ${className}`}>
+      {children}
+    </p>
+  );
+}
+
+/** A real photograph with a thin inset frame line, as in the art direction. */
+function Photo({
+  src,
+  alt,
+  width,
+  height,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  priority?: boolean;
+}) {
+  return (
+    <figure className="relative overflow-hidden bg-[#EFE8DF]">
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        priority={priority}
+        unoptimized={unoptimized}
+        sizes="(max-width: 1024px) 92vw, 560px"
+        className="block h-auto w-full"
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-4 border border-white/40"
+      />
+    </figure>
   );
 }

@@ -7,7 +7,7 @@ import AboutPage from "@/components/pages/AboutPage";
 export const metadata = {
   title: "About · Parastoo Sadeghi",
   description:
-    "Product designer working across healthcare, cybersecurity, games, and more. Story, services, and experience.",
+    "Parastoo Sadeghi is a Vancouver-based product designer who thinks in pictures: how she started, how she works, and what she is building next.",
 };
 
 export default function AboutRoute() {

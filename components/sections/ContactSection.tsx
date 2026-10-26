@@ -5,7 +5,14 @@ import { footer, profile } from "@/lib/content";
  * Closing frame, kept editorial and minimal: one short line and one row of
  * icons for every way to reach me. Nothing else.
  */
-export default function ContactSection({ className = "" }: { className?: string }) {
+export default function ContactSection({
+  className = "",
+  lead,
+}: {
+  className?: string;
+  /** Optional short line above the headline, e.g. "Have something in mind?" */
+  lead?: string;
+}) {
   // Every way to reach me, as one row of icons: email first, then the
   // profiles, then the résumé when there is one.
   const links = [
@@ -27,6 +34,11 @@ export default function ContactSection({ className = "" }: { className?: string 
           <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/60">
             Contact
           </p>
+          {lead && (
+            <p className="mb-4 font-serif text-2xl italic text-[#F472B6] md:text-3xl">
+              {lead}
+            </p>
+          )}
           <SplitText
             as="h2"
             text="Let’s talk."

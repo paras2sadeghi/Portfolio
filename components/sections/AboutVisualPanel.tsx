@@ -1,16 +1,30 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { bougainvilleaClips } from "@/lib/motif";
 
-export default function AboutVisualPanel({ reduced }: { reduced: boolean }) {
+/**
+ * A warm stone panel with bougainvillea drifting down through it on scroll: the
+ * vine video rises as the page moves, the backdrop slowly scales, and the
+ * content fades up into place. The words are whatever is passed in, so it
+ * can hold any short chapter.
+ *
+ * The video only plays while the panel is on screen; with reduced motion
+ * there is no video or parallax and the content is simply shown.
+ */
+export default function AboutVisualPanel({
+  children,
+  reduced,
+}: {
+  children: ReactNode;
+  reduced: boolean;
+}) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const mediaRef = useRef<HTMLDivElement | null>(null);
   const videoLayerRef = useRef<HTMLDivElement | null>(null);
-  const headlineRef = useRef<HTMLParagraphElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
@@ -31,63 +45,38 @@ export default function AboutVisualPanel({ reduced }: { reduced: boolean }) {
 
   useEffect(() => {
     const panel = panelRef.current;
-    const media = mediaRef.current;
-    const videoLayer = videoLayerRef.current;
-    const headline = headlineRef.current;
     if (reduced || !panel) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
     const context = gsap.context(() => {
-      if (media) {
+      const scrub = { trigger: panel, start: "top 85%", end: "bottom 25%", scrub: true };
+
+      if (mediaRef.current) {
         gsap.fromTo(
-          media,
+          mediaRef.current,
           { scale: 1.05 },
           {
             scale: 1.1,
             ease: "none",
-            scrollTrigger: {
-              trigger: panel,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            },
+            scrollTrigger: { trigger: panel, start: "top bottom", end: "bottom top", scrub: true },
           }
         );
       }
-
-      if (videoLayer) {
+      if (videoLayerRef.current) {
+        // The vines drift up and out of the panel, away from the copy.
         gsap.fromTo(
-          videoLayer,
-          { yPercent: 8 },
-          {
-            yPercent: -52,
-            ease: "none",
-            scrollTrigger: {
-              trigger: panel,
-              start: "top 85%",
-              end: "bottom 25%",
-              scrub: true,
-            },
-          }
+          videoLayerRef.current,
+          { yPercent: 0 },
+          { yPercent: -35, ease: "none", scrollTrigger: scrub }
         );
       }
-
-      if (headline) {
+      if (contentRef.current) {
+        // A small rise only; the copy is always at full strength.
         gsap.fromTo(
-          headline,
-          { opacity: 0.12, yPercent: 18 },
-          {
-            opacity: 1,
-            yPercent: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: panel,
-              start: "top 85%",
-              end: "bottom 25%",
-              scrub: true,
-            },
-          }
+          contentRef.current,
+          { y: 32 },
+          { y: 0, ease: "none", scrollTrigger: scrub }
         );
       }
     }, panel);
@@ -98,58 +87,40 @@ export default function AboutVisualPanel({ reduced }: { reduced: boolean }) {
   return (
     <div
       ref={panelRef}
-      className="relative min-h-[28rem] md:min-h-[36rem]"
+      className="relative isolate overflow-hidden rounded-2xl text-foreground"
     >
-      <div className="@container/panel relative min-h-[28rem] overflow-hidden rounded-2xl md:min-h-[36rem]">
+      {/* Warm stone, the tone of the posters' sets, with a soft light from
+          the top left. The vine video is transparent, so the flowers sit on
+          it the way they do in the photographs. */}
+      <div ref={mediaRef} aria-hidden className="absolute inset-0 -z-10 will-change-transform">
+        <div className="absolute inset-0 bg-[#F1E9DF]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_55%_at_25%_0%,rgba(255,255,255,0.7),transparent_60%)]" />
+      </div>
+
+      {!reduced && (
         <div
-          ref={mediaRef}
-          className="absolute inset-0 z-0 will-change-transform"
+          ref={videoLayerRef}
+          aria-hidden
+          // Only the top of the panel, fading out well above the copy.
+          className="pointer-events-none absolute inset-x-0 top-0 h-[34%] will-change-transform md:h-[42%] [mask-image:linear-gradient(to_bottom,black_0%,black_55%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_55%,transparent_100%)]"
         >
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[linear-gradient(180deg,#050505_0%,#0a0a0a_45%,#121212_100%)]"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[radial-gradient(ellipse_80%_45%_at_30%_8%,rgba(255,255,255,0.06),transparent_50%),radial-gradient(ellipse_60%_35%_at_90%_20%,rgba(255,255,255,0.04),transparent_45%)]"
+          <video
+            ref={videoRef}
+            src={bougainvilleaClips.bleed}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="h-full w-full object-cover object-top"
           />
         </div>
+      )}
 
-        <div className="absolute inset-0 z-10 flex min-h-[28rem] flex-col justify-end overflow-hidden rounded-2xl p-6 sm:p-8 md:min-h-[36rem] md:p-9">
-          <div
-            aria-hidden
-            className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black via-black/50 to-transparent"
-          />
-          <p
-            ref={headlineRef}
-            className="relative w-full max-w-full font-display text-[length:clamp(1.375rem,16cqi,3.25rem)] font-medium uppercase leading-[0.86] tracking-[-0.045em] text-white will-change-transform @[28rem]/panel:text-[length:clamp(1.5rem,14cqi,3.75rem)] @[36rem]/panel:text-[length:clamp(1.75rem,12cqi,4.25rem)]"
-            style={reduced ? { opacity: 1 } : { opacity: 0.12 }}
-          >
-            Design
-            <br />
-            with
-            <br />
-            structure
-          </p>
+      {/* The content sits in the lower part, clear of the vines. */}
+      <div className="relative flex min-h-[34rem] flex-col justify-end p-6 pt-56 sm:p-10 sm:pt-64 md:min-h-[42rem] md:p-16 md:pt-72">
+        <div ref={contentRef} className="relative will-change-transform">
+          {children}
         </div>
-
-        {!reduced && (
-          <div
-            ref={videoLayerRef}
-            aria-hidden
-            className="pointer-events-none absolute inset-x-[-10%] top-[-8%] z-20 h-[115%] will-change-transform [mask-image:linear-gradient(to_bottom,black_0%,black_70%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_70%,transparent_100%)]"
-          >
-            <video
-              ref={videoRef}
-              src={bougainvilleaClips.bleed}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="h-full w-full scale-[1.1] object-cover object-[center_10%]"
-            />
-          </div>
-        )}
       </div>
     </div>
   );
