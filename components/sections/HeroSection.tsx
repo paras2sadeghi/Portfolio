@@ -120,7 +120,7 @@ export default function HeroSection() {
         {/* Stationary role line. */}
         <p
           data-hero-fade
-          className="mb-3 px-6 text-[11px] font-medium uppercase tracking-[0.24em] text-white [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:mb-4 md:px-10 md:text-[13px]"
+          className="mb-3 px-6 text-[10px] font-normal uppercase tracking-[0.28em] text-white/70 [text-shadow:0_1px_14px_rgba(0,0,0,0.5)] md:mb-4 md:px-10 md:text-[11px]"
         >
           Product designer · Vancouver
         </p>
