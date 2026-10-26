@@ -10,6 +10,7 @@ import ScrollProgress from "@/components/ui/ScrollProgress";
 import CaseStudyBlocks, { type CaseStudyBlock } from "@/components/work/CaseStudyBlocks";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { getAdjacentProject, workHref } from "@/lib/projects";
+import { posterFor } from "@/lib/posters";
 import { GSAP_EASE } from "@/utils/motion";
 
 interface ProjectMeta {
@@ -151,16 +152,16 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           </div>
         </header>
 
-        {/* Every cover is 16:9, so the frame is too and nothing is cropped.
-            The width is capped to the screen height left under the header,
-            so the whole cover shows when the page opens, but never below
-            36rem wide on large screens. */}
+        {/* The cover is the project's poster scene (4:3), so the frame is
+            too and nothing is cropped. The width is capped to the screen
+            height left under the header, so the whole cover shows when the
+            page opens, but never below 36rem wide on large screens. */}
         <div
           data-cs-reveal
-          className="relative mx-auto mb-16 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-surface md:mb-24 md:max-w-[max(36rem,calc((100svh-28rem)*16/9))]"
+          className="relative mx-auto mb-16 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface md:mb-24 md:max-w-[max(36rem,calc((100svh-28rem)*4/3))]"
         >
           <Image
-            src={project.heroImage}
+            src={posterFor(project)}
             alt={`${project.name} product interface mockup`}
             fill
             unoptimized={process.env.NODE_ENV !== "production"}

@@ -18,8 +18,19 @@ const SCENES: Record<string, string> = {
   "fang-rung": "/images/work/scenes/fang-rung.webp",
 };
 
-export function posterFor(project: { slug: string; heroImage?: string; thumbnail: string }) {
-  return SCENES[project.slug] ?? project.heroImage ?? project.thumbnail;
+// Bump when scene files are replaced under the same names, so browsers and
+// the image optimiser fetch the new files instead of cached old ones. Keep
+// it in step with images.localPatterns in next.config.mjs.
+const SCENES_VERSION = "3";
+
+export function posterFor(project: {
+  slug: string;
+  heroImage?: string;
+  thumbnail?: string;
+}): string {
+  const scene = SCENES[project.slug];
+  if (scene) return `${scene}?v=${SCENES_VERSION}`;
+  return project.heroImage ?? project.thumbnail ?? "";
 }
 
 /** "Concept · B2B SaaS" -> "Concept / B2B SaaS". */

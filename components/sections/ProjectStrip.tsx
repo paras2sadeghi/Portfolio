@@ -56,21 +56,26 @@ export default function ProjectStrip({ cards }: { cards: StripCard[] }) {
     let frame = 0;
 
     const tick = (now: number) => {
-      const dt = Math.min(0.1, (now - last) / 1000);
+      const dt = Math.min(0.25, (now - last) / 1000);
       last = now;
 
-      // The user moved the strip themselves: follow them from there.
-      if (Math.abs(el.scrollLeft - pos) > 2) pos = el.scrollLeft;
+      const userScrolling = now < heldUntil.current;
+      if (userScrolling || hovering.current || focused.current) {
+        // Follow wherever the user (or the arrows) put the strip. The
+        // browser's own scroll position is only read here: on scaled
+        // displays it snaps writes to the device pixel grid, and reading
+        // it back every frame would swallow most of the slow auto-motion.
+        pos = el.scrollLeft;
+      } else {
+        pos += speed * dt;
+        // Keep the position inside the first copy so it loops forever.
+        if (pos >= cycle) pos -= cycle;
+        if (pos < 0) pos += cycle;
+        el.scrollLeft = pos;
+      }
 
-      const paused =
-        hovering.current || focused.current || now < heldUntil.current;
-      if (!paused) pos += speed * dt;
-
-      // Keep the position inside the first copy so it can loop forever in
-      // both directions.
-      if (pos >= cycle) pos -= cycle;
-      if (pos < 0) pos += cycle;
-      if (Math.abs(el.scrollLeft - pos) > 0.5) el.scrollLeft = pos;
+      // A manual scroll past either end wraps too.
+      if (el.scrollLeft >= cycle) el.scrollLeft -= cycle;
 
       frame = requestAnimationFrame(tick);
     };
@@ -145,6 +150,7 @@ export default function ProjectStrip({ cards }: { cards: StripCard[] }) {
         onTouchStart={hold}
         onTouchMove={hold}
         onWheel={hold}
+        onKeyDown={hold}
         className="mt-6 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <ul className="flex w-max" style={{ gap: GAP }}>

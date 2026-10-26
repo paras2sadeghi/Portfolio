@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { homeIntro } from "@/lib/content";
 
@@ -7,11 +6,9 @@ import { homeIntro } from "@/lib/content";
  * on a 12-column grid inside a 1200px content width (20px gutters, 96px top
  * and bottom on desktop):
  *
- * - the headline in a serif across six columns, its second line in pink
+ * - the headline in a serif across seven columns, its second line in pink
  *   italics;
- * - the paragraph and the About link in columns 7 to 10, clear of the
- *   flowers;
- * - a bougainvillea wall bleeding off the right edge, fading into the page.
+ * - the paragraph and the About link in columns 8 to 12, on plain white.
  *
  * Deliberately has no scroll animation, so the copy can never end up hidden
  * by a trigger measuring a stale page height.
@@ -25,35 +22,16 @@ export default function IntroSection() {
       aria-label="Introduction"
       className="relative overflow-hidden bg-background px-6 py-16 md:px-10 lg:py-24"
     >
-      {/* The flowers: the whole photo is the section's background. Its wall
-          is near-white on the left, so it meets the page with no seam or
-          fade, and the vine sits on the right, clear of the text. Desktop
-          only. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 hidden lg:block"
-      >
-        <Image
-          src="/images/home/bougainvillea-wall.jpg"
-          alt=""
-          fill
-          unoptimized={process.env.NODE_ENV !== "production"}
-          sizes="100vw"
-          className="object-cover object-right"
-        />
-      </div>
-
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-12 gap-x-5">
-        <h2 className="col-span-12 font-serif text-[clamp(3.25rem,13vw,4.5rem)] font-normal leading-[0.98] tracking-[-0.02em] md:text-[clamp(4.5rem,8vw,6.75rem)] xl:col-span-6 xl:text-[clamp(4rem,6.4vw,6rem)]">
+        <h2 className="col-span-12 font-serif text-[clamp(3.25rem,13vw,4.5rem)] font-normal leading-[0.98] tracking-[-0.02em] md:text-[clamp(4.5rem,8vw,6.75rem)] lg:col-span-7 lg:text-[clamp(4rem,6.4vw,6.25rem)]">
           <span className="block">{first}</span>
           {second && (
             <span className="block italic text-[#DB2777]">{second}</span>
           )}
         </h2>
 
-        {/* Under the headline until 1280px, then beside it. Capped in width
-            so it always stays left of the vine. */}
-        <div className="col-span-12 mt-8 max-w-[26rem] md:col-span-6 xl:col-start-7 xl:col-span-4 xl:mt-0 xl:max-w-[22rem] xl:self-end xl:pb-3">
+        {/* Under the headline on phones and tablets, beside it from 1024px. */}
+        <div className="col-span-12 mt-8 max-w-[26rem] md:col-span-8 lg:col-start-8 lg:col-span-5 lg:mt-0 lg:self-end lg:pb-3">
           <p className="text-lg leading-[1.45] text-foreground/80 md:text-xl">
             {homeIntro.aside}
           </p>

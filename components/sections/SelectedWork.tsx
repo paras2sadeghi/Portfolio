@@ -14,15 +14,18 @@ import { categoryLine, posterFor, shortCategory } from "@/lib/posters";
  * centred 1200px container, square-cornered posters with 12px gutters on
  * pure white, and the posters carry all the colour.
  *
- * - Featured grid: Flash Pharmacy as the large left tile, Huddle and Transit
- *   stacked on the right, each with its name and a short category below.
+ * - Featured grid: Flash Pharmacy as the large left tile, Flash Longevity
+ *   and Safes Family stacked on the right, each with its name and outcome.
  * - "More to explore": every project in a slow looping strip (ProjectStrip).
  *
  * The grid and every card are plain links, so crawlers and agents get the
  * full list.
  */
 
-const FEATURED = ["flash-pharmacy", "huddle", "transit"];
+// Chosen for hiring: real, shipped work first. Flash Pharmacy (lead
+// designer, launching), Flash Longevity (designed and built, live) and Safes
+// Family (shipped on iOS and Android).
+const FEATURED = ["flash-pharmacy", "flash-longevity", "safes-family"];
 
 const unoptimized = process.env.NODE_ENV !== "production";
 
@@ -75,13 +78,6 @@ export default function SelectedWork() {
       </div>
 
       <ProjectStrip cards={cards} />
-
-      <div className="mx-auto mt-10 max-w-[1200px] px-6 xl:px-0">
-        <p className="border-t border-foreground/10 pt-5 text-[10px] uppercase tracking-[0.18em] text-muted">
-          Featured {String(featured.length).padStart(2, "0")} / Continuous
-          project index
-        </p>
-      </div>
     </section>
   );
 }
@@ -127,6 +123,13 @@ function Feature({
           <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-muted">
             {categoryLine(project.discipline)}
           </p>
+          {/* The outcome a hiring manager looks for: role and whether it
+              shipped. */}
+          {project.card?.contribution && (
+            <p className="mt-1.5 text-sm text-foreground/70">
+              {project.card.contribution}
+            </p>
+          )}
         </div>
         <span
           aria-hidden

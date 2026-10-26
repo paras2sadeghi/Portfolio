@@ -4,20 +4,19 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Magnolia from "@/components/ui/Magnolia";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { GSAP_EASE } from "@/utils/motion";
 import { profile } from "@/lib/content";
 import { HERO_BLUR } from "@/lib/heroBlur";
 
-const NAME = profile.name;
-const [FIRST_NAME, ...REST] = profile.name.split(" ");
+const NAME = profile.name.toUpperCase();
+const [FIRST_NAME, ...REST] = NAME.split(" ");
 const LAST_NAME = REST.join(" ");
 
-// The name is set in the same serif as the intro's headline, in normal
-// case, with a small brand flower between repeats as an ornament.
+// The name in the tight display grotesque, uppercase, with a small brand-pink
+// dot between repeats.
 const NAME_TYPE =
-  "font-serif font-normal leading-none tracking-[-0.02em] text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)]";
+  "font-display font-medium uppercase leading-none tracking-[-0.035em] text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)]";
 
 /**
  * Full-bleed portrait hero. The photograph is the whole frame; the name runs
@@ -138,7 +137,7 @@ export default function HeroSection() {
                 {[0, 1].map((unit) => (
                   <span
                     key={unit}
-                    className={`flex shrink-0 items-center text-[8vw] ${NAME_TYPE}`}
+                    className={`flex shrink-0 items-center text-[9.2vw] ${NAME_TYPE}`}
                   >
                     <span>{NAME}</span>
                     <FlowerMark />
@@ -157,12 +156,12 @@ export default function HeroSection() {
           {/* The gap between the words is a margin, not a space character: a
               plain space would render at the container's 16px size and vanish
               next to 8vw type. */}
-          <span className={`block text-[16vw] leading-[1.02] md:mr-[0.24em] md:inline md:text-[8vw] md:leading-none ${NAME_TYPE}`}>
+          <span className={`block text-[15.5vw] leading-[0.95] md:mr-[0.26em] md:inline md:text-[9.2vw] md:leading-none ${NAME_TYPE}`}>
             {FIRST_NAME}
           </span>
-          <span className={`inline-flex items-center whitespace-nowrap text-[16vw] leading-[1.02] md:text-[8vw] md:leading-none ${NAME_TYPE}`}>
+          <span className={`inline-flex items-center whitespace-nowrap text-[15.5vw] leading-[0.95] md:text-[9.2vw] md:leading-none ${NAME_TYPE}`}>
             {LAST_NAME}
-            <FlowerMark className="ml-[0.3em] h-[0.32em] w-[0.32em]" />
+            <FlowerMark className="ml-[0.25em] h-[0.16em] w-[0.16em]" />
           </span>
         </div>
       </div>
@@ -170,14 +169,16 @@ export default function HeroSection() {
   );
 }
 
-/**
- * The brand flower as a small ornament between repeats of the name: about a
- * third of the type height, centred on the line, crisp at any size.
- */
+/** A small brand-pink dot between repeats of the name, centred on the line. */
 function FlowerMark({
-  className = "mx-[0.5em] h-[0.32em] w-[0.32em]",
+  className = "mx-[0.45em] h-[0.16em] w-[0.16em]",
 }: {
   className?: string;
 }) {
-  return <Magnolia className={`shrink-0 text-[#EC4899] ${className}`} />;
+  return (
+    <span
+      aria-hidden
+      className={`inline-block shrink-0 rounded-full bg-[#EC4899] ${className}`}
+    />
+  );
 }
