@@ -94,7 +94,7 @@ export default function ProjectStrip({ cards }: { cards: StripCard[] }) {
     <div className="mt-16">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-6 sm:flex-row sm:items-end sm:justify-between sm:gap-6 md:px-10">
         <div>
-          <h3 className="font-serif text-3xl font-normal tracking-[-0.01em] md:text-4xl">
+          <h3 className="font-serif text-3xl font-normal tracking-[-0.01em] md:text-[2.5rem]">
             More to explore
           </h3>
           <p className="mt-2 text-sm text-muted">

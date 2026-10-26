@@ -62,7 +62,7 @@ export default function SelectedWork() {
               <span className="text-xs tabular-nums text-muted">02</span>
               <h2
                 id="selected-title"
-                className="font-display text-3xl font-normal tracking-[-0.02em] md:text-[2.5rem]"
+                className="font-serif text-3xl font-normal tracking-[-0.01em] md:text-[2.5rem]"
               >
                 Selected work.
               </h2>

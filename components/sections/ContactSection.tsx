@@ -30,7 +30,8 @@ export default function ContactSection({ className = "" }: { className?: string 
           <SplitText
             as="h2"
             text="Let’s talk."
-            className="font-display text-[15vw] font-medium leading-[0.86] tracking-[-0.06em] md:text-[min(8vw,7.5rem)]"
+            // The same serif as every other section title on the page.
+            className="font-serif text-[15vw] font-normal leading-[0.95] tracking-[-0.02em] md:text-[min(8vw,7.5rem)]"
             // Plays on mount rather than on scroll-into-view, so a trigger
             // measured before the images above have loaded can never leave
             // the headline masked. The section starts off-screen anyway.
