@@ -68,7 +68,7 @@ export default function AboutVisualPanel({
         gsap.fromTo(
           videoLayerRef.current,
           { yPercent: 0 },
-          { yPercent: -35, ease: "none", scrollTrigger: scrub }
+          { yPercent: -60, ease: "none", scrollTrigger: scrub }
         );
       }
       if (contentRef.current) {
@@ -101,8 +101,10 @@ export default function AboutVisualPanel({
         <div
           ref={videoLayerRef}
           aria-hidden
-          // Only the top of the panel, clear of the copy. No fade.
-          className="pointer-events-none absolute inset-x-0 top-0 h-[34%] will-change-transform md:h-[42%]"
+          // A large square in the top-left (the clip is square, with the vine
+          // filling its top-left). It starts reaching down toward the
+          // heading and rises out of the way as the page scrolls. No fade.
+          className="pointer-events-none absolute left-0 top-0 aspect-square w-[85%] will-change-transform md:w-[58%]"
         >
           <video
             ref={videoRef}
