@@ -4,12 +4,20 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Magnolia from "@/components/ui/Magnolia";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { GSAP_EASE } from "@/utils/motion";
 import { profile } from "@/lib/content";
 import { HERO_BLUR } from "@/lib/heroBlur";
 
-const NAME = profile.name.toUpperCase();
+const NAME = profile.name;
+const [FIRST_NAME, ...REST] = profile.name.split(" ");
+const LAST_NAME = REST.join(" ");
+
+// The name is set in the same serif as the intro's headline, in normal
+// case, with a small brand flower between repeats as an ornament.
+const NAME_TYPE =
+  "font-serif font-normal leading-none tracking-[-0.02em] text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)]";
 
 /**
  * Full-bleed portrait hero. The photograph is the whole frame; the name runs
@@ -118,11 +126,11 @@ export default function HeroSection() {
         </p>
 
         {/* Moving name (desktop, motion allowed). Two identical halves of two
-            units each: NAME, flower, NAME, flower. The first unit sits
+            units each: name, flower, name, flower. The first unit sits
             complete inside the viewport before the loop begins. */}
         <div
           aria-hidden
-          className="hero-name hero-name-moving overflow-x-clip pb-3 pl-6 md:pb-5 md:pl-10"
+          className="hero-name hero-name-moving overflow-x-clip pb-6 pl-6 md:pb-9 md:pl-10"
         >
           <div className="hero-name-track flex w-max whitespace-nowrap">
             {[0, 1].map((half) => (
@@ -130,7 +138,7 @@ export default function HeroSection() {
                 {[0, 1].map((unit) => (
                   <span
                     key={unit}
-                    className="flex shrink-0 items-baseline font-display text-[9.2vw] font-medium uppercase leading-none tracking-[-0.035em] text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)]"
+                    className={`flex shrink-0 items-center text-[8vw] ${NAME_TYPE}`}
                   >
                     <span>{NAME}</span>
                     <FlowerMark />
@@ -144,18 +152,17 @@ export default function HeroSection() {
         {/* Static name (phones and reduced motion): complete and readable. */}
         <div
           aria-hidden
-          className="hero-name-static px-6 pb-4 md:px-10 md:pb-5"
+          className="hero-name-static px-6 pb-6 md:px-10 md:pb-9"
         >
           {/* The gap between the words is a margin, not a space character: a
               plain space would render at the container's 16px size and vanish
-              next to 9vw type. */}
-          <span className="block font-display text-[15.5vw] font-medium uppercase leading-[0.95] tracking-[-0.035em] text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)] md:mr-[0.26em] md:inline md:text-[9.2vw] md:leading-none">
-            {profile.name.split(" ")[0].toUpperCase()}
+              next to 8vw type. */}
+          <span className={`block text-[16vw] leading-[1.02] md:mr-[0.24em] md:inline md:text-[8vw] md:leading-none ${NAME_TYPE}`}>
+            {FIRST_NAME}
           </span>
-          <span className="block whitespace-nowrap font-display text-[15.5vw] font-medium uppercase leading-[0.95] tracking-[-0.035em] text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)] md:inline md:text-[9.2vw] md:leading-none">
-            {profile.name.split(" ").slice(1).join(" ").toUpperCase()}
-            {/* Tucked in close on phones so it never wraps under the name. */}
-            <FlowerMark className="ml-[0.18em] mr-0 h-[0.6em] w-[0.6em] md:mx-[0.3em] md:h-[0.7em] md:w-[0.7em]" />
+          <span className={`inline-flex items-center whitespace-nowrap text-[16vw] leading-[1.02] md:text-[8vw] md:leading-none ${NAME_TYPE}`}>
+            {LAST_NAME}
+            <FlowerMark className="ml-[0.3em] h-[0.32em] w-[0.32em]" />
           </span>
         </div>
       </div>
@@ -163,23 +170,14 @@ export default function HeroSection() {
   );
 }
 
-/** The brand flower, used as the separator between repeats of the name. */
+/**
+ * The brand flower as a small ornament between repeats of the name: about a
+ * third of the type height, centred on the line, crisp at any size.
+ */
 function FlowerMark({
-  className = "mx-[0.3em] h-[0.7em] w-[0.7em]",
+  className = "mx-[0.5em] h-[0.32em] w-[0.32em]",
 }: {
   className?: string;
 }) {
-  return (
-    <Image
-      src="/brand/mark-128.png"
-      alt=""
-      aria-hidden
-      width={128}
-      height={128}
-      // 3KB and always in the loop: load it up front so the separators
-      // don't pop in as the name slides toward them.
-      loading="eager"
-      className={`inline-block self-baseline ${className}`}
-    />
-  );
+  return <Magnolia className={`shrink-0 text-[#EC4899] ${className}`} />;
 }
