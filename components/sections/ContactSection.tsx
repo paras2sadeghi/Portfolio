@@ -17,11 +17,12 @@ export default function ContactSection({ className = "" }: { className?: string 
   return (
     <section
       id="contact"
-      className={`relative isolate overflow-hidden bg-ink px-6 py-16 text-white md:px-10 md:py-24 ${className}`}
+      className={`relative isolate overflow-hidden bg-ink px-6 py-20 text-white md:px-10 md:py-28 ${className}`}
     >
       {/* One line: the headline on the left, the icons on the right, both
-          sitting on the same bottom edge. Stacks on phones. */}
-      <div className="relative z-10 mx-auto flex max-w-[1600px] flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">
+          sitting on the same bottom edge, in the same 1200px column as the
+          rest of the home page. Stacks on phones. */}
+      <div className="relative z-10 mx-auto flex max-w-[1200px] flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">
         <div>
           <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/60">
             Contact
@@ -29,7 +30,7 @@ export default function ContactSection({ className = "" }: { className?: string 
           <SplitText
             as="h2"
             text="Let’s talk."
-            className="font-display text-[15vw] font-medium leading-[0.86] tracking-[-0.06em] md:text-[8vw]"
+            className="font-display text-[15vw] font-medium leading-[0.86] tracking-[-0.06em] md:text-[min(8vw,7.5rem)]"
             // Plays on mount rather than on scroll-into-view, so a trigger
             // measured before the images above have loaded can never leave
             // the headline masked. The section starts off-screen anyway.

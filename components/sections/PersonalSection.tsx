@@ -12,7 +12,7 @@ export default function PersonalSection() {
   return (
     <section
       aria-labelledby="personal-title"
-      className="relative bg-white px-6 pb-16 pt-6 md:pb-24 xl:px-0"
+      className="relative bg-white px-6 py-20 md:px-10 md:py-28"
     >
       <div className="mx-auto max-w-[1200px]">
         <div className="flex items-baseline justify-between gap-6 text-[10px] uppercase tracking-[0.18em] text-muted md:text-[11px]">

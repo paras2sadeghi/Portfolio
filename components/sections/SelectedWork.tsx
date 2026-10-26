@@ -53,10 +53,10 @@ export default function SelectedWork() {
     <section
       id="work"
       aria-labelledby="selected-title"
-      className="relative bg-white pb-10 pt-16 md:pb-14 md:pt-24"
+      className="relative bg-white pt-20 md:pt-28"
     >
       <SelectedWorkMotion>
-        <div className="mx-auto max-w-[1200px] px-6 xl:px-0">
+        <div className="mx-auto max-w-[1280px] px-6 md:px-10">
           <div className="flex items-baseline justify-between gap-6 pb-5">
             <div className="flex items-baseline gap-6 md:gap-10">
               <span className="text-xs tabular-nums text-muted">02</span>
