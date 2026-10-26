@@ -5,6 +5,7 @@ import IntroLoader from "@/components/IntroLoader";
 import HeroSection from "@/components/sections/HeroSection";
 import SelectedWork from "@/components/sections/SelectedWork";
 import IntroSection from "@/components/sections/IntroSection";
+import PersonalSection from "@/components/sections/PersonalSection";
 import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
         <HeroSection />
         <IntroSection />
         <SelectedWork />
+        <PersonalSection />
         <ContactSection />
       </main>
     </ScrollProvider>
