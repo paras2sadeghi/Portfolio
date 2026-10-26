@@ -25,31 +25,35 @@ export default function IntroSection() {
       aria-label="Introduction"
       className="relative overflow-hidden bg-background px-6 py-16 md:px-10 lg:py-24"
     >
-      {/* The flowers: full height on the right, fading in from the page so
-          they never sit on the text. Desktop only. */}
+      {/* The flowers: the whole photo is the section's background. Its wall
+          is near-white on the left, so it meets the page with no seam or
+          fade, and the vine sits on the right, clear of the text. Desktop
+          only. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[20%] max-w-[560px] xl:w-[26%] [mask-image:linear-gradient(to_right,transparent,black_35%)] lg:block"
+        className="pointer-events-none absolute inset-0 hidden lg:block"
       >
         <Image
           src="/images/home/bougainvillea-wall.jpg"
           alt=""
           fill
           unoptimized={process.env.NODE_ENV !== "production"}
-          sizes="24vw"
+          sizes="100vw"
           className="object-cover object-right"
         />
       </div>
 
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-12 gap-x-5">
-        <h2 className="col-span-12 font-serif text-[clamp(3.25rem,13vw,4.5rem)] font-normal leading-[0.98] tracking-[-0.02em] md:text-[clamp(4.5rem,8vw,6.75rem)] lg:col-span-6 lg:text-[clamp(4rem,6.4vw,6rem)]">
+        <h2 className="col-span-12 font-serif text-[clamp(3.25rem,13vw,4.5rem)] font-normal leading-[0.98] tracking-[-0.02em] md:text-[clamp(4.5rem,8vw,6.75rem)] xl:col-span-6 xl:text-[clamp(4rem,6.4vw,6rem)]">
           <span className="block">{first}</span>
           {second && (
             <span className="block italic text-[#DB2777]">{second}</span>
           )}
         </h2>
 
-        <div className="col-span-12 mt-8 md:col-span-8 lg:col-start-7 lg:col-span-4 lg:mt-0 lg:self-end lg:pb-3">
+        {/* Under the headline until 1280px, then beside it. Capped in width
+            so it always stays left of the vine. */}
+        <div className="col-span-12 mt-8 max-w-[26rem] md:col-span-6 xl:col-start-7 xl:col-span-4 xl:mt-0 xl:max-w-[22rem] xl:self-end xl:pb-3">
           <p className="text-lg leading-[1.45] text-foreground/80 md:text-xl">
             {homeIntro.aside}
           </p>
