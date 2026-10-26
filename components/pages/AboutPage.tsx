@@ -113,14 +113,15 @@ export default function AboutPage() {
             </Body>
           </div>
           <div data-reveal className="lg:col-span-6">
-            <div className="flex min-h-[260px] flex-col justify-center bg-[#F7F3EE] p-10 md:min-h-[300px] md:p-12">
-              <p className="font-serif text-3xl leading-[1.1] tracking-[-0.01em] md:text-[2.25rem]">
-                Art + logic +
-                <br />
-                <Accent>storytelling.</Accent>
-              </p>
-              <p className="mt-4 text-sm text-muted">Three interests. One career.</p>
-            </div>
+            <Photo
+              src="/images/about/baby-building-blocks.webp"
+              alt="Parastoo as a toddler, carefully stacking a tower of building blocks on a Persian rug, a bougainvillea beside her"
+              width={1448}
+              height={1086}
+            />
+            <p className="mt-3 text-sm text-muted">
+              Me, very early on. Already building things.
+            </p>
           </div>
         </div>
       </Chapter>
