@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FEATURED_SLUG } from "@/components/sections/FeaturedWork";
+import { SELECTED_SLUGS } from "@/components/sections/SelectedWork";
 import { conceptProjects, shippedProjects, workHref } from "@/lib/projects";
 
-// Shipped work first, then the explorations, same order as /work. The latest
-// work is already shown just above, so it is left out here.
+// Shipped work first, then the explorations, same order as /work. Projects
+// already in the Selected work grid just above are left out here.
 const items = [...shippedProjects, ...conceptProjects].filter(
-  (p) => p.slug !== FEATURED_SLUG
+  (p) => !SELECTED_SLUGS.includes(p.slug)
 );
 
 /**
