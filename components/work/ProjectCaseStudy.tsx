@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import MagneticButton from "@/components/animations/MagneticButton";
+import ContactSection from "@/components/sections/ContactSection";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import CaseStudyBlocks, { type CaseStudyBlock } from "@/components/work/CaseStudyBlocks";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -88,7 +88,7 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
             key={m.label}
             className="border-t border-foreground/12 py-3.5 md:flex md:items-baseline md:justify-between md:gap-6"
           >
-            <dt className="text-xs uppercase tracking-[0.18em] text-muted">
+            <dt className="text-[11px] uppercase tracking-[0.16em] text-muted">
               {m.label}
             </dt>
             <dd className="mt-1 text-sm font-medium md:mt-0 md:text-right md:text-base">
@@ -98,16 +98,23 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
         ))}
       </dl>
       {project.liveUrl && (
-        <MagneticButton
+        // The same quiet underlined link as "About me" on the home page.
+        <a
           href={project.liveUrl}
-          external
-          strength={0.35}
-          radius={120}
-          className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background transition-transform duration-500 hover:scale-[1.03]"
+          target="_blank"
+          rel="noreferrer"
+          className="group mt-6 inline-flex items-center gap-2 text-base font-medium"
         >
-          {project.liveLabel ?? "Live site"}
-          <span aria-hidden>↗</span>
-        </MagneticButton>
+          <span className="border-b border-foreground/30 pb-0.5 transition-colors duration-300 group-hover:border-[#DB2777] group-focus-visible:border-[#DB2777]">
+            {project.liveLabel ?? "Live site"}
+          </span>
+          <span
+            aria-hidden
+            className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          >
+            ↗
+          </span>
+        </a>
       )}
     </>
   );
@@ -115,7 +122,7 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
   return (
     <article ref={rootRef} className="bg-background text-foreground">
       <ScrollProgress />
-      <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-24 md:px-10 md:pb-32 md:pt-28">
+      <div className="mx-auto max-w-[1280px] px-6 pb-20 pt-24 md:px-10 md:pb-28 md:pt-28">
         <Link
           href="/work"
           data-cs-reveal
@@ -128,15 +135,16 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           <div className="md:col-span-8">
             <p
               data-cs-reveal
-              className="mb-4 text-xs uppercase tracking-[0.2em] text-muted"
+              className="mb-4 text-[11px] font-medium uppercase tracking-[0.16em] text-[#DB2777]"
             >
               {project.discipline} · {project.year}
             </p>
             <h1
               data-cs-reveal
-              className="max-w-[16ch] font-display text-[12vw] font-medium leading-[0.9] tracking-[-0.05em] md:text-[clamp(3rem,4.6vw,4.75rem)]"
+              className="max-w-[16ch] font-serif text-[clamp(2.75rem,11vw,3.5rem)] font-normal leading-[1] tracking-[-0.02em] md:text-[clamp(3.25rem,5vw,4.75rem)]"
             >
               {project.name}
+              <span className="text-[#DB2777]">.</span>
             </h1>
             <p
               data-cs-reveal
@@ -158,15 +166,15 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
             page opens, but never below 36rem wide on large screens. */}
         <div
           data-cs-reveal
-          className="relative mx-auto mb-16 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface md:mb-24 md:max-w-[max(36rem,calc((100svh-28rem)*4/3))]"
+          className="relative mx-auto mb-16 aspect-[4/3] w-full overflow-hidden bg-[#F7F3EE] md:mb-24 md:max-w-[max(36rem,calc((100svh-28rem)*4/3))]"
         >
           <Image
             src={posterFor(project)}
             alt={`${project.name} product interface mockup`}
             fill
             unoptimized={process.env.NODE_ENV !== "production"}
-            className="object-contain object-center"
-            sizes="(max-width: 1600px) 100vw, 1600px"
+            className="object-cover object-center"
+            sizes="(max-width: 1280px) 100vw, 1200px"
             priority
           />
         </div>
@@ -184,14 +192,14 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           // simple gallery. Each image keeps its own proportions, uncropped,
           // and tall phone screens are capped so they fit on one screen.
           <section data-cs-reveal className="mb-16 md:mb-24" aria-label="Screens">
-            <p className="mb-6 text-xs uppercase tracking-[0.2em] text-muted">
+            <p className="mb-6 text-[11px] font-medium uppercase tracking-[0.16em] text-[#DB2777]">
               Screens
             </p>
-            <div className="grid items-start gap-4 md:grid-cols-2 md:gap-6">
+            <div className="grid items-start gap-3 md:grid-cols-2">
               {cs.gallery.map((img, i) => (
                 <figure
                   key={img.src}
-                  className={`flex justify-center overflow-hidden rounded-2xl bg-surface ${
+                  className={`flex justify-center overflow-hidden bg-[#F7F3EE] ${
                     i === 0 && cs.gallery.length % 2 === 1 ? "md:col-span-2" : ""
                   }`}
                 >
@@ -214,17 +222,17 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           <section
             key={section.title}
             data-cs-reveal
-            className="mb-16 border-t border-foreground/12 pt-12 md:mb-20 md:pt-16"
+            className="grid gap-6 border-t border-foreground/10 py-12 md:grid-cols-12 md:gap-8 md:py-16"
           >
-            <div className="mb-8 flex items-baseline gap-4">
-              <span className="text-xs font-medium text-muted">
+            <div className="flex items-baseline gap-4 md:col-span-5">
+              <span className="text-sm tabular-nums text-[#DB2777]">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <h2 className="font-display text-2xl font-medium tracking-tight md:text-3xl">
+              <h2 className="font-serif text-3xl font-normal tracking-[-0.01em] md:text-[2.5rem]">
                 {section.title}
               </h2>
             </div>
-            <div className="max-w-2xl space-y-4 text-base leading-relaxed text-muted md:text-lg">
+            <div className="max-w-2xl space-y-4 text-base leading-relaxed text-foreground/70 md:col-span-7 md:text-lg">
               {section.body.map((para) => (
                 <p key={para.slice(0, 24)}>{para}</p>
               ))}
@@ -232,40 +240,41 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           </section>
         ))}
 
+        {/* Previous and next as poster cards, like the work grid. */}
         <nav
           data-cs-reveal
-          className="flex flex-col gap-6 border-t border-foreground/12 pt-12 sm:flex-row sm:justify-between"
+          aria-label="More projects"
+          className="grid gap-x-3 gap-y-10 border-t border-foreground/10 pt-12 md:grid-cols-2 md:pt-16"
         >
-          {prev ? (
-            <Link
-              href={workHref(prev.slug)}
-              className="group text-sm text-muted transition-colors hover:text-foreground"
-            >
-              <span className="block text-xs uppercase tracking-[0.16em]">
-                Previous
-              </span>
-              <span className="mt-1 inline-flex items-center gap-2 font-display text-xl font-medium text-foreground">
-                ← {prev.name}
-              </span>
-            </Link>
-          ) : (
-            <span />
+          {[
+            { p: prev, label: "Previous" },
+            { p: next, label: "Next" },
+          ].map(({ p, label }) =>
+            p ? (
+              <Link key={label} href={workHref(p.slug)} className="group block">
+                <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.16em] text-[#DB2777]">
+                  {label}
+                </p>
+                <div className="relative aspect-[16/9] overflow-hidden bg-[#F7F3EE]">
+                  <Image
+                    src={posterFor(p)}
+                    alt=""
+                    fill
+                    unoptimized={process.env.NODE_ENV !== "production"}
+                    sizes="(max-width: 768px) 92vw, 600px"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                  />
+                </div>
+                <p className="mt-3 font-serif text-2xl">{p.name}</p>
+              </Link>
+            ) : (
+              <span key={label} />
+            )
           )}
-          {next ? (
-            <Link
-              href={workHref(next.slug)}
-              className="group text-right text-sm text-muted transition-colors hover:text-foreground sm:ml-auto"
-            >
-              <span className="block text-xs uppercase tracking-[0.16em]">
-                Next
-              </span>
-              <span className="mt-1 inline-flex items-center gap-2 font-display text-xl font-medium text-foreground">
-                {next.name} →
-              </span>
-            </Link>
-          ) : null}
         </nav>
       </div>
+
+      <ContactSection />
     </article>
   );
 }

@@ -172,7 +172,7 @@ export default function CaseStudyBlocks({
               <section key={key} className="grid gap-6 md:grid-cols-[14rem_1fr] md:gap-16">
                 <Label text={block.label} />
                 <div data-rise className="max-w-3xl">
-                  <h2 className="font-display text-[2rem] font-medium leading-[1.04] tracking-[-0.035em] md:text-[3.4vw]">
+                  <h2 className="font-serif text-[2rem] font-normal leading-[1.08] tracking-[-0.02em] md:text-[clamp(2.25rem,3.4vw,3.25rem)]">
                     {block.title}
                   </h2>
                   <Body paragraphs={block.body} />
@@ -185,7 +185,7 @@ export default function CaseStudyBlocks({
               <p
                 key={key}
                 data-statement
-                className="mx-auto max-w-5xl text-center font-display text-4xl font-medium leading-[1.08] tracking-[-0.035em] md:text-[4.6vw]"
+                className="mx-auto max-w-4xl text-center font-serif text-4xl font-normal leading-[1.12] tracking-[-0.02em] md:text-[clamp(2.75rem,4.2vw,4rem)]"
               >
                 {block.text.split(" ").map((word, w) => (
                   <span key={w}>{word} </span>
@@ -200,7 +200,7 @@ export default function CaseStudyBlocks({
                   image={block}
                  
                   framed={block.frame !== "plain"}
-                  sizes="(max-width: 1600px) 100vw, 1600px"
+                  sizes="(max-width: 1280px) 100vw, 1200px"
                 />
                 {block.caption && <Caption text={block.caption} />}
               </figure>
@@ -218,7 +218,7 @@ export default function CaseStudyBlocks({
                   className={`md:sticky md:top-28 md:col-span-4 ${block.reverse ? "md:order-2" : ""}`}
                 >
                   <Label text={block.label} inline />
-                  <h2 className="mt-4 font-display text-[2rem] font-medium leading-[1.04] tracking-[-0.035em] md:text-[2.6vw]">
+                  <h2 className="mt-4 font-serif text-[2rem] font-normal leading-[1.08] tracking-[-0.02em] md:text-[clamp(2rem,2.6vw,2.6rem)]">
                     {block.title}
                   </h2>
                   <Body paragraphs={block.body} />
@@ -239,7 +239,7 @@ export default function CaseStudyBlocks({
                 <div className="grid gap-6 md:grid-cols-[14rem_1fr] md:gap-16">
                   <Label text={block.label} />
                   <div data-rise className="max-w-3xl">
-                    <h2 className="font-display text-[2rem] font-medium leading-[1.04] tracking-[-0.035em] md:text-[3.4vw]">
+                    <h2 className="font-serif text-[2rem] font-normal leading-[1.08] tracking-[-0.02em] md:text-[clamp(2.25rem,3.4vw,3.25rem)]">
                       {block.title}
                     </h2>
                     <Body paragraphs={block.body} />
@@ -257,7 +257,7 @@ export default function CaseStudyBlocks({
             return (
               <section
                 key={key}
-                className="overflow-hidden rounded-[24px] bg-stage px-6 py-16 md:px-16 md:py-24"
+                className="overflow-hidden bg-[#F7F3EE] px-6 py-16 md:px-16 md:py-24"
               >
                 <div className="mx-auto mb-12 max-w-xl text-center">
                   <Label text={block.label} inline />
@@ -306,7 +306,7 @@ export default function CaseStudyBlocks({
                 <p className="text-xs font-medium uppercase tracking-[0.2em]">
                   Draft · hidden on the live site
                 </p>
-                <p className="mt-3 font-display text-2xl font-medium">{block.title}</p>
+                <p className="mt-3 font-serif text-2xl">{block.title}</p>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed md:text-base">
                   {block.note}
                 </p>
@@ -326,7 +326,7 @@ function Label({ text, inline = false }: { text?: string; inline?: boolean }) {
   if (!text) return inline ? null : <span />;
   return (
     <p
-      className={`text-xs uppercase tracking-[0.2em] text-muted ${
+      className={`text-[11px] font-medium uppercase tracking-[0.16em] text-[#DB2777] ${
         inline ? "" : "md:sticky md:top-28 md:self-start md:pt-3"
       }`}
     >
@@ -378,14 +378,14 @@ function Shot({
   );
   if (!framed) {
     return (
-      <div data-shot className="overflow-hidden rounded-[20px]">
+      <div data-shot className="overflow-hidden">
         {img}
       </div>
     );
   }
   return (
-    <div data-shot className="overflow-hidden rounded-[20px] bg-stage p-3 md:p-10">
-      <div className="overflow-hidden rounded-[10px] shadow-[0_1px_0_rgba(0,0,0,0.04),0_20px_50px_-24px_rgba(20,30,30,0.28)] ring-1 ring-black/[0.06]">
+    <div data-shot className="overflow-hidden bg-[#F7F3EE] p-3 md:p-10">
+      <div className="overflow-hidden rounded-md shadow-[0_20px_50px_-28px_rgba(60,40,20,0.3)] ring-1 ring-black/[0.05]">
         {img}
       </div>
     </div>
