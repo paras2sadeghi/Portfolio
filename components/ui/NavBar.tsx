@@ -7,6 +7,7 @@ import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import Arrow from "@/components/ui/Arrow";
 import { profile } from "@/lib/content";
 
 /**
@@ -111,7 +112,9 @@ export default function NavBar() {
             active={pathname.startsWith("/contact")}
             solid={pastHero}
           >
-            Let’s talk <span aria-hidden>↗</span>
+            <span className="inline-flex items-center gap-1">
+              Let’s talk <Arrow className="h-[0.8em] w-[0.8em]" />
+            </span>
           </NavItem>
         </nav>
       </div>

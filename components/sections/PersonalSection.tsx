@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Arrow from "@/components/ui/Arrow";
 
 /**
  * "A little more personal": a short, human beat between the work and the
@@ -15,7 +16,7 @@ export default function PersonalSection() {
       className="relative bg-white px-6 py-20 md:px-10 md:py-28"
     >
       <div className="mx-auto max-w-[1200px]">
-        <div className="flex items-baseline justify-between gap-6 text-[10px] uppercase tracking-[0.18em] text-muted md:text-[11px]">
+        <div className="flex items-baseline justify-between gap-6 text-[11px] uppercase tracking-[0.16em] text-muted">
           <p>03 / A little more personal</p>
           <p>Creative practice</p>
         </div>
@@ -36,17 +37,12 @@ export default function PersonalSection() {
             </p>
             <Link
               href="/about"
-              className="group mt-7 inline-flex items-center gap-2 text-base font-medium"
+              className="group mt-5 inline-flex min-h-11 items-center gap-2 text-base font-medium"
             >
               <span className="border-b border-transparent pb-0.5 transition-colors duration-300 group-hover:border-[#DB2777] group-focus-visible:border-[#DB2777]">
                 A little about me
               </span>
-              <span
-                aria-hidden
-                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              >
-                ↗
-              </span>
+              <Arrow className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </div>
 

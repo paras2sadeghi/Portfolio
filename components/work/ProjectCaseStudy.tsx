@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ContactSection from "@/components/sections/ContactSection";
+import Arrow from "@/components/ui/Arrow";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import CaseStudyBlocks, { type CaseStudyBlock } from "@/components/work/CaseStudyBlocks";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -103,17 +104,12 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
           href={project.liveUrl}
           target="_blank"
           rel="noreferrer"
-          className="group mt-6 inline-flex items-center gap-2 text-base font-medium"
+          className="group mt-4 inline-flex min-h-11 items-center gap-2 text-base font-medium"
         >
           <span className="border-b border-foreground/30 pb-0.5 transition-colors duration-300 group-hover:border-[#DB2777] group-focus-visible:border-[#DB2777]">
             {project.liveLabel ?? "Live site"}
           </span>
-          <span
-            aria-hidden
-            className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-          >
-            ↗
-          </span>
+          <Arrow className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
       )}
     </>
@@ -126,9 +122,11 @@ export default function ProjectCaseStudy({ project }: { project: Project }) {
         <Link
           href="/work"
           data-cs-reveal
-          className="mb-6 inline-flex text-sm text-muted transition-colors hover:text-foreground"
+          // At least 44px tall so it is an easy tap on phones.
+          className="mb-4 inline-flex min-h-11 items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
         >
-          ← All work
+          <Arrow direction="left" />
+          All work
         </Link>
 
         <header className="mb-8 grid gap-8 md:mb-10 md:grid-cols-12 md:gap-10">

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { getLenis } from "@/hooks/useLenisGsap";
+import Arrow from "@/components/ui/Arrow";
 
 export interface LightboxImage {
   src: string;
@@ -109,7 +110,7 @@ export default function Lightbox({
               aria-label="Previous screenshot"
               className="shrink-0 rounded-full border border-white/30 p-3 transition-colors hover:bg-white hover:text-ink"
             >
-              <span aria-hidden>←</span>
+              <Arrow direction="left" className="h-4 w-4" />
             </button>
             <p className="max-w-2xl text-center text-sm leading-relaxed text-white/80">{image.alt}</p>
             <button
@@ -118,7 +119,7 @@ export default function Lightbox({
               aria-label="Next screenshot"
               className="shrink-0 rounded-full border border-white/30 p-3 transition-colors hover:bg-white hover:text-ink"
             >
-              <span aria-hidden>→</span>
+              <Arrow direction="right" className="h-4 w-4" />
             </button>
           </div>
         </div>

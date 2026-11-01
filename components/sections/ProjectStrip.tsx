@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Arrow from "@/components/ui/Arrow";
 
 export interface StripCard {
   slug: string;
@@ -103,29 +104,30 @@ export default function ProjectStrip({ cards }: { cards: StripCard[] }) {
             An ever-moving collection of things I’ve made.
           </p>
         </div>
-        <div className="-ml-0 flex items-center justify-between gap-5 sm:justify-start">
+        <div className="flex items-center gap-4">
           <Link
             href="/work"
-            className="whitespace-nowrap text-[11px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
+            className="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap text-[11px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-foreground"
           >
-            All projects
+            All projects <Arrow className="h-3 w-3" />
           </Link>
-          <div className="flex gap-1">
+          {/* Phones swipe the strip, so the step buttons start at tablet size. */}
+          <div className="hidden gap-1 sm:flex">
             <button
               type="button"
               onClick={() => stepBy(-1)}
               aria-label="Previous projects"
-              className="inline-flex h-9 w-9 items-center justify-center text-foreground/70 transition-colors hover:text-foreground"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-foreground/70 transition-colors hover:bg-foreground/5 hover:text-foreground"
             >
-              ←
+              <Arrow direction="left" className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={() => stepBy(1)}
               aria-label="Next projects"
-              className="inline-flex h-9 w-9 items-center justify-center text-foreground/70 transition-colors hover:text-foreground"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-foreground/70 transition-colors hover:bg-foreground/5 hover:text-foreground"
             >
-              →
+              <Arrow direction="right" className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -184,7 +186,7 @@ export default function ProjectStrip({ cards }: { cards: StripCard[] }) {
                   <p className="mt-3 text-sm font-medium tracking-tight">
                     {card.name}
                   </p>
-                  <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-muted">
+                  <p className="mt-0.5 text-[11px] uppercase tracking-[0.14em] text-muted">
                     {card.category}
                   </p>
                 </Link>

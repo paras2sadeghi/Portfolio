@@ -50,7 +50,7 @@ export default function IntroSection() {
             <Link
               data-intro-fade
               href={homeIntro.ctaHref}
-              className="group mt-8 inline-flex items-center gap-3 text-lg font-medium"
+              className="group mt-6 inline-flex min-h-11 items-center gap-3 text-lg font-medium"
             >
               <span className="border-b border-transparent pb-0.5 transition-colors duration-300 group-hover:border-[#DB2777] group-focus-visible:border-[#DB2777]">
                 {homeIntro.ctaLabel}
