@@ -21,7 +21,7 @@ const SCENES: Record<string, string> = {
 // Bump when scene files are replaced under the same names, so browsers and
 // the image optimiser fetch the new files instead of cached old ones. Keep
 // it in step with images.localPatterns in next.config.mjs.
-const SCENES_VERSION = "3";
+const SCENES_VERSION = "4";
 
 export function posterFor(project: {
   slug: string;
